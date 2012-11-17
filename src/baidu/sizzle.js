@@ -8,7 +8,7 @@
  * @create 2012-05-30
  * @modify
  */
-/*!
+/*
  * Sizzle CSS Selector Engine
  *  Copyright 2011, The Dojo Foundation
  *  Released under the MIT, BSD, and GPL Licenses.
@@ -19,9 +19,9 @@
 
  //在用户选择使用 Sizzle 时会被覆盖原有简化版本的baidu.query方法
 
-    baidu.query = function(selector, context, results) {
-        return baidu.merge(results || [], baidu.sizzle(selector, context));
-    };
+    // baidu.query = function( selector, context, results ) {
+    //     // return baidu.merge(results || [], baidu.sizzle(selector, context));
+    // };
 
 var document = window.document,
 	docElem = document.documentElement,
@@ -1421,6 +1421,6 @@ var posProcess = function( selector, context, seed, contextXML ) {
 
 // EXPOSE
 
-window.Sizzle = baidu.sizzle = Sizzle;
+window.Sizzle = baidu.sizzle = baidu.query = Sizzle;
 
 })( window );
