@@ -41,6 +41,10 @@ function getFileContent(file){
     return _content;
 }
 
+function pack( content ){
+    return "void function(){" + content + "}();";
+}
+
 
 // Task:delete release files
     // try{
@@ -62,8 +66,10 @@ function getFileContent(file){
     });
     //short.js需要添加到文件最后
     tangramCompatibleContent += fs.readFileSync('../src/baidu/short.js', 'utf8');
-
     tangramBaseContent = tangramCompatibleContent.replace(/\/\/\/\sTangram\s1\.x\sCode\sStart[\s\S]*?Code\sEnd/g, '');
+
+    tangramCompatibleContent = pack( tangramCompatibleContent );
+    tangramBaseContent = pack( tangramBaseContent );
 
     fs.open("tangram_compatible_src.js", "w", 0666, function(e, fd){
         fs.writeSync(fd, tangramCompatibleContent, 0, 'utf8');
@@ -83,6 +89,7 @@ function getFileContent(file){
     //     fs.writeSync(fd, fisContent, 0, 'utf8');
     //     fs.closeSync(fd);
     // });
+
 
 // Task:compress release files
     exec('java -jar ../test/tools/lib/yuicompressor-2.4.2.jar --type js --charset UTF-8 tangram_compatible_src.js -o tangram_compatible.js', function(error, stdout, stderr){
