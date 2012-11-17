@@ -40,6 +40,12 @@ void function( base, be ){
 	   		return element.fireEvent( "on" + type, event );
 	};
 
+	var upp = function( str ){
+	    return str.replace( /^\w/, function( s ){
+	        return s.toUpperCase();
+	    } );
+	};
+
 	var fire = function( element, type, triggerData, special ){
 		var evnt, eventReturn;
 
@@ -53,7 +59,6 @@ void function( base, be ){
 		        eventReturn = dispatchEvent( element, type, evnt );
 
 		    if( eventReturn !== false && triggerEvents[type] ){
-		    	console.log( eventReturn, type )
 			    try{
 			    	if( element[type] )
 			    	    element[type]();
