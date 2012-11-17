@@ -666,7 +666,7 @@ baidu.query = baidu.query || (function(){
         rId0= /^#([\w\-\$]+)$/
         rTag = /^\w+$/,
         rClass = /^(\w*)\.([\w\-\$]+)$/,
-        rComboClass = /^(\.[\w\-\$]+)+$/;
+        rComboClass = /^(\.[\w\-\$]+)+$/,
         rDivider = /\s*,\s*/,
         rSpace = /\s+/g,
         slice = Array.prototype.slice;
@@ -7995,7 +7995,7 @@ baidu.date = baidu.date || {};
 
 baidu.createChain('number', function(number){
     var nan = parseFloat(number),
-        val = isNaN(nan) ? nan : number;
+        val = isNaN(nan) ? nan : number,
         clazz = typeof val === 'number' ? Number : String,
         pro = clazz.prototype;
     val = new clazz(val);
@@ -14387,6 +14387,12 @@ void function( base, be ){
 	   		return element.fireEvent( "on" + type, event );
 	};
 
+	var upp = function( str ){
+	    return str.replace( /^\w/, function( s ){
+	        return s.toUpperCase();
+	    } );
+	};
+
 	var fire = function( element, type, triggerData, special ){
 		var evnt, eventReturn;
 
@@ -14400,7 +14406,6 @@ void function( base, be ){
 		        eventReturn = dispatchEvent( element, type, evnt );
 
 		    if( eventReturn !== false && triggerEvents[type] ){
-		    	console.log( eventReturn, type )
 			    try{
 			    	if( element[type] )
 			    	    element[type]();
@@ -17081,7 +17086,7 @@ baidu.sio.extend({
  
 baidu.sio.extend({
   log : function() {
-    url = this.url ;
+    var url = this.url ;
     var img = new Image(),
         key = 'tangram_sio_log_' + Math.floor(Math.random() *
               2147483648).toString(36);
