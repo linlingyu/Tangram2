@@ -3,13 +3,11 @@
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu;
 ///import baidu.support;
-///import baidu.dom;
 ///import baidu.dom.contains;
 ///import baidu.dom.getCurrentStyle;
 ///import baidu.dom.css;
-///import baidu._util_.data;
+///import baidu.dom.data;
 ///import baidu.dom.appendTo;
 ///import baidu.dom.css;
 
@@ -35,7 +33,7 @@ baidu.extend(baidu._util_,{
             if ( !elem.style ) {
                 continue;
             }
-            values[ index ] = baidu._util_._data( elem, "olddisplay" );
+            values[ index ] = baidu.dom(elem).data("olddisplay" );
             if ( show ) {
                 // Reset the inline display of this element to learn if it is
                 // being hidden by cascaded rules or not
@@ -48,13 +46,13 @@ baidu.extend(baidu._util_,{
                 // for such an element
                 if ( (elem.style.display === "" && curCSS( elem, "display" ) === "none") ||
                     !baidu.dom.contains( elem.ownerDocument.documentElement, elem ) ) {
-                    values[ index ] = baidu._util_._data( elem, "olddisplay", css_defaultDisplay(elem.nodeName) );
+                    values[ index ] = baidu.dom(elem).data("olddisplay", css_defaultDisplay(elem.nodeName) );
                 }
             } else {
                 display = curCSS( elem, "display" );
 
                 if ( !values[ index ] && display !== "none" ) {
-                    baidu._util_._data( elem, "olddisplay", display );
+                    baidu.dom(elem).data("olddisplay", display );
                 }
             }
         }

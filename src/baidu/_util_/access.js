@@ -2,29 +2,27 @@
  * @author linlingyu
  */
 ///import baidu._util_;
-///import baidu.dom;
+///import baidu.dom.each;
 ///import baidu.type;
 
-baidu._util_.access = function(key, value, callback){
-    if( this.size()<=0 ){
-        return this;
-    };
+baidu._util_.access = function(tang, key, value, callback){
+    if(tang.size() <= 0){return tang;}
     switch(baidu.type(key)){
-        case 'string'://高频
+        case 'string': //高频
             if(value === undefined){
-                return callback.call(this, this[0], key);
+                return callback.call(tang, tang[0], key);
             }else{
-                for(var i = 0, ele; ele = this[i]; i++){
-                    callback.call(this, ele, key,
-                        baidu.type(value) === 'function' ? value.call(ele, i, callback.call(this, ele, key)) : value);
-                }
+                tang.each(function(index, item){
+                    callback.call(tang, item, key,
+                        baidu.type(value) === 'function' ? value.call(item, i, callback.call(tang, item, key)) : value);
+                });
             }
             break;
         case 'object':
             for(var i in key){
-                baidu._util_.access.call(this, i, key[i], callback);
+                baidu._util_.access.call(tang, i, key[i], callback);
             }
             break;
     }
-    return this;
+    return tang;
 };

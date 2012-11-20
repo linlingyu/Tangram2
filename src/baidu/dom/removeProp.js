@@ -31,7 +31,7 @@
 ///import baidu.dom;
 ///import baidu.forEach;
 ///import baidu.support;
-///import baidu._util_.propHooks;
+///baidu._util_.propHooks;
 
 baidu.dom.extend({
     removeProp: function(value){

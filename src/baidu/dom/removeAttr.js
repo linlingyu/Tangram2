@@ -28,18 +28,28 @@
 
  */
 
+///import baidu.type;
+///import baidu.dom.each;
 ///import baidu.forEach;
 ///import baidu.support;
-///import baidu._util_.propHooks;
+/// baidu._util_.propHooks;
 ///import baidu.dom.attr;
 
 baidu.dom.extend({
     removeAttr: function(value){
-
-        //异常处理
-        if(arguments.length <= 0 || !value || typeof value !== 'string'){
-            return this;
-        };
+        if(!value || baidu.type(value) !== 'string'){return this;}//异常处理
+        var util = baidu._util_, attrNames;
+        this.each(function(index, item){
+            if(item.nodeType !== 1){return;}
+            attrNames = value.toLowerCase().split(/\s+/);
+            for(var i = 0, attr; attr = attrNames[i]; i++){
+                util
+            }
+            
+            
+        });
+        
+        
 
         baidu.forEach(this, function(item){
             var propName, attrNames, name, l, isBool, i = 0;

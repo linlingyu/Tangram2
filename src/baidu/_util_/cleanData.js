@@ -1,4 +1,3 @@
-///import baidu._util_;
 ///import baidu.id;
 ///import baidu._util_.eventBase;
 

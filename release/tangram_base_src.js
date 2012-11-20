@@ -128,59 +128,25 @@ _.versions.push( baidu.version );
 baidu.check = baidu.check || function(){};
 
 /*
- * @author meizz
- * @create 2012.08.28
- */
-
-///import baidu;
-
-/**
- * @description 框架内一些私用方法的集合
- * @Object 
- * @name baidu._util_
- */
-
-
-baidu._util_ = baidu._util_ || {};
-///import baidu;
-
-/**
- * @fileoverview
- * @author meizz
- * @create 2012-05-20
- * @modify
- */
-
-/**
- * @description 将第二个 ArrayLike对象合并到第一个 ArrayLike 中去
+ * Tangram
+ * Copyright 2009 Baidu Inc. All rights reserved.
  * 
- * @function
- * @name baidu.merge
- * @grammar baidu.merge(first,second)
- * @param   {Object}    first   第一个 ArrayLike
- * @param   {Object}    second  第二个 ArrayLike
- * @return              first   第一个对象
+ * path: baidu/lang.js
+ * author: erik
+ * version: 1.1.0
+ * date: 2009/12/02
  */
-baidu.merge = function(first, second) {
-    var i = first.length,
-        j = 0;
 
-    if ( typeof second.length === "number" ) {
-        for ( var l = second.length; j < l; j++ ) {
-            first[ i++ ] = second[ j ];
-        }
 
-    } else {
-        while ( second[j] !== undefined ) {
-            first[ i++ ] = second[ j++ ];
-        }
-    }
 
-    first.length = i;
+/**
+ * @description 对语言层面的封装，包括类型判断、模块扩展、继承基类以及对象自定义事件的支持。
+ * @name baidu.lang
+ * @namespace baidu.lang
+ */
+ 
+baidu.lang = baidu.lang || {};
 
-    return first;
-};
-///import baidu;
 /**
  * @fileoverview forEach是ECMAScript 5 里的标准方法，而each不是标准；
  * 目前为了兼容jQuery保留baidu.each()，$.each()接口与标准的forEach有三大差异：
@@ -247,28 +213,9 @@ baidu.forEach = function( enumerable, iterator, context ) {
     return enumerable;
 };
 
-/*
- * Tangram
- * Copyright 2009 Baidu Inc. All rights reserved.
- * 
- * path: baidu/lang.js
- * author: erik
- * version: 1.1.0
- * date: 2009/12/02
- */
 
-///import baidu;
 
-/**
- * @description 对语言层面的封装，包括类型判断、模块扩展、继承基类以及对象自定义事件的支持。
- * @name baidu.lang
- * @namespace baidu.lang
- */
- 
-baidu.lang = baidu.lang || {};
-///import baidu;
-///import baidu.lang;
-///import baidu.forEach;
+
 /*
  * @fileoverview
  * @name baidu.type
@@ -384,8 +331,8 @@ baidu.isObject = function( unknow ) {
 11-DOCUMENT FRAGMENT
 12-NOTATION
 */
-///import baidu;
-///import baidu.type;
+
+
 
 /*
  * @fileoverview
@@ -458,9 +405,9 @@ baidu.extend = function(depthClone, object) {
    3、第一个参数为 false 时进行浅克隆；
    4、接受聚合的对象不是一个object时，返回 空对象
 //*/
-///import baidu;
-///import baidu.type;
-///import baidu.extend;
+
+
+
 /*
  * @fileoverview
  * @author meizz
@@ -536,9 +483,110 @@ baidu.overwrite = function(Class, list, fn) {
 
 	return Class;
 };
-///import baidu;
-///import baidu.type;
-///import baidu.createChain;
+/*
+ * Tangram
+ * Copyright 2009 Baidu Inc. All rights reserved.
+ * 
+ * path: baidu/object.js
+ * author: erik
+ * version: 1.1.0
+ * date: 2009/11/15
+ */
+
+
+/**
+ * @description 操作原生对象的方法
+ * @name baidu.object 
+ * @namespace
+ */
+baidu.object = baidu.object || {};
+
+/*
+ * Tangram
+ * Copyright 2009 Baidu Inc. All rights reserved.
+ */
+
+
+
+
+/**
+ * @description 判断一个对象是不是字面量对象，即判断这个对象是不是由{}或者new Object类似方式创建
+ * @name baidu.object.isPlain
+ * @function
+ * @grammar baidu.object.isPlain(source)
+ * @param {Object} source 需要检查的对象
+ * @remark
+ * 事实上来说，在Javascript语言中，任何判断都一定会有漏洞，因此本方法只针对一些最常用的情况进行了判断
+ *             
+ * @return {Boolean} 检查结果
+ */
+baidu.object.isPlain  = baidu.isPlainObject;
+
+/*
+ * @author wangxiao
+ * @email  1988wangxiao@gmail.com
+ */
+
+
+
+
+
+/**
+ * @description string对象链式语法的链头，操作字符串
+ * @function 
+ * @name baidu.string()
+ * @grammar baidu.string(str)
+ * @param {String} str 一个需要处理的字符串
+ * @return {TangramString} 返回一个TangramString对象
+ */
+
+baidu.createChain('string',
+    // 执行方法
+    function(string){
+        var type = baidu.type(string),
+            str = new String(~'string|number'.indexOf(type) ? string : type),
+            pro = String.prototype;
+        baidu.forEach(baidu.string.$String.prototype, function(fn, key) {
+            pro[key] || (str[key] = fn);
+        });
+        return str;
+    }
+);
+/**
+ * @author wangxiao
+ * @email  1988wangxiao@gmail.com
+ */
+
+
+
+/**
+ * @description 删除目标字符串两端的空白字符
+ * @function 
+ * @name baidu.string().trim()
+ * @grammar baidu.string(str).trim()
+ * @return {String} 删除两端空白字符后的字符串
+ */
+
+/**
+ * @description 删除目标字符串两端的空白字符
+ * @function 
+ * @name baidu.string.trim
+ * @grammar baidu.string.trim(str)
+ * @param {String} str 目标字符串
+ * @return {String} 删除两端空白字符后的字符串
+ */
+
+baidu.string.extend({
+    trim: function(){
+        var trimer = new RegExp('(^[\\s\\t\\xa0\\u3000]+)|([\\u3000\\xa0\\s\\t]+\x24)', 'g');
+        return function(){
+            return this.replace(trimer, '');
+        }
+    }()
+});
+
+
+
 
 /*
  * @fileoverview
@@ -575,438 +623,7 @@ baidu.overwrite(baidu.array.$Array, "concat slice".split(" "), function(key) {
 		return baidu.array( Array.prototype[key].apply(this, arguments) );
 	}
 });
-///import baidu.array;
 
-/**
- * @fileoverview
- * @author meizz
- * @create 2012-07-30
- * @modify
- */
-
-/**
- * @description 去除数组中的重复项
- *
- * @name baidu.array.unique
- * @function
- * @grammar $Array.unique([fn])
- * @param   {Function}      fn  用于做除重对比的函数
- * @return  {Array}             已经除重后的数组
- */
-
-/**
- * @description 去除数组中的重复项
- *
- * @name baidu.array().unique()
- * @function
- * @grammar $Array.unique([fn])
- * @param   {Function}      fn  用于做除重对比的函数
- * @return  {Array}             已经除重后的数组
- */
-baidu.array.extend({
-    unique : function (fn) {
-        var len = this.length,
-            result = this.slice(0),
-            i, datum;
-            
-        if ('function' != typeof fn) {
-            fn = function (item1, item2) {
-                return item1 === item2;
-            };
-        }
-        
-        // 从后往前双重循环比较
-        // 如果两个元素相同，删除后一个
-        while (--len > 0) {
-            datum = result[len];
-            i = len;
-            while (i--) {
-                if (fn(datum, result[i])) {
-                    result.splice(len, 1);
-                    break;
-                }
-            }
-        }
-
-        len = this.length = result.length;
-        for ( i=0; i<len; i++ ) {
-            this[ i ] = result[ i ];
-        }
-
-        return this;
-    }
-});
-///import baidu;
-///import baidu.forEach;
-///import baidu.merge;
-///import baidu.array.unique;
-/*
- * @fileoverview
- * @name baidu.query
- * @author meizz
- * @create 2012-05-30
- * @modify 2012-06-10 将大函数分拆成 query() 和 queryCombo()；使用 querySelectAll()；
- */
-
-/**
- * @description 通过指定的CSS选择器取指定的DOM元素
- * 在用户选择使用 Sizzle 时会被覆盖成 Sizzle 方法
- * 目前这个简版的 selector 函数支持四种选择器 * #id .class tagName
- *
- * @function
- * @name baidu.query
- * @grammar baidu.query(selector[, context[, results]])
- * @param   {String}    selector    CSS选择器字符串
- * @param   {Document}  context     选择的范围
- * @param   {Array}     results     返回的结果对象（数组）
- * @return  {Array}                 筛选后的对象组
- */
-baidu.query = baidu.query || (function(){
-    var rId = /^(\w*)#([\w\-\$]+)$/,
-        rId0= /^#([\w\-\$]+)$/
-        rTag = /^\w+$/,
-        rClass = /^(\w*)\.([\w\-\$]+)$/,
-        rComboClass = /^(\.[\w\-\$]+)+$/,
-        rDivider = /\s*,\s*/,
-        rSpace = /\s+/g,
-        slice = Array.prototype.slice;
-
-    // selector: #id, .className, tagName, *
-    function query(selector, context) {
-        var t, x, id, dom, tagName, className, arr, list, array = [];
-
-        // tag#id
-        if (rId.test(selector)) {
-            id = RegExp.$2;
-            tagName = RegExp.$1 || "*";
-
-            // 本段代码效率很差，不过极少流程会走到这段
-            baidu.forEach(context.getElementsByTagName(tagName), function(dom) {
-                dom.id == id && array.push(dom);
-            });
-
-        // tagName or *
-        } else if (rTag.test(selector) || selector == "*") {
-            baidu.merge(array, context.getElementsByTagName(selector));
-
-        // .className
-        } else if (rClass.test(selector)) {
-            arr = [];
-            tagName = RegExp.$1;
-            className = RegExp.$2;
-            t = " " + className + " ";
-            // bug: className: .a.b
-
-            if (context.getElementsByClassName) {
-                arr = context.getElementsByClassName(className);
-            } else {
-                baidu.forEach(context.getElementsByTagName("*"), function(dom) {
-                    dom.className && (" " + dom.className + " ").indexOf(t) > -1 && (arr.push(dom));
-                });
-            }
-
-            if (tagName && (tagName = tagName.toUpperCase())) {
-                baidu.forEach(arr, function(dom) {
-                    dom.tagName.toUpperCase() === tagName && array.push(dom);
-                });
-            } else {
-                baidu.merge(array, arr);
-            }
-        
-        // IE 6 7 8 里组合样式名(.a.b)
-        } else if (rComboClass.test(selector)) {
-            list = selector.substr(1).split(".");
-
-            baidu.forEach(context.getElementsByTagName("*"), function(dom) {
-                if (dom.className) {
-                    t = " " + dom.className + " ";
-                    x = true;
-
-                    baidu.forEach(list, function(item){
-                        t.indexOf(" "+ item +" ") == -1 && (x = false);
-                    });
-
-                    x && array.push(dom);
-                }
-            });
-        }
-
-        return array;
-    }
-
-    // selector 还可以是上述四种情况的组合，以空格分隔
-    // @return ArrayLike
-    function queryCombo(selector, context) {
-        var a, s = selector, id = "__tangram__", array = [];
-
-        // 在 #id 且没有 context 时取 getSingle，其它时 getAll
-        if (!context && rId0.test(s) && (a=document.getElementById(s.substr(1)))) {
-            return [a];
-        }
-
-        context = context || document;
-
-        // 用 querySelectorAll 时若取 #id 这种唯一值时会多选
-        if (context.querySelectorAll) {
-            // 在使用 querySelectorAll 时，若 context 无id将貌似 document 而出错
-            if (context.nodeType == 1 && !context.id) {
-                context.id = id;
-                a = context.querySelectorAll("#" + id + " " + s);
-                context.id = "";
-            } else {
-                a = context.querySelectorAll(s);
-            }
-            return a;
-        } else {
-            if (s.indexOf(" ") == -1) {
-                return query(s, context);
-            }
-
-            baidu.forEach(query(s.substr(0, s.indexOf(" ")), context), function(dom) { // 递归
-                baidu.merge(array, queryCombo(s.substr(s.indexOf(" ") + 1), dom));
-            });
-        }
-
-        return array;
-    }
-
-    return function(selector, context, results) {
-        if (!selector || typeof selector != "string") {
-            return results || [];
-        }
-
-        var arr = [];
-        selector = selector.replace(rSpace, " ");
-        results && baidu.merge(arr, results) && (results.length = 0);
-
-        baidu.forEach(selector.indexOf(",") > 0 ? selector.split(rDivider) : [selector], function(item) {
-            baidu.merge(arr, queryCombo(item, context));
-        });
-
-        return baidu.merge(results || [], baidu.array(arr).unique());
-    };
-})();
-
-///import baidu;
-///import baidu.merge;
-///import baidu.query;
-///import baidu.createChain;
-
-/**
- * @fileoverview DOM操作链式语法头
- * @author meizz
- * @create 2012-05-20
- * @modify
- */
-
-/**
- * @description 创建一个空的TangramDom对象
- * @function 
- * @name baidu.dom()
- * @grammar baidu.dom("")
- * @param   {String}    selector    空字符串
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- */
-/**
- * @description 创建一个空的TangramDom对象
- * @function 
- * @name baidu.dom()
- * @grammar baidu.dom(null)
- * @param   {Null}   null    null对象
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- */
-/**
- * @description 创建一个空的TangramDom对象
- * @function 
- * @name baidu.dom()
- * @grammar baidu.dom()
- * @param   {undefined} selector    undefined未定义
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- */
-/**
- * @description 创建TangramDom对象
- * @function 
- * @name baidu.dom()
- * @grammar baidu.dom(selector[, context])
- * @param   {String}        selector    CSS选择器字符串
- * @param   {Document}      context     [可选]指选择器的范围
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- */
-/**
- * @description 创建TangramDom对象
- * @name baidu.dom()
- * @function 
- * @grammar baidu.dom(HTMLElement)
- * @param   {HTMLElement}   HTMLElement DOM对象（包括Document）
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- */
-/**
- * @description 创建TangramDom对象
- * @function 
- * @name baidu.dom()
- * @grammar baidu.dom(Array)
- * @param   {Array}         Array       一组DOM对象（包括Document）
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- */
-/**
- * @description 创建TangramDom对象
- * @function 
- * @name baidu.dom()
- * @grammar baidu.dom(TangramDom)
- * @param   {TangramDom}    selector    TangramDom对象
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- */
-/**
- * @description 通过传入 HTMLString 创建TangramDom对象
- * @function 
- * @name baidu.dom()
- * @grammar baidu.dom(HTMLString)
- * @param   {String}        selector    HTMLString
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- */
-/**
- * @description 在dom.onready时运行指定函数
- * @function 
- * @name baidu.dom()
- * @grammar baidu.dom(fn)
- * @param   {Function} fn Function函数
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- */
-baidu.createChain("dom",
-
-// method function
-
-
-function(selector, context) {
-    var e, me = new baidu.dom.$DOM(context);
-
-    // Handle $(""), $(null), or $(undefined)
-    if (!selector) {
-        return me;
-    }
-
-    // Handle $($DOM)
-    if (selector._type_ == "$DOM") {
-        return selector;
-
-    // Handle $(DOMElement)
-    } else if (selector.nodeType || selector == selector.window) {
-        me[0] = selector;
-        me.length = 1;
-        return me;
-
-    // Handle $(Array) or $(Collection) or $(NodeList)
-    } else if (selector.length && me.toString.call(selector) != "[object String]") {
-        return baidu.merge(me, selector);
-
-    } else if (typeof selector == "string") {
-        // HTMLString
-        if (selector.charAt(0) == "<" && selector.charAt(selector.length - 1) == ">" && selector.length > 2) {
-            if ( baidu.dom.createElements ) {
-                baidu.merge( me, baidu.dom.createElements( selector ) );
-            }
-
-        // baidu.query
-        } else {
-            baidu.query(selector, context, me);
-        }
-    
-    // document.ready
-    } else if (typeof selector == "function") {
-        return me.ready ? me.ready(selector) : me;
-    }
-
-    return me;
-},
-
-// constructor
-function(context) {
-    this.length = 0;
-    this._type_ = "$DOM";
-    this.context = context || document;
-}
-
-).extend({
-
-/**
- * @description 取得 TangramDom 对象里的 length
- * @name baidu.dom().size()
- * @function 
- * @grammar TangramDom.size()
- * @return  {Number}    TangramDom对象里DOM元素的个数
- * @example 
- 直接获取baidu()方法所生成的TangramDom对象中的元素数量，也可以直接baidu(args).length 
-
- 示例代码：
- //HTML片段
- <div>1</div>
- <div>2</div>
-
- //取得src属性
- baidu("div").size();  //2    
- */
-    
-    size: function() {
-        return this.length;
-    }
-
-    ,splice : function(){}
-
-    /**
-     * @description 按指定序号返回TangramDom对象里的DOM元素，如果不传序号则返回所有的DOM对象
-     * @name baidu.dom().get()
-     * @function 
-     * @grammar TangramDom.get([index])
-     * @param   {Number}    index   序号
-     * @return  {Array}     TangramDom对象里DOM元素
-     */
-    ,
-    get: function(index) {
-
-        if ( typeof index == "number" ) {
-            return index < 0 ? this[this.length + index] : this[index];
-        }
-
-        return Array.prototype.slice.call(this, 0);
-    }
-
-    ,toArray: function(){
-        return this.get();
-    }
-
-});
-
-/**
- * @author linlingyu
- */
-///import baidu._util_;
-///import baidu.dom;
-///import baidu.type;
-
-baidu._util_.access = function(key, value, callback){
-    if( this.size()<=0 ){
-        return this;
-    };
-    switch(baidu.type(key)){
-        case 'string'://高频
-            if(value === undefined){
-                return callback.call(this, this[0], key);
-            }else{
-                for(var i = 0, ele; ele = this[i]; i++){
-                    callback.call(this, ele, key,
-                        baidu.type(value) === 'function' ? value.call(ele, i, callback.call(this, ele, key)) : value);
-                }
-            }
-            break;
-        case 'object':
-            for(var i in key){
-                baidu._util_.access.call(this, i, key[i], callback);
-            }
-            break;
-    }
-    return this;
-};
-///import baidu.array;
 
 /**
  * @fileoverview
@@ -1064,10 +681,10 @@ baidu.array.extend({
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu;
-///import baidu.forEach;
-///import baidu.extend;
-///import baidu.array.indexOf;
+
+
+
+
 
 /**
  * @description 一个多用途的回调列表对象，提供了强大的的方式来管理回调函数列表
@@ -1377,11 +994,11 @@ function(){});
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu;
-///import baidu.extend;
-///import baidu.createChain;
-///import baidu.callbacks;
-///import baidu.forEach;
+
+
+
+
+
 
 /**
  * @description 提供应对延迟事件、异步调用的解决方案
@@ -1678,14 +1295,662 @@ function( func ) {
 function(){});
 
 
+
+
+/*
+ * @fileoverview 在当前页面开辟一个全局的信息存放地
+ * @name baidu.global
+ * @author meizz
+ * @create 2012-07-25
+ */
+
+/**
+ * @description 在当前页面开辟一个全局的信息存放地
+ * @function
+ * @name baidu.global
+ * @grammar baidu.global(key[, value[, overwrite]])
+ * @param   {String}    key         被存储的变量名
+ * @param   {Object}    value       [可选]需要存储的变量值
+ * @param   {String}    overwrite   [可选]true 覆盖原值
+ * @return  {Object}                该key对象的对象
+ */
+baidu.global = baidu.global || (function() {
+    baidu._global_ = window[ baidu.guid ];
+    var global = baidu._global_._ = {};
+
+    return function( key, value, overwrite ) {
+        if ( typeof value != "undefined" ) {
+            if(!overwrite) {
+                value = typeof global[ key ] == "undefined" ? value : global[ key ];
+            }
+            global[ key ] =  value;
+
+        } else if (key && typeof global[ key ] == "undefined" ) {
+            global[ key ] = {};
+        }
+
+        return global[ key ];
+    }
+})();
+
+
+
+/*
+ * @fileoverview
+ * @name baidu.browser
+ * @author meizz
+ * @create 2012-06-29
+ * @modify
+ */
+
+/**
+ * @description 判断浏览器类型和特性的属性
+ * @namespace
+ * @name baidu.browser
+ * @grammar baidu.browser.ie
+ * @grammar baidu.browser.chrome
+ * @grammar baidu.browser.firefox
+ * @grammar baidu.browser.opera
+ * @grammar baidu.browser.safari
+ * @grammar baidu.browser.isGecko
+ * @grammar baidu.browser.isStrict
+ * @grammar baidu.browser.isWebkit
+ */
+baidu.browser = baidu.browser || function(){
+    var ua = navigator.userAgent;
+    
+    var result = {
+        isStrict : document.compatMode == "CSS1Compat"
+        ,isGecko : /gecko/i.test(ua) && !/like gecko/i.test(ua)
+        ,isWebkit: /webkit/i.test(ua)
+    };
+
+    try{/(\d+\.\d+)/.test(external.max_version) && (result.maxthon = + RegExp['\x241'])} catch (e){};
+
+    // 蛋疼 你懂的
+    switch (true) {
+        case /msie (\d+\.\d+)/i.test(ua) :
+            result.ie = document.documentMode || + RegExp['\x241'];
+            break;
+        case /chrome\/(\d+\.\d+)/i.test(ua) :
+            result.chrome = + RegExp['\x241'];
+            break;
+        case /(\d+\.\d)?(?:\.\d)?\s+safari\/?(\d+\.\d+)?/i.test(ua) && !/chrome/i.test(ua) :
+            result.safari = + (RegExp['\x241'] || RegExp['\x242']);
+            break;
+        case /firefox\/(\d+\.\d+)/i.test(ua) : 
+            result.firefox = + RegExp['\x241'];
+            break;
+        
+        case /opera(?:\/| )(\d+(?:\.\d+)?)(.+?(version\/(\d+(?:\.\d+)?)))?/i.test(ua) :
+            result.opera = + ( RegExp["\x244"] || RegExp["\x241"] );
+            break;
+    }
+           
+    baidu.extend(baidu, result);
+
+    return result;
+}();
+/*
+baidu.browser.chrome = /chrome\/(\d+\.\d+)/i.test(navigator.userAgent) ? + RegExp['\x241'] : undefined;
+baidu.browser.firefox = /firefox\/(\d+\.\d+)/i.test(navigator.userAgent) ? + RegExp['\x241'] : undefined;
+baidu.browser.ie = baidu.ie = /msie (\d+\.\d+)/i.test(navigator.userAgent) ? (document.documentMode || + RegExp['\x241']) : undefined;
+baidu.browser.isGecko = /gecko/i.test(navigator.userAgent) && !/like gecko/i.test(navigator.userAgent);
+baidu.browser.isStrict = document.compatMode == "CSS1Compat";
+baidu.browser.isWebkit = /webkit/i.test(navigator.userAgent);
+baidu.browser.opera = /opera(\/| )(\d+(\.\d+)?)(.+?(version\/(\d+(\.\d+)?)))?/i.test(navigator.userAgent) ?  + ( RegExp["\x246"] || RegExp["\x242"] ) : undefined;
+baidu.browser.safari = /(\d+\.\d)?(?:\.\d)?\s+safari\/?(\d+\.\d+)?/i.test(ua) && !/chrome/i.test(ua) ? + (RegExp['\x241'] || RegExp['\x242']) : undefined;
+try {
+    if (/(\d+\.\d+)/.test(external.max_version)) {
+        baidu.browser.maxthon = + RegExp['\x241'];
+    }
+} catch (e) {}
+//*/
+
+
+
+
+/*
+ * @fileoverview
+ * @author dron,meizz
+ * @create 2012-06-13
+ * @modify
+ */
+
+/**
+ * @description 页面级唯一标识的方法
+ * @function
+ * @name baidu.id
+ * @grammar baidu.id( [id[, command]] )
+ * @param   {Object}        object      Object or id
+ * @param   {String}        command     [可选] 操作名，若该字符不是指定操作符时将认为是指定 id
+ * @return  {Object}        String or Object
+ */
+baidu.id = function() {
+    var maps = baidu.global("_maps_id")
+        ,key = baidu.key;
+
+    baidu.global("_counter", 1, true);
+
+    return function( object, command ) {
+        var e
+            ,str_1= baidu.isString( object )
+            ,obj_1= baidu.isObject( object )
+            ,id = obj_1 ? object[ key ] : str_1 ? object : "";
+
+        // 第二个参数为 String
+        if ( baidu.isString( command ) ) {
+            switch ( command ) {
+            case "get" :
+                return obj_1 ? id : maps[id];
+            break;
+            case "remove" :
+            case "delete" :
+                if ( e = maps[id] ) {
+                    // 20120827 mz IE低版本给 element[key] 赋值时会写入DOM树，因此在移除的时候需要使用remove
+                    if (baidu.isElement(e) && baidu.browser.ie < 7) {
+                        e.removeAttribute(key);
+                    } else {
+                        delete e[ key ];
+                    }
+                    delete maps[ id ];
+                }
+                return id;
+            break;
+            case "decontrol" : 
+                !(e = maps[id]) && obj_1 && ( object[ key ] = id = baidu.id() );
+                id && delete maps[ id ];
+                return id;
+            break;
+            default :
+                if ( str_1 ) {
+                    (e = maps[ id ]) && delete maps[ id ];
+                    e && ( maps[ e[ key ] = command ] = e );
+                } else if ( obj_1 ) {
+                    id && delete maps[ id ];
+                    maps[ object[ key ] = command ] = object;
+                }
+                return command;
+            }
+        }
+
+        // 第一个参数不为空
+        if ( obj_1 ) {
+            !id && (maps[ object[ key ] = id = baidu.id() ] = object);
+            return id;
+        } else if ( str_1 ) {
+            return maps[ object ];
+        }
+
+        return "TANGRAM__" + baidu._global_._._counter ++;
+    };
+}();
+
+baidu.id.key = "tangram_guid";
+
+//TODO: mz 20120827 在低版本IE做delete操作时直接 delete e[key] 可能出错，这里需要重新评估，重写
+
+
+/**
+ * @fileoverview
+ * @author meizz
+ * @create 2012-05-20
+ * @modify
+ */
+
+/**
+ * @description 将第二个 ArrayLike对象合并到第一个 ArrayLike 中去
+ * 
+ * @function
+ * @name baidu.merge
+ * @grammar baidu.merge(first,second)
+ * @param   {Object}    first   第一个 ArrayLike
+ * @param   {Object}    second  第二个 ArrayLike
+ * @return              first   第一个对象
+ */
+baidu.merge = function(first, second) {
+    var i = first.length,
+        j = 0;
+
+    if ( typeof second.length === "number" ) {
+        for ( var l = second.length; j < l; j++ ) {
+            first[ i++ ] = second[ j ];
+        }
+
+    } else {
+        while ( second[j] !== undefined ) {
+            first[ i++ ] = second[ j++ ];
+        }
+    }
+
+    first.length = i;
+
+    return first;
+};
+
+
+/**
+ * @fileoverview
+ * @author meizz
+ * @create 2012-07-30
+ * @modify
+ */
+
+/**
+ * @description 去除数组中的重复项
+ *
+ * @name baidu.array.unique
+ * @function
+ * @grammar $Array.unique([fn])
+ * @param   {Function}      fn  用于做除重对比的函数
+ * @return  {Array}             已经除重后的数组
+ */
+
+/**
+ * @description 去除数组中的重复项
+ *
+ * @name baidu.array().unique()
+ * @function
+ * @grammar $Array.unique([fn])
+ * @param   {Function}      fn  用于做除重对比的函数
+ * @return  {Array}             已经除重后的数组
+ */
+baidu.array.extend({
+    unique : function (fn) {
+        var len = this.length,
+            result = this.slice(0),
+            i, datum;
+            
+        if ('function' != typeof fn) {
+            fn = function (item1, item2) {
+                return item1 === item2;
+            };
+        }
+        
+        // 从后往前双重循环比较
+        // 如果两个元素相同，删除后一个
+        while (--len > 0) {
+            datum = result[len];
+            i = len;
+            while (i--) {
+                if (fn(datum, result[i])) {
+                    result.splice(len, 1);
+                    break;
+                }
+            }
+        }
+
+        len = this.length = result.length;
+        for ( i=0; i<len; i++ ) {
+            this[ i ] = result[ i ];
+        }
+
+        return this;
+    }
+});
+
+
+
+
+/*
+ * @fileoverview
+ * @name baidu.query
+ * @author meizz
+ * @create 2012-05-30
+ * @modify 2012-06-10 将大函数分拆成 query() 和 queryCombo()；使用 querySelectAll()；
+ */
+
+/**
+ * @description 通过指定的CSS选择器取指定的DOM元素
+ * 在用户选择使用 Sizzle 时会被覆盖成 Sizzle 方法
+ * 目前这个简版的 selector 函数支持四种选择器 * #id .class tagName
+ *
+ * @function
+ * @name baidu.query
+ * @grammar baidu.query(selector[, context[, results]])
+ * @param   {String}    selector    CSS选择器字符串
+ * @param   {Document}  context     选择的范围
+ * @param   {Array}     results     返回的结果对象（数组）
+ * @return  {Array}                 筛选后的对象组
+ */
+baidu.query = baidu.query || (function(){
+    var rId = /^(\w*)#([\w\-\$]+)$/,
+        rId0= /^#([\w\-\$]+)$/
+        rTag = /^\w+$/,
+        rClass = /^(\w*)\.([\w\-\$]+)$/,
+        rComboClass = /^(\.[\w\-\$]+)+$/,
+        rDivider = /\s*,\s*/,
+        rSpace = /\s+/g,
+        slice = Array.prototype.slice;
+
+    // selector: #id, .className, tagName, *
+    function query(selector, context) {
+        var t, x, id, dom, tagName, className, arr, list, array = [];
+
+        // tag#id
+        if (rId.test(selector)) {
+            id = RegExp.$2;
+            tagName = RegExp.$1 || "*";
+
+            // 本段代码效率很差，不过极少流程会走到这段
+            baidu.forEach(context.getElementsByTagName(tagName), function(dom) {
+                dom.id == id && array.push(dom);
+            });
+
+        // tagName or *
+        } else if (rTag.test(selector) || selector == "*") {
+            baidu.merge(array, context.getElementsByTagName(selector));
+
+        // .className
+        } else if (rClass.test(selector)) {
+            arr = [];
+            tagName = RegExp.$1;
+            className = RegExp.$2;
+            t = " " + className + " ";
+            // bug: className: .a.b
+
+            if (context.getElementsByClassName) {
+                arr = context.getElementsByClassName(className);
+            } else {
+                baidu.forEach(context.getElementsByTagName("*"), function(dom) {
+                    dom.className && (" " + dom.className + " ").indexOf(t) > -1 && (arr.push(dom));
+                });
+            }
+
+            if (tagName && (tagName = tagName.toUpperCase())) {
+                baidu.forEach(arr, function(dom) {
+                    dom.tagName.toUpperCase() === tagName && array.push(dom);
+                });
+            } else {
+                baidu.merge(array, arr);
+            }
+        
+        // IE 6 7 8 里组合样式名(.a.b)
+        } else if (rComboClass.test(selector)) {
+            list = selector.substr(1).split(".");
+
+            baidu.forEach(context.getElementsByTagName("*"), function(dom) {
+                if (dom.className) {
+                    t = " " + dom.className + " ";
+                    x = true;
+
+                    baidu.forEach(list, function(item){
+                        t.indexOf(" "+ item +" ") == -1 && (x = false);
+                    });
+
+                    x && array.push(dom);
+                }
+            });
+        }
+
+        return array;
+    }
+
+    // selector 还可以是上述四种情况的组合，以空格分隔
+    // @return ArrayLike
+    function queryCombo(selector, context) {
+        var a, s = selector, id = "__tangram__", array = [];
+
+        // 在 #id 且没有 context 时取 getSingle，其它时 getAll
+        if (!context && rId0.test(s) && (a=document.getElementById(s.substr(1)))) {
+            return [a];
+        }
+
+        context = context || document;
+
+        // 用 querySelectorAll 时若取 #id 这种唯一值时会多选
+        if (context.querySelectorAll) {
+            // 在使用 querySelectorAll 时，若 context 无id将貌似 document 而出错
+            if (context.nodeType == 1 && !context.id) {
+                context.id = id;
+                a = context.querySelectorAll("#" + id + " " + s);
+                context.id = "";
+            } else {
+                a = context.querySelectorAll(s);
+            }
+            return a;
+        } else {
+            if (s.indexOf(" ") == -1) {
+                return query(s, context);
+            }
+
+            baidu.forEach(query(s.substr(0, s.indexOf(" ")), context), function(dom) { // 递归
+                baidu.merge(array, queryCombo(s.substr(s.indexOf(" ") + 1), dom));
+            });
+        }
+
+        return array;
+    }
+
+    return function(selector, context, results) {
+        if (!selector || typeof selector != "string") {
+            return results || [];
+        }
+
+        var arr = [];
+        selector = selector.replace(rSpace, " ");
+        results && baidu.merge(arr, results) && (results.length = 0);
+
+        baidu.forEach(selector.indexOf(",") > 0 ? selector.split(rDivider) : [selector], function(item) {
+            baidu.merge(arr, queryCombo(item, context));
+        });
+
+        return baidu.merge(results || [], baidu.array(arr).unique());
+    };
+})();
+
+
+
+
+
+
+/**
+ * @fileoverview DOM操作链式语法头
+ * @author meizz
+ * @create 2012-05-20
+ * @modify
+ */
+
+/**
+ * @description 创建一个空的TangramDom对象
+ * @function 
+ * @name baidu.dom()
+ * @grammar baidu.dom("")
+ * @param   {String}    selector    空字符串
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ */
+/**
+ * @description 创建一个空的TangramDom对象
+ * @function 
+ * @name baidu.dom()
+ * @grammar baidu.dom(null)
+ * @param   {Null}   null    null对象
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ */
+/**
+ * @description 创建一个空的TangramDom对象
+ * @function 
+ * @name baidu.dom()
+ * @grammar baidu.dom()
+ * @param   {undefined} selector    undefined未定义
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ */
+/**
+ * @description 创建TangramDom对象
+ * @function 
+ * @name baidu.dom()
+ * @grammar baidu.dom(selector[, context])
+ * @param   {String}        selector    CSS选择器字符串
+ * @param   {Document}      context     [可选]指选择器的范围
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ */
+/**
+ * @description 创建TangramDom对象
+ * @name baidu.dom()
+ * @function 
+ * @grammar baidu.dom(HTMLElement)
+ * @param   {HTMLElement}   HTMLElement DOM对象（包括Document）
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ */
+/**
+ * @description 创建TangramDom对象
+ * @function 
+ * @name baidu.dom()
+ * @grammar baidu.dom(Array)
+ * @param   {Array}         Array       一组DOM对象（包括Document）
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ */
+/**
+ * @description 创建TangramDom对象
+ * @function 
+ * @name baidu.dom()
+ * @grammar baidu.dom(TangramDom)
+ * @param   {TangramDom}    selector    TangramDom对象
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ */
+/**
+ * @description 通过传入 HTMLString 创建TangramDom对象
+ * @function 
+ * @name baidu.dom()
+ * @grammar baidu.dom(HTMLString)
+ * @param   {String}        selector    HTMLString
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ */
+/**
+ * @description 在dom.onready时运行指定函数
+ * @function 
+ * @name baidu.dom()
+ * @grammar baidu.dom(fn)
+ * @param   {Function} fn Function函数
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ */
+baidu.createChain("dom",
+
+// method function
+
+
+function(selector, context) {
+    var e, me = new baidu.dom.$DOM(context);
+
+    // Handle $(""), $(null), or $(undefined)
+    if (!selector) {
+        return me;
+    }
+
+    // Handle $($DOM)
+    if (selector._type_ == "$DOM") {
+        return selector;
+
+    // Handle $(DOMElement)
+    } else if (selector.nodeType || selector == selector.window) {
+        me[0] = selector;
+        me.length = 1;
+        return me;
+
+    // Handle $(Array) or $(Collection) or $(NodeList)
+    } else if (selector.length && me.toString.call(selector) != "[object String]") {
+        return baidu.merge(me, selector);
+
+    } else if (typeof selector == "string") {
+        // HTMLString
+        if (selector.charAt(0) == "<" && selector.charAt(selector.length - 1) == ">" && selector.length > 2) {
+            if ( baidu.dom.createElements ) {
+                baidu.merge( me, baidu.dom.createElements( selector ) );
+            }
+
+        // baidu.query
+        } else {
+            baidu.query(selector, context, me);
+        }
+    
+    // document.ready
+    } else if (typeof selector == "function") {
+        return me.ready ? me.ready(selector) : me;
+    }
+
+    return me;
+},
+
+// constructor
+function(context) {
+    this.length = 0;
+    this._type_ = "$DOM";
+    this.context = context || document;
+}
+
+).extend({
+
+/**
+ * @description 取得 TangramDom 对象里的 length
+ * @name baidu.dom().size()
+ * @function 
+ * @grammar TangramDom.size()
+ * @return  {Number}    TangramDom对象里DOM元素的个数
+ * @example 
+ 直接获取baidu()方法所生成的TangramDom对象中的元素数量，也可以直接baidu(args).length 
+
+ 示例代码：
+ //HTML片段
+ <div>1</div>
+ <div>2</div>
+
+ //取得src属性
+ baidu("div").size();  //2    
+ */
+    
+    size: function() {
+        return this.length;
+    }
+
+    ,splice : function(){}
+
+    /**
+     * @description 按指定序号返回TangramDom对象里的DOM元素，如果不传序号则返回所有的DOM对象
+     * @name baidu.dom().get()
+     * @function 
+     * @grammar TangramDom.get([index])
+     * @param   {Number}    index   序号
+     * @return  {Array}     TangramDom对象里DOM元素
+     */
+    ,
+    get: function(index) {
+
+        if ( typeof index == "number" ) {
+            return index < 0 ? this[this.length + index] : this[index];
+        }
+
+        return Array.prototype.slice.call(this, 0);
+    }
+
+    ,toArray: function(){
+        return this.get();
+    }
+
+});
+
+/*
+ * @author meizz
+ * @create 2012.08.28
+ */
+
+
+
+/**
+ * @description 框架内一些私用方法的集合
+ * @Object 
+ * @name baidu._util_
+ */
+
+
+baidu._util_ = baidu._util_ || {};
 /**
  * @author dron,wangxiao
  */
 
-///import baidu;
-///import baidu.dom;
-///import baidu._util_;
-///import baidu.deferred;
+
+
+
+
 
 /**
  * @description 监听 documentDomReady 事件
@@ -1845,11 +2110,10 @@ baidu.dom.extend({
 
 
 /**
- * @author linlingyu  wangxiao
+ * @author linlingyu wangxiao
  */
-///import baidu;
-///import baidu.dom;
-///import baidu.dom.ready;
+
+
 
 baidu.support = baidu.support || function(){
     var div = document.createElement('div'),
@@ -1862,10 +2126,10 @@ baidu.support = baidu.support || function(){
     input.checked = true;
     
     support = {
-        opacity: a.style.opacity === '0.55',
-        cssFloat: !!a.style.cssFloat,
-        noCloneChecked: input.cloneNode(true).checked,
-        noCloneEvent: true
+        opacity: a.style.opacity === '0.55',//is support opacity
+        cssFloat: !!a.style.cssFloat,//is support cssFloat
+        noCloneChecked: input.cloneNode(true).checked,//用于判断ie是否支持clone属性
+        noCloneEvent: true//noCloneEvent和noCloneChecked使用在baidu.dom.clone接口中
     };
     if (!div.addEventListener && div.attachEvent && div.fireEvent){
         div.attachEvent('onclick', function(){support.noCloneEvent = false;});
@@ -1880,11 +2144,7 @@ baidu.support = baidu.support || function(){
             boundString = 'left: 0; top: 0; width: 0px; height: 0px; ',
             visibleString = boundString + paddingMarginBorder + '0; visibility: hidden;',
             styleString = boundString + paddingMarginBorder + '5px solid #000; position: absolute;',
-            outer,
-            inner,
-            select,
-            opt,
-            table;
+            outer, inner, select, opt, table;
             
         container.style.cssText = 'position: static;' + visibleString;
         body.insertBefore(container, body.firstChild);
@@ -1989,894 +2249,11 @@ baidu.support = baidu.support || function(){
 
     return support;
 }();
-/**
- * @author wangxiao
- * @email  1988wangxiao@gmail.com
- */
 
-///import baidu;
-///import baidu.extend;
-///import baidu.support;
-///import baidu._util_;
 
-baidu.extend(baidu._util_,{
-	rfocusable:/^(?:button|input|object|select|textarea)$/i,
-	rclickable:/^a(?:rea)?$/i,
-	rboolean:/^(?:autofocus|autoplay|async|checked|controls|defer|disabled|hidden|loop|multiple|open|readonly|required|scoped|selected)$/i,
-	propFix:{
-		tabindex: "tabIndex",
-		readonly: "readOnly",
-		"for": "htmlFor",
-		"class": "className",
-		maxlength: "maxLength",
-		cellspacing: "cellSpacing",
-		cellpadding: "cellPadding",
-		rowspan: "rowSpan",
-		colspan: "colSpan",
-		usemap: "useMap",
-		frameborder: "frameBorder",
-		contenteditable: "contentEditable"
-	},
-	propHooks: {
-		tabIndex:{
-			get: function( elem ) {
 
-				var bu = baidu._util_;
-				// elem.tabIndex doesn't always return the correct value when it hasn't been explicitly set
-				// http://fluidproject.org/blog/2008/01/09/getting-setting-and-removing-tabindex-values-with-javascript/
-				var attributeNode = elem.getAttributeNode("tabindex");
 
-				return attributeNode && attributeNode.specified ?
-					parseInt( attributeNode.value, 10 ) :
-					bu.rfocusable.test( elem.nodeName ) || bu.rclickable.test( elem.nodeName ) && elem.href ?
-						0 :
-						undefined;
-			}
-		}
-	}
-});
 
-// IE6/7 call enctype encoding
-if ( !baidu.support.enctype ) {
-	var bu = baidu._util_;
-	bu.propFix.enctype = "encoding";
-};
-
-// Safari mis-reports the default selected property of an option
-// Accessing the parent's selectedIndex property fixes it
-if ( !baidu.support.optSelected ) {
-	var bu = baidu._util_;
-	bu.propHooks.selected = baidu.extend( bu.propHooks.selected, {
-		get: function( elem ) {
-			var parent = elem.parentNode;
-
-			if ( parent ) {
-				parent.selectedIndex;
-
-				// Make sure that it also works with optgroups, see #5701
-				if ( parent.parentNode ) {
-					parent.parentNode.selectedIndex;
-				}
-			}
-			return null;
-		}
-	});
-};
-
-/**
- * @author wangxiao
- * @email  1988wangxiao@gmail.com
- */
-
-///import baidu.extend;
-///import baidu.support;
-///import baidu.forEach;
-///import baidu._util_.propHooks;
-
-baidu.extend(baidu,{
-    _error : function( msg ) {
-        throw new Error( msg );
-    },
-    _nodeName : function( elem, name ) {
-        return elem.nodeName && elem.nodeName.toUpperCase() === name.toUpperCase();
-    }    
-});
-
-baidu.extend(baidu._util_,{
-	rfocusable : /^(?:button|input|object|select|textarea)$/i,
-	rtype : /^(?:button|input)$/i,
-	rclickable : /^a(?:rea)?$/i,
-	nodeHook:{},
-	attrHooks: {
-		type: {
-			set: function( elem, value ) {
-				var bu = baidu._util_;
-				// We can't allow the type property to be changed (since it causes problems in IE)
-				if ( bu.rtype.test( elem.nodeName ) && elem.parentNode ) {
-					baidu._error( "type property can't be changed" );
-				} else if ( !baidu.support.radioValue && value === "radio" && baidu._nodeName(elem, "input") ) {
-					// Setting the type on a radio button after the value resets the value in IE6-9
-					// Reset value to it's default in case type is set after value
-					// This is for element creation
-					var val = elem.value;
-					elem.setAttribute( "type", value );
-					if ( val ) {
-						elem.value = val;
-					}
-					return value;
-				}
-			}
-		},
-		// Use the value property for back compat
-		// Use the nodeHook for button elements in IE6/7 (#1954)
-		value: {
-			get: function( elem, name ) {
-				var bu = baidu._util_;
-				if ( bu.nodeHook && baidu._nodeName( elem, "button" ) ) {
-					return bu.nodeHook.get( elem, name );
-				}
-				return name in elem ?
-					elem.value :
-					null;
-			},
-			set: function( elem, value, name ) {
-				if ( bu.nodeHook && baidu._nodeName( elem, "button" ) ) {
-					return bu.nodeHook.set( elem, value, name );
-				}
-				// Does not return so that setAttribute is also used
-				elem.value = value;
-			}
-		}
-	},
-	// Hook for boolean attributes
-	boolHook : {
-		get: function( elem, name ) {
-			// Align boolean attributes with corresponding properties
-			// Fall back to attribute presence where some booleans are not supported
-			var attrNode,
-				property = baidu(elem).prop( name );
-			return property === true || typeof property !== "boolean" && ( attrNode = elem.getAttributeNode(name) ) && attrNode.nodeValue !== false ?
-				name.toLowerCase() :
-				undefined;
-		},
-		set: function( elem, value, name ) {
-			var propName;
-			if ( value === false ) {
-				// Remove boolean attributes when set to false
-				baidu(elem).removeAttr( name );
-			} else {
-				// value is true since we know at this point it's type boolean and not false
-				// Set boolean attributes to the same name and set the DOM property
-				propName = baidu._util_.propFix[ name ] || name;
-				if ( propName in elem ) {
-					// Only set the IDL specifically if it already exists on the element
-					elem[ propName ] = true;
-				}
-
-				elem.setAttribute( name, name.toLowerCase() );
-			}
-			return name;
-		}
-	}
-});
-
-// Add the tabIndex propHook to attrHooks for back-compat (different case is intentional)
-baidu._util_.attrHooks.tabindex = baidu._util_.propHooks.tabIndex;
-
-// IE6/7 do not support getting/setting some attributes with get/setAttribute
-if ( !baidu.support.getSetAttribute ) {
-
-	var bu = baidu._util_,
-		fixSpecified = {
-			name: true,
-			id: true,
-			coords: true
-		};
-
-	// Use this for any attribute in IE6/7
-	// This fixes almost every IE6/7 issue
-	bu.nodeHook = {
-		get: function( elem, name ) {
-			var ret;
-			ret = elem.getAttributeNode( name );
-			return ret && ( fixSpecified[ name ] ? ret.nodeValue !== "" : ret.specified ) ?
-				ret.nodeValue :
-				undefined;
-		},
-		set: function( elem, value, name ) {
-			// Set the existing or create a new attribute node
-			var ret = elem.getAttributeNode( name );
-			if ( !ret ) {
-				ret = document.createAttribute( name );
-				elem.setAttributeNode( ret );
-			}
-			return ( ret.nodeValue = value + "" );
-		}
-	};
-
-	// Apply the nodeHook to tabindex
-	bu.attrHooks.tabindex.set = bu.nodeHook.set;
-
-    // Set width and height to auto instead of 0 on empty string( Bug #8150 )
-    // This is for removals
-    baidu.forEach([ "width", "height" ], function( name ) {
-        bu.attrHooks[ name ] = baidu.extend( bu.attrHooks[ name ], {
-            set: function( elem, value ) {
-                if ( value === "" ) {
-                    elem.setAttribute( name, "auto" );
-                    return value;
-                }
-            }
-        });
-    });
-
-	// Set contenteditable to false on removals(#10429)
-	// Setting to empty string throws an error as an invalid value
-	bu.attrHooks.contenteditable = {
-		get: bu.nodeHook.get,
-		set: function( elem, value, name ) {
-			if ( value === "" ) {
-				value = "false";
-			}
-			bu.nodeHook.set( elem, value, name );
-		}
-	};
-};
-
-// Some attributes require a special call on IE
-if ( !baidu.support.hrefNormalized ) {
-	var bu = baidu._util_;
-    baidu.forEach([ "href", "src", "width", "height" ], function( name ) {
-        bu.attrHooks[ name ] = baidu.extend( bu.attrHooks[ name ], {
-            get: function( elem ) {
-                var ret = elem.getAttribute( name, 2 );
-                return ret === null ? undefined : ret;
-            }
-        });
-    });
-};
-
-if ( !baidu.support.style ) {
-	var bu = baidu._util_;
-	bu.attrHooks.style = {
-		get: function( elem ) {
-			// Return undefined in the case of empty string
-			// Normalize to lowercase since IE uppercases css property names
-			return elem.style.cssText.toLowerCase() || undefined;
-		},
-		set: function( elem, value ) {
-			return ( elem.style.cssText = "" + value );
-		}
-	};
-};
-
-
-///import baidu;
-
-/*
- * @fileoverview 在当前页面开辟一个全局的信息存放地
- * @name baidu.global
- * @author meizz
- * @create 2012-07-25
- */
-
-/**
- * @description 在当前页面开辟一个全局的信息存放地
- * @function
- * @name baidu.global
- * @grammar baidu.global(key[, value[, overwrite]])
- * @param   {String}    key         被存储的变量名
- * @param   {Object}    value       [可选]需要存储的变量值
- * @param   {String}    overwrite   [可选]true 覆盖原值
- * @return  {Object}                该key对象的对象
- */
-baidu.global = baidu.global || (function() {
-    baidu._global_ = window[ baidu.guid ];
-    var global = baidu._global_._ = {};
-
-    return function( key, value, overwrite ) {
-        if ( typeof value != "undefined" ) {
-            if(!overwrite) {
-                value = typeof global[ key ] == "undefined" ? value : global[ key ];
-            }
-            global[ key ] =  value;
-
-        } else if (key && typeof global[ key ] == "undefined" ) {
-            global[ key ] = {};
-        }
-
-        return global[ key ];
-    }
-})();
-
-///import baidu.extend;
-
-/*
- * @fileoverview
- * @name baidu.browser
- * @author meizz
- * @create 2012-06-29
- * @modify
- */
-
-/**
- * @description 判断浏览器类型和特性的属性
- * @namespace
- * @name baidu.browser
- * @grammar baidu.browser.ie
- * @grammar baidu.browser.chrome
- * @grammar baidu.browser.firefox
- * @grammar baidu.browser.opera
- * @grammar baidu.browser.safari
- * @grammar baidu.browser.isGecko
- * @grammar baidu.browser.isStrict
- * @grammar baidu.browser.isWebkit
- */
-baidu.browser = baidu.browser || function(){
-    var ua = navigator.userAgent;
-    
-    var result = {
-        isStrict : document.compatMode == "CSS1Compat"
-        ,isGecko : /gecko/i.test(ua) && !/like gecko/i.test(ua)
-        ,isWebkit: /webkit/i.test(ua)
-    };
-
-    try{/(\d+\.\d+)/.test(external.max_version) && (result.maxthon = + RegExp['\x241'])} catch (e){};
-
-    // 蛋疼 你懂的
-    switch (true) {
-        case /msie (\d+\.\d+)/i.test(ua) :
-            result.ie = document.documentMode || + RegExp['\x241'];
-            break;
-        case /chrome\/(\d+\.\d+)/i.test(ua) :
-            result.chrome = + RegExp['\x241'];
-            break;
-        case /(\d+\.\d)?(?:\.\d)?\s+safari\/?(\d+\.\d+)?/i.test(ua) && !/chrome/i.test(ua) :
-            result.safari = + (RegExp['\x241'] || RegExp['\x242']);
-            break;
-        case /firefox\/(\d+\.\d+)/i.test(ua) : 
-            result.firefox = + RegExp['\x241'];
-            break;
-        
-        case /opera(?:\/| )(\d+(?:\.\d+)?)(.+?(version\/(\d+(?:\.\d+)?)))?/i.test(ua) :
-            result.opera = + ( RegExp["\x244"] || RegExp["\x241"] );
-            break;
-    }
-           
-    baidu.extend(baidu, result);
-
-    return result;
-}();
-/*
-baidu.browser.chrome = /chrome\/(\d+\.\d+)/i.test(navigator.userAgent) ? + RegExp['\x241'] : undefined;
-baidu.browser.firefox = /firefox\/(\d+\.\d+)/i.test(navigator.userAgent) ? + RegExp['\x241'] : undefined;
-baidu.browser.ie = baidu.ie = /msie (\d+\.\d+)/i.test(navigator.userAgent) ? (document.documentMode || + RegExp['\x241']) : undefined;
-baidu.browser.isGecko = /gecko/i.test(navigator.userAgent) && !/like gecko/i.test(navigator.userAgent);
-baidu.browser.isStrict = document.compatMode == "CSS1Compat";
-baidu.browser.isWebkit = /webkit/i.test(navigator.userAgent);
-baidu.browser.opera = /opera(\/| )(\d+(\.\d+)?)(.+?(version\/(\d+(\.\d+)?)))?/i.test(navigator.userAgent) ?  + ( RegExp["\x246"] || RegExp["\x242"] ) : undefined;
-baidu.browser.safari = /(\d+\.\d)?(?:\.\d)?\s+safari\/?(\d+\.\d+)?/i.test(ua) && !/chrome/i.test(ua) ? + (RegExp['\x241'] || RegExp['\x242']) : undefined;
-try {
-    if (/(\d+\.\d+)/.test(external.max_version)) {
-        baidu.browser.maxthon = + RegExp['\x241'];
-    }
-} catch (e) {}
-//*/
-///import baidu;
-///import baidu.type;
-///import baidu.global;
-///import baidu.browser;
-/*
- * @fileoverview
- * @author dron,meizz
- * @create 2012-06-13
- * @modify
- */
-
-/**
- * @description 页面级唯一标识的方法
- * @function
- * @name baidu.id
- * @grammar baidu.id( [id[, command]] )
- * @param   {Object}        object      Object or id
- * @param   {String}        command     [可选] 操作名，若该字符不是指定操作符时将认为是指定 id
- * @return  {Object}        String or Object
- */
-baidu.id = function() {
-    var maps = baidu.global("_maps_id")
-        ,key = baidu.key;
-
-    baidu.global("_counter", 1, true);
-
-    return function( object, command ) {
-        var e
-            ,str_1= baidu.isString( object )
-            ,obj_1= baidu.isObject( object )
-            ,id = obj_1 ? object[ key ] : str_1 ? object : "";
-
-        // 第二个参数为 String
-        if ( baidu.isString( command ) ) {
-            switch ( command ) {
-            case "get" :
-                return obj_1 ? id : maps[id];
-            break;
-            case "remove" :
-            case "delete" :
-                if ( e = maps[id] ) {
-                    // 20120827 mz IE低版本给 element[key] 赋值时会写入DOM树，因此在移除的时候需要使用remove
-                    if (baidu.isElement(e) && baidu.browser.ie < 7) {
-                        e.removeAttribute(key);
-                    } else {
-                        delete e[ key ];
-                    }
-                    delete maps[ id ];
-                }
-                return id;
-            break;
-            case "decontrol" : 
-                !(e = maps[id]) && obj_1 && ( object[ key ] = id = baidu.id() );
-                id && delete maps[ id ];
-                return id;
-            break;
-            default :
-                if ( str_1 ) {
-                    (e = maps[ id ]) && delete maps[ id ];
-                    e && ( maps[ e[ key ] = command ] = e );
-                } else if ( obj_1 ) {
-                    id && delete maps[ id ];
-                    maps[ object[ key ] = command ] = object;
-                }
-                return command;
-            }
-        }
-
-        // 第一个参数不为空
-        if ( obj_1 ) {
-            !id && (maps[ object[ key ] = id = baidu.id() ] = object);
-            return id;
-        } else if ( str_1 ) {
-            return maps[ object ];
-        }
-
-        return "TANGRAM__" + baidu._global_._._counter ++;
-    };
-}();
-
-baidu.id.key = "tangram_guid";
-
-//TODO: mz 20120827 在低版本IE做delete操作时直接 delete e[key] 可能出错，这里需要重新评估，重写
-/**
- * @author dron
- */
-
-///import baidu._util_;
-
-baidu._util_.eventBase = {};
-///import baidu._util_;
-///import baidu.id;
-///import baidu._util_.eventBase;
-
-baidu._util_.cleanData = function(array){
-    var tangId;
-    for(var i = 0, ele; ele = array[i]; i++){
-        tangId = baidu.id(ele, 'get');
-        if(!tangId){continue;}
-        baidu._util_.eventBase.removeAll(ele);
-        baidu.id(ele, 'remove');
-    }
-}
-/*
- * Tangram
- * Copyright 2009 Baidu Inc. All rights reserved.
- * 
- * path: baidu/object.js
- * author: erik
- * version: 1.1.0
- * date: 2009/11/15
- */
-
-///import baidu;
-/**
- * @description 操作原生对象的方法
- * @name baidu.object 
- * @namespace
- */
-baidu.object = baidu.object || {};
-
-/*
- * tangram
- * copyright 2011 baidu inc. all rights reserved.
- *
- * path: baidu/object/isEmpty.js
- * author: leeight
- * version: 1.1.0
- * date: 2011/04/30
- */
-
-///import baidu.object;
-
-/**
- * @description 检测一个对象是否是空的，需要注意的是：如果污染了Object.prototype或者Array.prototype，那么baidu.object.isEmpty({})或者baidu.object.isEmpty([])可能返回的就是false.
- * @name baidu.object.isEmpty
- * @function
- * @grammar baidu.object.isEmpty(obj)
- * @param {Object} obj 需要检测的对象.
- * @return {boolean} 如果是空的对象就返回true.
- */
-baidu.object.isEmpty = function(obj) {
-    var ret = true;
-    if('[object Array]' === Object.prototype.toString.call(obj)){
-        ret = !obj.length;
-    }else{
-        obj = new Object(obj);
-        for(var key in obj){
-            return false;
-        }
-    }
-    return ret;
-};
-
-/*
- * Tangram
- * Copyright 2009 Baidu Inc. All rights reserved.
- * 
- * path: baidu/json.js
- * author: erik
- * version: 1.1.0
- * date: 2009/12/02
- */
-
-///import baidu;
-/**
- * @description 操作json对象的方法
- * @name baidu.json
- * @namespace
- */
-baidu.json = baidu.json || {};
-
-
-/*
- * Tangram
- * Copyright 2009 Baidu Inc. All rights reserved.
- * 
- * path: baidu/json/parse.js
- * author: erik, berg
- * version: 1.2
- * date: 2009/11/23
- */
-
-///import baidu.json;
-
-/**
- * @description 将字符串解析成json对象。注：不会自动祛除空格
- * @name baidu.json.parse
- * @function
- * @grammar baidu.json.parse(data)
- * @param {string} data 需要解析的字符串
- * @remark
- * 该方法的实现与ecma-262第五版中规定的JSON.parse不同，暂时只支持传入一个参数。后续会进行功能丰富。
- * @meta standard
- * @see baidu.json.stringify,baidu.json.decode
- *             
- * @return {JSON} 解析结果json对象
- */
-baidu.json.parse = function (data) {
-    //2010/12/09：更新至不使用原生parse，不检测用户输入是否正确
-    return (new Function("return (" + data + ")"))();
-};
-
-
-/**
- * @author wangxiao
- * @email  1988wangxiao@gmail.com
- */
-
-///import baidu;
-///import baidu.extend;
-///import baidu.type;
-///import baidu.dom;
-///import baidu.object.isEmpty;
-///import baidu.support;
-///import baidu._util_.cleanData;
-///import baidu.json.parse;
-
-
-;(function(){
-
-var rbrace = /^(?:\{.*\}|\[.*\])$/,
-	rmultiDash = /([A-Z])/g,
-
-	// Matches dashed string for camelizing
-	rmsPrefix = /^-ms-/,
-	rdashAlpha = /-([\da-z])/gi,
-
-	fcamelCase = function( all, letter ) {
-		return ( letter + "" ).toUpperCase();
-	};
-
-baidu.extend(baidu._util_,{
-
-	// Convert dashed to camelCase; used by the css and data modules
-	// Microsoft forgot to hump their vendor prefix (#9572)
-	camelCase: function( string ) {
-		return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
-	}
-});
-
-//Copy from jQuery 1.8 , thank you for jQuery 
-baidu.extend(baidu._util_,{
-	cache: {},
-
-	deletedIds: [],
-
-	// Please use with caution
-	uuid: 0,
-
-	// Unique for each copy of baidu on the page
-	// Non-digits removed to match rinlinebaidu
-	expando: "baidu" + ( '2.0.0' + Math.random() ).replace( /\D/g, "" ),
-
-	// The following elements throw uncatchable exceptions if you
-	// attempt to add expando properties to them.
-	noData: {
-		"embed": true,
-		// Ban all objects except for Flash (which handle expandos)
-		"object": "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000",
-		"applet": true
-	},
-
-	hasData: function( elem ) {
-		elem = elem.nodeType ? baidu._util_.cache[ elem[baidu._util_.expando] ] : elem[ baidu._util_.expando ];
-		return !!elem && !isEmptyDataObject( elem );
-	},
-
-	data: function( elem, name, data, pvt /* Internal Use Only */ ) {
-		if ( !baidu._util_.acceptData( elem ) ) {
-			return;
-		}
-
-		var thisCache, ret,
-			internalKey = baidu._util_.expando,
-			getByName = typeof name === "string",
-
-			// We have to handle DOM nodes and JS objects differently because IE6-7
-			// can't GC object references properly across the DOM-JS boundary
-			isNode = elem.nodeType,
-
-			//这部分为jQuery全局的缓存设计，目前tangram2.0中没有设计该部分功能，但是使用涉及到这部分的接口全部正常。
-			// Only DOM nodes need the global baidu cache; JS object data is
-			// attached directly to the object so GC can occur automatically
-			cache = isNode ? baidu._util_.cache : elem,
-
-			// Only defining an ID for JS objects if its cache already exists allows
-			// the code to shortcut on the same path as a DOM node with no cache
-			id = isNode ? elem[ internalKey ] : elem[ internalKey ] && internalKey;
-
-		// Avoid doing any more work than we need to when trying to get data on an
-		// object that has no data at all
-		if ( (!id || !cache[id] || (!pvt && !cache[id].data)) && getByName && data === undefined ) {
-			return;
-		}
-
-		if ( !id ) {
-			// Only DOM nodes need a new unique ID for each element since their data
-			// ends up in the global cache
-			if ( isNode ) {
-				elem[ internalKey ] = id = baidu._util_.deletedIds.pop() || ++baidu._util_.uuid;
-			} else {
-				id = internalKey;
-			}
-		}
-
-		if ( !cache[ id ] ) {
-			cache[ id ] = {};
-
-			// Avoids exposing baidu metadata on plain JS objects when the object
-			// is serialized using JSON.stringify
-			if ( !isNode ) {
-				cache[ id ].toJSON = function() {};
-			}
-		}
-
-		// An object can be passed to baidu.dom.data instead of a key/value pair; this gets
-		// shallow copied over onto the existing cache
-		if ( typeof name === "object" || typeof name === "function" ) {
-			if ( pvt ) {
-				cache[ id ] = baidu.extend( cache[ id ], name );
-			} else {
-				cache[ id ].data = baidu.extend( cache[ id ].data, name );
-			}
-		}
-
-		thisCache = cache[ id ];
-
-		// baidu data() is stored in a separate object inside the object's internal data
-		// cache in order to avoid key collisions between internal data and user-defined
-		// data.
-		if ( !pvt ) {
-			if ( !thisCache.data ) {
-				thisCache.data = {};
-			}
-
-			thisCache = thisCache.data;
-		}
-
-		if ( data !== undefined ) {
-			thisCache[ baidu._util_.camelCase( name ) ] = data;
-		}
-
-		// Check for both converted-to-camel and non-converted data property names
-		// If a data property was specified
-		if ( getByName ) {
-
-			// First Try to find as-is property data
-			ret = thisCache[ name ];
-
-			// Test for null|undefined property data
-			if ( ret == null ) {
-
-				// Try to find the camelCased property
-				ret = thisCache[ baidu._util_.camelCase( name ) ];
-			}
-		} else {
-			ret = thisCache;
-		}
-
-		return ret;
-	},
-
-	removeData: function( elem, name, pvt /* Internal Use Only */ ) {
-		if ( !baidu._util_.acceptData( elem ) ) {
-			return;
-		}
-
-		var thisCache, i, l,
-
-			isNode = elem.nodeType,
-
-			cache = isNode ? baidu._util_.cache : elem,
-			id = isNode ? elem[ baidu._util_.expando ] : baidu._util_.expando;
-
-		// If there is already no cache entry for this object, there is no
-		// purpose in continuing
-		if ( !cache[ id ] ) {
-			return;
-		}
-
-		if ( name ) {
-
-			thisCache = pvt ? cache[ id ] : cache[ id ].data;
-
-			if ( thisCache ) {
-
-				// Support array or space separated string names for data keys
-				if ( !baidu.isArray( name ) ) {
-
-					// try the string as a key before any manipulation
-					if ( name in thisCache ) {
-						name = [ name ];
-					} else {
-
-						// split the camel cased version by spaces unless a key with the spaces exists
-						name = baidu._util_.camelCase( name );
-						if ( name in thisCache ) {
-							name = [ name ];
-						} else {
-							name = name.split(" ");
-						}
-					}
-				}
-
-				for ( i = 0, l = name.length; i < l; i++ ) {
-					delete thisCache[ name[i] ];
-				}
-
-				// If there is no data left in the cache, we want to continue
-				// and let the cache object itself get destroyed
-				if ( !( pvt ? isEmptyDataObject : baidu.object.isEmpty )( thisCache ) ) {
-					return;
-				}
-			}
-		}
-
-		if ( !pvt ) {
-			delete cache[ id ].data;
-
-			// Don't destroy the parent cache unless the internal data object
-			// had been the only thing left in it
-			if ( !isEmptyDataObject( cache[ id ] ) ) {
-				return;
-			}
-		}
-
-		// Destroy the cache
-		if ( isNode ) {
-			baidu._util_.cleanData( [ elem ], true );
-
-		// Use delete when supported for expandos or `cache` is not a window per isWindow (#10080)
-		} else if ( baidu.support.deleteExpando || cache != cache.window ) {
-			delete cache[ id ];
-
-		// When all else fails, null
-		} else {
-			cache[ id ] = null;
-		}
-	},
-
-	// For internal use only.
-	_data: function( elem, name, data ) {
-		return baidu._util_.data( elem, name, data, true );
-	},
-
-	// A method for determining if a DOM node can handle the data expando
-	acceptData: function( elem ) {
-		var noData = elem.nodeName && baidu._util_.noData[ elem.nodeName.toLowerCase() ];
-
-		// nodes accept data unless otherwise specified; rejection can be conditional
-		return !noData || noData !== true && elem.getAttribute("classid") === noData;
-	}
-});
-
-//TODO data的入口
-
-function dataAttr( elem, key, data ) {
-	// If nothing was found internally, try to fetch any
-	// data from the HTML5 data-* attribute
-	if ( data === undefined && elem.nodeType === 1 ) {
-
-		var name = "data-" + key.replace( rmultiDash, "-$1" ).toLowerCase();
-
-		data = elem.getAttribute( name );
-
-		if ( typeof data === "string" ) {
-			try {
-				data = data === "true" ? true :
-				data === "false" ? false :
-				data === "null" ? null :
-				baidu.isNumber( data ) ? +data :
-					rbrace.test( data ) ? baidu.json.parse( data ) :
-					data;
-			} catch( e ) {}
-
-			// Make sure we set the data so it isn't changed later
-			baidu._util_.data( elem, key, data );
-
-		} else {
-			data = undefined;
-		}
-	}
-
-	return data;
-}
-
-// checks a cache object for emptiness
-function isEmptyDataObject( obj ) {
-	var name;
-	for ( name in obj ) {
-
-		// if the public data object is empty, the private is still empty
-		if ( name === "data" && baidu.object.isEmpty( obj[name] ) ) {
-			continue;
-		}
-		if ( name !== "toJSON" ) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-
-//
-})();
-
-
-
-///import baidu;
-///import baidu.type;
-///import baidu.id;
-///import baidu.forEach;
-///import baidu.createChain;
 /*
  * @fileoverview
  * @name baidu.event
@@ -2972,11 +2349,64 @@ function( event ){
     }
 });
 
+
+
+/**
+ * @fileoverview
+ * @name baidu.dom.each
+ * @author meizz
+ * @create 2012-06-05
+ * @modify
+ */
+
+/**
+ * @description 枚举当前 TangramDom 对象里的所有 DOM 元素，并执行指定的函数
+ * 指定的函数参数（index[, dom]），函数里的 this 指向 DOM 元素
+ * @function
+ * @name baidu.dom().each()
+ * @grammar baidu.dom(args).each(iterator)
+ * @param   {Function}      iterator    迭代器
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象                tangramDom(this)
+ * @example 
+ 
+ 
+ 示例代码：
+ //HTML片段
+ <div>1</div>
+ <div>2</div>
+
+ //取得src属性
+ baidu("div").size();  //2     
+ */
+
+baidu.dom.extend({
+    each : function (iterator) {
+        baidu.check("function", "baidu.dom.each");
+        var i, result,
+            n = this.length;
+
+        for (i=0; i<n; i++) {
+            result = iterator.call( this[i], i, this[i], this );
+
+            if ( result === false || result == "break" ) { break;}
+        }
+
+        return this;
+    }
+});
+
 /**
  * @author dron
  */
 
-///import baidu._util_.eventBase;
+
+
+baidu._util_.eventBase = {};
+/**
+ * @author dron
+ */
+
+
 
 void function( base, listener ){
 	listener = base.listener = {};
@@ -2994,10 +2424,10 @@ void function( base, listener ){
  * @author dron
  */
 
-///import baidu.id;
-///import baidu.event;
-///import baidu._util_.eventBase;
-///import baidu._util_.eventBase.listener;
+
+
+
+
 
 void function( base, be ){
 	var I = baidu.id;
@@ -3089,6 +2519,19 @@ void function( base, be ){
     }();
 
 }( baidu._util_.eventBase, baidu.event );
+///import baidu._util_;
+baidu._util_.contains = document.compareDocumentPosition ?
+    function(container, contained){
+        return !!(container.compareDocumentPosition( contained ) & 16);
+    } : document.contains ? function(container, contained){
+        return container != contained
+            && (container.contains ? container.contains( contained ) : false)
+    } : function(container, contained){
+        while(contained = contained.parentNode){
+            if(contained === container){return true;}
+        }
+        return false;
+    };
 
 
 /*
@@ -3101,7 +2544,8 @@ void function( base, be ){
  * date: 2009/11/17
  */
 
-///import baidu.dom;
+
+
 
 /**
  * @description 判断一个元素是否包含另一个元素
@@ -3118,21 +2562,14 @@ void function( base, be ){
  
 baidu.dom.extend({
     contains : function(contained) {
-        contained = baidu.dom(contained);
-        if(this.size() <= 0
-            || contained.size() <= 0){
-            return false;
-        }
         var container = this[0];
-        contained = contained[0];
-        //fixme: 无法处理文本节点的情况(IE)
-        return container.contains
-            ? container != contained && container.contains(contained)
-            : !!(container.compareDocumentPosition(contained) & 16);
+            contained = baidu.dom(contained)[0];
+        if(!container || !contained){return false;}
+        return baidu._util_.contains(container, contained);
     }	
 });
 
-///import baidu;
+
 /**
  * @fileoverview
  * @author meizz
@@ -3211,9 +2648,9 @@ ArrayBuffer.byteLength
  * @author dron
  */
 
-///import baidu._util_.eventBase;
-///import baidu.dom.contains;
-///import baidu.each;
+
+
+
 
 void function( special ){
     
@@ -3245,7 +2682,7 @@ void function( special ){
  * @author dron
  */
 
-///import baidu.dom;
+
 
 void function(){
     var arr = ("blur focus focusin focusout load resize scroll unload click dblclick " +
@@ -3724,9 +3161,9 @@ void function(){
  * @author dron
  */
 
-///import baidu.dom;
-///import baidu.event;
-///import baidu._util_.eventBase.queue;
+
+
+
 
 void function( base, be ){
     var queue = base.queue;
@@ -3781,1463 +3218,8 @@ void function( base, be ){
 
 }( baidu._util_.eventBase, baidu.event );
 
-///import baidu._util_.eventBase.simulate;
+
 ///import baidu._util_.eventBase.shortcut;
-/**
- * @author linlingyu
- */
-///import baidu.dom;
-/**
- * @description 取得第一个匹配元素的computed style值。如果元素的样式值不能被浏览器计算，则会返回空字符串（IE）
- * @function 
- * @name baidu.dom().getComputedStyle()
- * @grammar baidu.dom(args).getComputedStyle(key)
- * @param {String} key 参数是一个css的属性名称，通过该属性名称取得第一个匹配元素的computed style值
- * @return {String} 返回一个字符串的computed style值
- */
-/**
- * @description 取得第一个匹配元素的computed style值。如果元素的样式值不能被浏览器计算，则会返回空字符串（IE）
- * @function 
- * @name baidu.dom.getComputedStyle
- * @grammar baidu.dom.getComputedStyle(element, key)
- * @param {String|Element} element 目标元素或目标元素的id
- * @param {String} key 参数是一个css的属性名称，通过该属性名称取得第一个匹配元素的computed style值
- * @return {String} 返回一个字符串的computed style值
- */
-baidu.dom.extend({
-    getComputedStyle: function(key){
-        var defaultView = this[0].ownerDocument.defaultView,
-            computedStyle = defaultView && defaultView.getComputedStyle
-                && defaultView.getComputedStyle(this[0], null),
-            val = computedStyle ? (computedStyle.getPropertyValue(key) || computedStyle[key]) : '';
-        return val || this[0].style[key];
-    }
-});
-/**
- * @author linlingyu
- */
-///import baidu.dom.getComputedStyle;
-/**
- * @description 取得第一个匹配元素的 currentStyle 值，兼容非IE浏览器某些样式名称或者值需要hack的话，需要别外处理
- * @function 
- * @name baidu.dom().getCurrentStyle()
- * @grammar baidu.dom(args).getCurrentStyle(key)
- * @param {String} key 参数是一个css的属性名称，通过该属性名称取得第一个匹配元素的 currentStyle 值
- * @return {String} 返回一个字符串的 currentStyle 值
- */
-/**
- * @description 取得第一个匹配元素的 currentStyle 值，兼容非IE浏览器某些样式名称或者值需要hack的话，需要别外处理
- * @function 
- * @name baidu.dom.getCurrentStyle
- * @grammar baidu.dom.getCurrentStyle(element, key)
- * @param {String|Element} element 目标元素或目标元素的id
- * @param {String} key 参数是一个css的属性名称，通过该属性名称取得第一个匹配元素的 currentStyle 值
- * @return {String} 返回一个字符串的 currentStyle 值
- */
-baidu.dom.extend({
-    getCurrentStyle: function(){
-        var css = document.documentElement.currentStyle ?
-            function(key){return this[0].currentStyle ? this[0].currentStyle[key] : this[0].style[key];}
-                : function(key){return this.getComputedStyle(key);}
-        return function(key){
-            return css.call(this, key);
-        }
-    }()
-});
-/**
- * @author linlingyu
- */
-
-///import baidu._util_;
-///import baidu.forEach;
-///import baidu.dom.getCurrentStyle;
-
-baidu._util_.getWidthOrHeight = function(){
-    var ret = {},
-        cssShow = {position: 'absolute', visibility: 'hidden', display: 'block'};
-    function swap(ele, options){
-        var defaultVal = {};
-        for(var i in options){
-            defaultVal[i] = ele.style[i];
-            ele.style[i] = options[i];
-        }
-        return defaultVal;
-    }
-    baidu.forEach(['Width', 'Height'], function(item){
-        var cssExpand = {Width: ['Right', 'Left'], Height: ['Top', 'Bottom']}[item];
-        ret['get' + item] = function(ele, extra){
-            var tang = baidu.dom(ele),
-                rect = ele['offset' + item],
-                defaultValue = rect === 0 && swap(ele, cssShow),
-                delString = 'padding|border';
-            defaultValue && (rect = ele['offset' + item]);
-            extra && baidu.forEach(extra.split('|'), function(val){
-                if(!~delString.indexOf(val)){//if val is margin
-                    rect += parseFloat(tang.getCurrentStyle(val + cssExpand[0])) || 0;
-                    rect += parseFloat(tang.getCurrentStyle(val + cssExpand[1])) || 0;
-                }else{//val is border or padding
-                    delString = delString.replace(new RegExp('\\|?' + val + '\\|?'), '');
-                }
-            });
-            delString && baidu.forEach(delString.split('|'), function(val){
-                rect -= parseFloat(tang.getCurrentStyle(val + cssExpand[0] + (val === 'border' ? 'Width' : ''))) || 0;
-                rect -= parseFloat(tang.getCurrentStyle(val + cssExpand[1] + (val === 'border' ? 'Width' : ''))) || 0;
-            });
-            defaultValue && swap(ele, defaultValue);
-            return rect;
-        }
-    });
-    //
-    return function(ele, key, extra){
-        return ret[key === 'width' ? 'getWidth' : 'getHeight'](ele, extra);
-    }
-}();
-///import baidu.browser;
-
-/**
- * @description 判断是否严格标准的渲染模式
- * @function
- * @name baidu.browser.isStrict
- * @grammar baidu.browser.isStrict
- * @meta standard
- * @return {Boolean} 布尔值
- */
-//baidu.browser.isStrict = document.compatMode == "CSS1Compat";
-
-/**
- * @author linlingyu
- */
-
-///import baidu._util_;
-///import baidu.forEach;
-///import baidu.dom;
-///import baidu.browser.isStrict;
-
-baidu._util_.getWindowOrDocumentWidthOrHeight = baidu._util_.getWindowOrDocumentWidthOrHeight || function(){
-    var ret = {'window': {}, 'document': {}};
-    baidu.forEach(['Width', 'Height'], function(item){
-        var clientProp = 'client' + item,
-            offsetProp = 'offset' + item,
-            scrollProp = 'scroll' + item;
-        ret['window']['get' + item] = function(ele){
-            var doc = ele.document,
-                rectValue = doc.documentElement[clientProp];
-            return baidu.browser.isStrict && rectValue
-                || doc.body && doc.body[clientProp] || rectValue;
-        };
-        ret['document']['get' + item] = function(ele){
-            var doc = ele.documentElement;
-            return doc[clientProp] >= doc[scrollProp] ? doc[clientProp]
-                : Math.max(ele.body[scrollProp], doc[scrollProp], ele.body[offsetProp], doc[offsetProp]);
-        }
-    });
-    return function(ele, type, key){
-        return ret[type][key === 'width' ? 'getWidth' : 'getHeight'](ele);
-    }
-}();
-//Sizzle.isXML
-///import baidu._util_;
-baidu._util_.isXML = function(ele) {
-    var docElem = (ele ? ele.ownerDocument || ele : 0).documentElement;
-    return docElem ? docElem.nodeName !== 'HTML' : false;
-};
-
-/*
- * @author wangxiao
- * @email  1988wangxiao@gmail.com
- */
-
-///import baidu.createChain;
-///import baidu.forEach;
-///import baidu.type;
-
-/**
- * @description string对象链式语法的链头，操作字符串
- * @function 
- * @name baidu.string()
- * @grammar baidu.string(str)
- * @param {String} str 一个需要处理的字符串
- * @return {TangramString} 返回一个TangramString对象
- */
-
-baidu.createChain('string',
-    // 执行方法
-    function(string){
-        var type = baidu.type(string),
-            str = new String(~'string|number'.indexOf(type) ? string : type),
-            pro = String.prototype;
-        baidu.forEach(baidu.string.$String.prototype, function(fn, key) {
-            pro[key] || (str[key] = fn);
-        });
-        return str;
-    }
-);
-/**
- * @author wangxiao
- * @email  1988wangxiao@gmail.com
- */
-
-///import baidu.string;
-
-/**
- * @description 将目标字符串进行驼峰化处理
- * @function 
- * @name baidu.string().toCamelCase()
- * @grammar baidu.string(str).toCamelCase()
- * @return {String} 驼峰化处理后的字符串
- */
-
-/**
- * @description 将目标字符串进行驼峰化处理
- * @function 
- * @name baidu.string.toCamelCase
- * @grammar baidu.string.toCamelCase(str)
- * @param {String} str 目标字符串
- * @return {String} 驼峰化处理后的字符串
- */
-
- //支持单词以“-_”分隔
- //todo:考虑以后去掉下划线支持？
-baidu.string.extend({
-    toCamelCase : function () {
-    	var source = this.valueOf();
-        //提前判断，提高getStyle等的效率 thanks xianwei
-        if (source.indexOf('-') < 0 && source.indexOf('_') < 0) {
-            return source;
-        }
-        return source.replace(/[-_][^-_]/g, function (match) {
-            return match.charAt(1).toUpperCase();
-        });
-    }
-});
-
-/**
- * @author linlingyu
- */
-
-///import baidu.dom.getCurrentStyle;
-///import baidu.extend;
-///import baidu.forEach;
-///import baidu.support;
-///import baidu._util_.getWidthOrHeight;
-///import baidu.type;
-///import baidu.string.toCamelCase;
-
-baidu.dom.styleFixer = function(){
-    var alpha = /alpha\s*\(\s*opacity\s*=\s*(\d{1,3})/i,
-        nonpx = /^-?(?:\d*\.)?\d+(?!px)[^\d\s]+$/i,
-        cssNumber = 'fillOpacity,fontWeight,opacity,orphans,widows,zIndex,zoom',
-        cssProps = {
-            'float': baidu.support.cssFloat ? 'cssFloat' : 'styleFloat'
-        },
-        cssMapping = {
-            fontWeight: {normal: 400, bold: 700, bolder: 700, lighter: 100}
-        },
-        cssHooks = {
-            opacity: {},
-            width: {},
-            height: {},
-            fontWeight: {
-                get: function(ele, key){
-                    var ret = style.get(ele, key);
-                    return cssMapping.fontWeight[ret] || ret;
-                }
-            }
-        },
-        style = {
-            set: function(ele, key, val){ele.style[key] = val;}
-        };
-    baidu.extend(cssHooks.opacity, baidu.support.opacity ? {
-        get: function(ele, key){
-            var ret = baidu.dom(ele).getCurrentStyle(key);
-            return ret === '' ? '1' : ret;
-        }
-    } : {
-        get: function(ele){
-            return alpha.test((ele.currentStyle || ele.style).filter || '') ? parseFloat(RegExp.$1) / 100 : '1';
-        },
-        set: function(ele, key, value){
-            var filterString = (ele.currentStyle || ele.style).filter || '',
-                opacityValue = value * 100;
-                ele.style.zoom = 1;
-                ele.style.filter = alpha.test(filterString) ? filterString.replace(alpha, 'Alpha(opacity=' + opacityValue)
-                    : filterString + ' progid:dximagetransform.microsoft.Alpha(opacity='+ opacityValue +')';
-        }
-    });
-    //
-    baidu.forEach(['width', 'height'], function(item){
-        cssHooks[item] = {
-            get: function(ele){
-                return baidu._util_.getWidthOrHeight(ele, item) + 'px';
-            },
-            set: function(ele, key, val){
-                baidu.type(val) === 'number' && val < 0 && (val = 0);
-                style.set(ele, key, val);
-            }
-        };
-    });
-    
-    baidu.extend(style, document.documentElement.currentStyle? {
-        get: function(ele, key){
-            var val = baidu.dom(ele).getCurrentStyle(key),
-                defaultLeft;
-            if(nonpx.test(val)){
-                defaultLeft = ele.style.left;
-                ele.style.left = key === 'fontSize' ? '1em' : val;
-                val = ele.style.pixelLeft + 'px';
-                ele.style.left = defaultLeft;
-            }
-            return val;
-        }
-    } : {
-        get: function(ele, key){
-            return baidu.dom(ele).getCurrentStyle(key);
-        }
-    });
-    
-    //
-    return function(ele, key, val){
-        var origKey = baidu.string(key).toCamelCase(),
-            method = val === undefined ? 'get' : 'set',
-            origVal, hooks;
-        origKey = cssProps[origKey] || origKey;
-        origVal = baidu.type(val) === 'number' && !~cssNumber.indexOf(origKey) ? val + 'px' : val;
-        hooks = cssHooks.hasOwnProperty(origKey) && cssHooks[origKey][method] || style[method];
-        return hooks(ele, origKey, origVal);
-    };
-}();
-/**
- * @author linlingyu
- */
-///import baidu._util_.access;
-///import baidu.dom.getCurrentStyle;
-///import baidu.dom.styleFixer;
-
-/**
- * @description 取得第一个匹配元素或是设置多个匹配元素的css属性
- * @function 
- * @name baidu.dom().css()
- * @grammar baidu.dom(args).css(key)
- * @param {String} key 一个css的属性名称
- * @return {String} 返回取得的值的字符串
- * @example 
- .css()方法是为匹配的元素集合中获取第一个元素的样式属性值简单方法，
- 特别是针对不同的浏览器能访问大多数的性质和不同类型的浏览器某几个属性，
- .css()方法解决了浏览器差异。
-
- 示例代码：
- //HTML代码片段
- <div style="background-color:blue;"></div>
-
- //取得背景色
- baidu("div").css("background-color");  //blue
-
- */
-
-/**
- * @description 取得第一个匹配元素或是设置多个匹配元素的css属性
- * @function 
- * @name baidu.dom().css()
- * @grammar baidu.dom(args).css(key, value)
- * @param {String} key 一个css的属性名称
- * @param {Number|String} value 一个对应key的css的属性值，通过key与value的键和值来设置匹配元素的css属性，当value是一个空字符串时，表示要删除当前属性
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- * @example 
- .css()方法使得设置元素的CSS属性快速而又简单。
- 这个方法可以使用任何一个CSS属性名和用空格隔开的值，或者一个“名/值对”对象(JavaScript Object)作为参数。
- 示例代码： //HTML代码片段
- <div style="background-color:blue;"></div>
-
- //取得背景色
- baidu("div").css("background-color","red");  //blue
- 
- */
-
-/**
- * @description 设置第一个匹配元素或是设置多个匹配元素的多个css属性
- * @function 
- * @name baidu.dom().css()
- * @grammar baidu.dom(args).css(map)
- * @param {Object} map 一个具有key-value键值对的json数据，通过该map可以一次设置匹配元素的多个css属性的值
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- * @example 
- .css()方法使得设置元素的CSS属性快速而又简单。
- 这个方法可以使用任何一个CSS属性名和用空格隔开的值，或者一个“名/值对”对象(JavaScript Object)作为参数。
- 示例代码： //HTML代码片段
- <div style="position:absolute;left:20px;right:20px;background-color:blue;"></div>
-
- //设置css
- baidu("div").css({
- 	"background-color":"red",
- 	"left":"30px",
- 	"right":"40px"
- });
- 
- */
-
-/**
- * @description 取得第一个匹配元素或是设置多个匹配元素的css属性
- * @function 
- * @name baidu.dom().css()
- * @grammar baidu.dom(args).css(key, fn)
- * @param {String} key 一个css的属性名称
- * @param {function} fn 接收两个参数，index参数表示匹配元素在集合中的索引，value表示当前key的css属性对应的值，fn最终需要返回一个对应key的css属性值
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- * @example
- 该接口为迭代器方法，可以获取每个匹配元素的对应css属性和index（索引值），并且将函数返回值设置为对应的css属性；
- 通过使用一个函数来设置css属性，我们可以根据元素的css属性来计算值。
- 举个例子，我们可以把新的值与现有的值联系在一起，允许我们通过函数来传递改变新值。
-
- 示例代码：
- //HTML代码片段
- <div style="background-color:blue;"></div>
- <div style="background-color:blue;"></div>
-
- //迭代器方法
- //通过使用一个函数来设置className，我们可以根据元素的className来计算值。
- //举个例子，我们可以把新的值与现有的值联系在一起，允许我们通过函数来传递改变新值。
- baidu('div').css("background-color",function(index,css){
-    alert(index);
-    alert(css);
-    if(index==1){
-       return "red";
-    }
- });
-
- */
-
-baidu.dom.extend({
-    css: function(key, value){
-        baidu.check('^(?:(?:string(?:,(?:number|string|function))?)|object)$', 'baidu.dom.css');
-        return baidu._util_.access.call(this, key, value, function(ele, key, val){
-            var styleFixer = baidu.dom.styleFixer;
-            return styleFixer ? styleFixer(ele, key, val)
-                : (val === undefined ? this.getCurrentStyle(key) : ele.style[key] = val);
-        });
-    }
-});
-///import baidu.dom;
-///import baidu.forEach;
-
-/**
- * @fileoverview
- * @author meizz
- * @create 2012-05-28
- * @modify
- */
-
-/**
- * @description 查找当前元素之前所有的同辈元素，直到遇到匹配的那个元素为止
- *
- * @function
- * @name baidu.dom().map()
- * @grammar baidu.dom(args).map(iterator)
- * @param   {Function}            iterator    遍历函数
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象        old TangramDom
- */
-baidu.dom.extend({
-    map : function (iterator) {
-        baidu.check("function","baidu.dom.map");
-        var me = this,
-            td = baidu.dom();
-
-        baidu.forEach(this, function( dom, index ){
-            td[td.length ++] = iterator.call( dom, index, dom, dom );
-        });
-
-        return td;
-    }
-});
-
-/**
- * @author linlingyu
- */
-
-///import baidu.dom.map;
-///import baidu.support;
-///import baidu.id;
-///import baidu._util_.eventBase;
-///import baidu._util_.isXML;
-/**
- * @description 对匹配元素进行深度克隆
- * @function 
- * @name baidu.dom().clone()
- * @grammar baidu.dom(args).clone([withDataAndEvents[,deepWithDataAndEvents]])
- * @param {Boolean} withDataAndEvents 一个可选的布尔值参数，当参数为true时，表示当次克隆需要将该匹配元素的数据和事件也做克隆
- * @param {Boolean} deepWithDataAndEvents 一个可选的布尔值参数，当参数为true时，表示当次克隆需要将该匹配元素的所有子元素的数据和事件也做克隆
- * @return {TangramDom} 接口最终返回一个TangramDom对象，该对象包装了克隆的节点
- * @example
- .clone()方法深度复制所有匹配的元素，包括所有匹配元素、匹配元素的下级元素、文字节点。
- 当和插入方法联合使用时，.clone()对于复制页面上的元素很方便。
- 
- 注意：如果也要克隆事件，需要传入参数。
-
- 示例代码：
- //HTML代码片段
- <div id='body'>
-   <h1>test1</h1>
-   <div class='content'></div>
- </div>
- <h2>footer</h2>
-
- //通常我们将页面上一个元素插入到DOM里另立个地方，它会被从老地方移走：
- baidu('h2').appendTo(baidu('#body'));
-
- //插入后，得到新内容
- <div id='body'>
-   <h1>test1</h1>
-   <div class='content'></div>
-   <h2>footer</h2>
- </div>
-
- //但是我们如果需要的是复制而不是移除，我们可以像下面这样写代码：
- baidu('h2').clone().appendTo(baidu('#body'));
-
- //插入后，得到新内容
- <div id='body'>
-   <h1>test1</h1>
-   <div class='content'></div>
-   <h2>footer</h2>
- </div>
- <h2>footer</h2>
-
- //仅克隆当前节点的事件
- baidu('h2').clone(true);
-
- //克隆当前节点及所有子节点的全部事件
- baidu('h2').clone(true,true);
-
- */
-
-baidu.dom.extend({
-    clone: function(){
-        var event = baidu._util_.eventBase;
-        //
-        function getAll(ele){
-            return ele.getElementsByTagName ? ele.getElementsByTagName('*')
-                : (ele.querySelectorAll ? ele.querySelectorAll('*') : []);
-        }
-        //
-        function cloneFixAttributes(src, dest){
-            dest.clearAttributes && dest.clearAttributes();
-            dest.mergeAttributes && dest.mergeAttributes(src);
-            switch(dest.nodeName.toLowerCase()){
-                case 'object':
-                    dest.outerHTML = src.outerHTML;
-                    break;
-                case 'textarea':
-                case 'input':
-                    if(~'checked|radio'.indexOf(src.type)){
-                        src.checked && (dest.defaultChecked = dest.checked = src.checked);
-                        dest.value !== src.value && (dest.value = src.value);
-                    }
-                    dest.defaultValue = src.defaultValue;
-                    break;
-                case 'options':
-                    dest.selected = src.defaultSelected;
-                    break;
-                case 'script':
-                    dest.text !== src.text && (dest.text = src.text);
-                    break;
-            }
-            dest[baidu.key] && dest.removeAttribute(baidu.key);
-        }
-        //
-        function cloneCopyEvent(src, dest){
-        	if(dest.nodeType !== 1 || !baidu.id(src, 'get')){return;}
-        	var defaultEvents = event.get(src);
-        	for(var i in defaultEvents){
-        	    for(var j = 0, handler; handler = defaultEvents[i][j]; j++){
-        	        event.add(dest, i, handler);
-        	    }
-        	}
-        }
-        //
-        function clone(ele, dataAndEvents, deepDataAndEvents){
-            var cloneNode = ele.cloneNode(true),
-                srcElements, destElements, len;
-            //IE
-            if((!baidu.support.noCloneEvent || !baidu.support.noCloneChecked)
-                && (ele.nodeType === 1 || ele.nodeType === 11) && !baidu._util_.isXML(ele)){
-                    cloneFixAttributes(ele, cloneNode);
-                    srcElements = getAll( ele );
-                    destElements = getAll( cloneNode );
-                    len = srcElements.length;
-                    for(var i = 0; i < len; i++){
-                        destElements[i] && cloneFixAttributes(srcElements[i], destElements[i]);
-                    }
-            }
-            if(dataAndEvents){
-                cloneCopyEvent(ele, cloneNode);
-                if(deepDataAndEvents){
-                    srcElements = getAll( ele );
-                    destElements = getAll( cloneNode );
-                    len = srcElements.length;
-                    for(var i = 0; i < len; i++){
-                    	cloneCopyEvent(srcElements[i], destElements[i]);
-                    }
-                }
-            }
-            return cloneNode;
-        }
-        //
-        return function(dataAndEvents, deepDataAndEvents){
-            dataAndEvents = !!dataAndEvents;
-            deepDataAndEvents = !!deepDataAndEvents;
-            return this.map(function(){
-                return clone(this, dataAndEvents, deepDataAndEvents);
-            });
-        }
-    }()
-});
-
-/**
- * @author linlingyu
- */
-///import baidu.dom;
-/**
- * @description 取得匹配元素所属的document对象
- * @function 
- * @name baidu.dom().getDocument()
- * @grammar baidu.dom(args).getDocument()
- * @return {document} 返回一个document对象
- */
-/**
- * @description 获取目标元素所属的document对象
- * @function 
- * @name baidu.dom.getDocument
- * @grammar baidu.dom.getDocument(element)
- * @param {String|Element} element 目标元素或目标元素的id
- * @return {document} 返回一个document对象
- */
-baidu.dom.extend({
-    getDocument: function(){
-    	if(this.size()<=0){return undefined;}
-        var ele = this[0];
-        return ele.nodeType == 9 ? ele : ele.ownerDocument || ele.document;
-    }
-});
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.merge;
-
-/**
- * @fileoverview
- * @author meizz
- * @create 2012-07-05
- * @modify
- */
-
-/**
- * @description 通过 HTMLString 创建 DOM 对象
- *
- * @function
- * @name baidu.dom.createElements
- * @grammar baidu.dom.createElements(HTMLString)
- * @param   {HTMLString}    htmlstring HTMLString
- * @return  {$DOM}          new TangramDom
- */
-baidu.dom.createElements = function() {
-    var tagReg  = /<(\w+)/i,
-        rhtml = /<|&#?\w+;/,
-        tagMap  = {
-            area    : [1, "<map>", "</map>"],
-            col     : [2, "<table><tbody></tbody><colgroup>", "</colgroup></table>"],
-            legend  : [1, "<fieldset>", "</fieldset>"],
-            option  : [1, "<select multiple='multiple'>", "</select>"],
-            td      : [3, "<table><tbody><tr>", "</tr></tbody></table>"],
-            thead   : [1, "<table>", "</table>"],
-            tr      : [2, "<table><tbody>", "</tbody></table>"],
-            _default: [0, "", ""]
-        };
-
-    // 建立映射
-    tagMap.optgroup = tagMap.option;
-    tagMap.tbody = tagMap.tfoot = tagMap.colgroup = tagMap.caption = tagMap.thead;
-    tagMap.th = tagMap.td;
-
-    // 将<script>解析成正常可执行代码
-    function parseScript ( box, doc ) {
-        var list = box.getElementsByTagName("SCRIPT"),
-            i, script, item;
-
-        for ( i=list.length-1; i>=0; i-- ) {
-            item = list[ i ];
-            script = doc.createElement( "SCRIPT" );
-
-            item.id && (script.id = item.id);
-            item.src && (script.src = item.src);
-            item.type && (script.type = item.type);
-            script[ item.text ? "text" : "textContent" ] = item.text || item.textContent;
-
-            item.parentNode.replaceChild( script, item );
-        }
-    }
-
-    return function( htmlstring, doc ) {
-        baidu.isNumber( htmlstring ) && ( htmlstring = htmlstring.toString() );
-        doc = doc || document;
-
-        var wrap, depth, box,
-            hs  = htmlstring,
-            n   = hs.length,
-            div = doc.createElement("div"),
-            df  = doc.createDocumentFragment(),
-            result = [];
-
-        if ( baidu.isString( hs ) ) {
-            if(!rhtml.test(hs)){// TextNode
-                result.push( doc.createTextNode( hs ) );
-            }else {//htmlString
-                wrap = tagMap[ hs.match( tagReg )[1].toLowerCase() ] || tagMap._default;
-
-                div.innerHTML = "<i>mz</i>" + wrap[1] + hs + wrap[2];
-                div.removeChild( div.firstChild );  // for ie (<script> <style>)
-                parseScript(div, doc);
-
-                depth = wrap[0];
-                box = div;
-                while ( depth -- ) { box = box.firstChild; };
-
-                baidu.merge( result, box.childNodes );
-
-                // 去除 item.parentNode
-                baidu.forEach( result, function (dom) {
-                    df.appendChild( dom );
-                } );
-
-                div = box = null;
-            }
-        }
-
-        div = null;
-
-        return result;
-    };
-}();
-
-/**
- * @author linlingyu
- */
-///import baidu.dom;
-///import baidu._util_.cleanData;
-
-/**
- * @description 将匹配到的DOM元素的内部内容全部清空
- * @function 
- * @name baidu.dom().empty()
- * @grammar baidu.dom(args).empty()
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- * @example
- 该方法会移除掉匹配元素中的元素，但是该方法不会去移除已经绑定在元素上面的事件，
- 如果要移除已经绑定的事件，使用.remove()方法。
-
- 示例代码：
- //HTML代码片段
- <div>
-    <h1>test1</h1>
-    <h2>test2</h2>
- </div>
-
- //清除div中的内容
- baidu('div').empty();
-
- //结果：
- <div>
- </div>
-
- */
-
-
-baidu.dom.extend({
-    empty: function(){
-        for(var i = 0, item; item = this[i]; i++){
-            item.nodeType === 1 && baidu._util_.cleanData(item.getElementsByTagName('*'));
-            while(item.firstChild){
-                item.removeChild(item.firstChild);
-            }
-        }
-        return this;
-    }
-});
-
-
-/**
- * @author linlingyu
- */
-
-///import baidu.dom;
-///import baidu._util_.smartInsert;
-
-/**
- * @description 在匹配的每个DOM元素内部的末端插入内容
- * @function 
- * @name baidu.dom().append()
- * @grammar baidu.dom(args).append(content1[,content2])
- * @param {HTMLString|Element|TangramDom} content1 支持一个DOM元素或是一段HTMLString或是一个TangramDom对象
- * @param {HTMLString|Array|Element|TangramDom} content2 支持一个或多个DOM元素或是DOM元素的数组或是一段HTMLString或是一个TangramDom对象
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- * @example
- .append()函数将特定内容插入到每个匹配元素里面的最后面，作为它的最后一个子元素（last child）, 
- 如果要作为第一个子元素 （first child），用.prepend()或.prependTo()
- 
- .append() 和.appendTo()实现同样的功能，主要的不同是语法——内容和目标的位置不同。
- 对于.append()，选择表达式在函数的前面，参数是将要插入的内容。
- 对于.appendTo()刚好相反，内容在方法前面，它将被放在参数里元素的末尾。
-
- 另，如果有多个目标元素，内容将被复制然后，被插入到每个目标后面；
- 如果一个被选中的元素被插在另外一个地方，这是移动而不是复制。
-
- 示例代码：
- //HTML代码片段
- <div id='body'>
-   <h1>test1</h1>
-   <div class='content'></div>
- </div>
-
- //可以创建内容然后同时插在好几个元素后面
- baidu('#body').append('<h2>footer</h2>');
-
- //插入后，得到新内容
- <div id='body'>
-   <h1>test1</h1>
-   <div class='content'></div>
-   <h2>footer</h2>
- </div>
-
- //也可以在页面上选择一个元素然后插在另一个元素后面，
- //如果一个被选中的元素被插在另外一个地方，这是移动而不是复制。
-
- baidu('#body').append(baidu('h2'));  //结果同上
-
- */
-
-/**
- * @description 在匹配的每个DOM元素内部的末端插入内容
- * @function 
- * @name baidu.dom().append()
- * @grammar baidu.dom(args).append(fn)
- * @param {Function} fn 支持一个函数作为参数，函数最终需要返回一个HTMLString|Element|TangramDom
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- * @example baidu.dom(args).append(function(index,html){})
- */
-
-baidu.dom.extend({
-    append: function(){
-        baidu.check('^(?:string|function|HTMLElement|\\$DOM)(?:,(?:string|array|HTMLElement|\\$DOM))*$', 'baidu.dom.append');
-        baidu._util_.smartInsert(this, arguments, function(child){
-            this.nodeType === 1 && this.appendChild(child);
-        });
-        return this;
-    }
-});
-/*
- * @author wangxiao
- * @email  1988wangxiao@gmail.com
- */
-/**
- * @description 从匹配的第一个元素中获取HTML内容。
- * @function 
- * @name baidu.dom().html()
- * @grammar baidu.dom(args).html()
- * @return {String|Undefined} HTML内容
- * @example
- 在一个HTML文档中，我们可以使用.html()方法来获取任意一个元素的内容。
- 如果选择器匹配多于一个的元素，那么只有第一个匹配元素的 HTML 内容会被获取。
-
- 示例代码：
- //HTML代码片段
- <div>
-   <h1>title</h1>
-   <p>content</p>
- </div>
-
- //获取HTML
- baidu('div').html();  //得到 <h1>title</h1><p>content</p>
-
- */
- /**
- * @description 设置每一个匹配元素的html内容。
- * @function 
- * @name baidu.dom().html()
- * @grammar baidu.dom(args).html(htmlString)
- * @param {String} htmlString 用来设置每个匹配元素的一个HTML 字符串。
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- * @example
- 我们可以使用.html()来设置元素的内容，在这些元素的任何内容完全被新的内容取代。
- 如果匹配多个元素，则将会改变所有的HTML，符合get first set all原则。
-
- 示例代码：
- //HTML代码片段
- <div>
-   <h1>title</h1>
-   <p>content</p>
- </div>
-
- //重置HTML
- baidu('div').html('<input>');
- 
- //生成代码
- <div>
-   <input>
- </div>
- 
- */
- /**
- * @description 设置每一个匹配元素的html内容。
- * @function 
- * @name baidu.dom().html()
- * @grammar baidu.dom(args).html(fn)
- * @param {Function} fn 用来返回设置HTML内容的一个函数。接收元素的索引位置和元素旧的HTML作为参数。
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- * @example baidu.dom(args).html(function(index, html))
- */
-
-///import baidu;
-///import baidu.support;
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.dom.empty;
-///import baidu.dom.append;
-
-baidu.dom.extend({
-    html: function(value){
-
-        var bd = baidu.dom,
-            bt = baidu._util_,
-            me = this,
-            isSet = false,
-            result;
-
-        //当dom选择器为空时
-        if(this.size()<=0){
-            switch(typeof value){
-                case 'undefined':
-                    return undefined;
-                break;
-                default:
-                    return me;
-                break;
-            }            
-        }
-        
-        var nodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figcaption|figure|footer|" +
-        "header|hgroup|mark|meter|nav|output|progress|section|summary|time|video",
-            rnoInnerhtml = /<(?:script|style|link)/i,
-            rnoshimcache = new RegExp("<(?:" + nodeNames + ")[\\s/>]", "i"),
-            rleadingWhitespace = /^\s+/,
-            rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi,
-            rtagName = /<([\w:]+)/,
-            wrapMap = {
-                option: [ 1, "<select multiple='multiple'>", "</select>" ],
-                legend: [ 1, "<fieldset>", "</fieldset>" ],
-                thead: [ 1, "<table>", "</table>" ],
-                tr: [ 2, "<table><tbody>", "</tbody></table>" ],
-                td: [ 3, "<table><tbody><tr>", "</tr></tbody></table>" ],
-                col: [ 2, "<table><tbody></tbody><colgroup>", "</colgroup></table>" ],
-                area: [ 1, "<map>", "</map>" ],
-                _default: [ 0, "", "" ]
-            };
-        wrapMap.optgroup = wrapMap.option;
-        wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
-        wrapMap.th = wrapMap.td;
-
-        // IE6-8 can't serialize link, script, style, or any html5 (NoScope) tags,
-        // unless wrapped in a div with non-breaking characters in front of it.
-        if ( !baidu.support.htmlSerialize ) {
-            wrapMap._default = [ 1, "X<div>", "</div>" ];
-        }
-
-        baidu.forEach(me,function(elem, index){
-            
-            if(result){
-                return;
-            };
-            var tangramDom = bd(elem);
-            switch(typeof value){
-                case 'undefined':
-        
-                    //get first
-                    result = ( elem.nodeType === 1 ? elem.innerHTML : undefined );
-                    return result;
-
-                break;
-
-                case 'number':
-                    value = String(value);
-                case 'string':
-
-                    //set all
-                    isSet = true;
-
-                    // See if we can take a shortcut and just use innerHTML
-                    if ( !rnoInnerhtml.test( value ) &&
-                        ( baidu.support.htmlSerialize || !rnoshimcache.test( value )  ) &&
-                        ( baidu.support.leadingWhitespace || !rleadingWhitespace.test( value ) ) &&
-                        !wrapMap[ ( rtagName.exec( value ) || ["", ""] )[1].toLowerCase() ] ) {
-
-                        value = value.replace( rxhtmlTag, "<$1></$2>" );
-
-                        try {
-
-                            // Remove element nodes and prevent memory leaks
-                            if ( elem.nodeType === 1 ) {
-                                tangramDom.empty();
-                                elem.innerHTML = value;
-                            }
-
-                            elem = 0;
-
-                        // If using innerHTML throws an exception, use the fallback method
-                        } catch(e) {}
-                    }
-
-                    if ( elem ) {
-                        me.empty().append( value );
-                    }
-
-                break;
-
-                case 'function':
-
-                    //set all
-                    isSet = true;
-                    tangramDom.html(value.call(elem, index, tangramDom.html()));
-                break;
-            };
-        });
-        
-        return isSet?me:result;
-    }
-});
-/**
- * @author linlingyu
- */
-
-///import baidu._util_;
-///import baidu.type;
-///import baidu.forEach;
-///import baidu.dom.createElements;
-///import baidu.dom.getDocument;
-///import baidu.dom.html;
-
-baidu._util_.smartInsert = function(tang, args, callback){
-    if(args.length <= 0 || tang.size() <= 0){return;}
-    if(baidu.type(args[0]) === 'function'){
-        var fn = args[0],
-            tangItem;
-        return baidu.forEach(tang, function(item, index){
-            tangItem = baidu.dom(item);
-            args[0] = fn.call(item, index, tangItem.html());
-            baidu._util_.smartInsert(tangItem, args, callback);
-        });
-    }
-    var doc = tang.getDocument() || document,
-        fragment = doc.createDocumentFragment(),
-        len = tang.length - 1,
-        firstChild;
-    for(var i = 0, item; item = args[i]; i++){
-        if(item.nodeType){
-            fragment.appendChild(item);
-        }else{
-            baidu.forEach(~'string|number'.indexOf(baidu.type(item)) ?
-                baidu.dom.createElements(item, doc)
-                    : item, function(ele){
-                        fragment.appendChild(ele);
-                    });
-        }
-    }
-    if(!(firstChild = fragment.firstChild)){return;}
-    baidu.forEach(tang, function(item, index){
-        callback.call(item.nodeName.toLowerCase() === 'table'
-            && firstChild.nodeName.toLowerCase() === 'tr' ?
-                item.tBodies[0] || item.appendChild(item.ownerDocument.createElement('tbody'))
-                    : item, index < len ? fragment.cloneNode(true) : fragment);
-    });
-};
-/**
- * @author linlingyu
- */
-
-
-
-
-
-
-
-
-
-baidu._util_.smartInsertTo = function(tang, target, callback, orie){
-    var insert = baidu.dom(target),
-        first = insert[0],
-        tangDom;
-        
-    if(orie && first && (!first.parentNode || first.parentNode.nodeType === 11)){
-        orie = orie === 'before';
-        tangDom = baidu.merge(orie ? tang : insert, !orie ? tang : insert);
-        if(tang !== tangDom){
-            tang.length = 0;
-            baidu.merge(tang, tangDom);
-        }
-    }else{
-        for(var i = 0, item; item = insert[i]; i++){
-            baidu._util_.smartInsert(baidu.dom(item), i > 0 ? tang.clone(true) : tang, callback);
-        }
-    }
-};
-
-/**
- * @author linlingyu
- */
-///import baidu.dom;
-///import baidu._util_.smartInsertTo;
-
-/**
- * @description 将匹配到的DOM元素插入到参数指定的DOM元素内部的末端
- * @function 
- * @name baidu.dom().appendTo()
- * @grammar baidu.dom(args).appendTo(target)
- * @param {HTMLString|selector|Element|TangramDom} target 一个HTMLString或是选择器字符串或是DOM元素或是TangramDom对象
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象
- * @example
- .appendTo()函数将特定内容插入到每个匹配元素里面的最后面，作为它的最后一个子元素（last child）, 
- 如果要作为第一个子元素 （first child），用.prepend()或.prependTo()
- 
- .append() 和.appendTo()实现同样的功能，主要的不同是语法——内容和目标的位置不同。
- 对于.append()，选择表达式在函数的前面，参数是将要插入的内容。
- 对于.appendTo()刚好相反，内容在方法前面，它将被放在参数里元素的末尾。
-
- 另，如果有多个目标元素，内容将被复制然后，被插入到每个目标后面；
- 如果一个被选中的元素被插在另外一个地方，这是移动而不是复制。
-
- 示例代码：
- //HTML代码片段
- <div id='body'>
-   <h1>test1</h1>
-   <div class='content'></div>
- </div>
-
- //可以创建内容然后同时插在好几个元素后面
- baidu('<h2>footer</h2>').appendTo(baidu('#body'));
-
- //插入后，得到新内容
- <div id='body'>
-   <h1>test1</h1>
-   <div class='content'></div>
-   <h2>footer</h2>
- </div>
-
- //也可以在页面上选择一个元素然后插在另一个元素后面，
- //如果一个被选中的元素被插在另外一个地方，这是移动而不是复制。
-
- baidu('h2').after(baidu('#body'));  //结果同上
-
- */
-baidu.dom.extend({
-    appendTo: function(target){
-        baidu.check('^(?:string|HTMLElement|\\$DOM)$', 'baidu.dom.appendTo');
-        baidu._util_.smartInsertTo(this, target, function(child){
-            this.appendChild(child);
-        });
-        return this;
-    }
-});
-/**
- * @author wangxiao
- * @email  1988wangxiao@gmail.com
- */
-
-///import baidu;
-///import baidu.support;
-///import baidu.dom;
-///import baidu.dom.contains;
-///import baidu.dom.getCurrentStyle;
-///import baidu.dom.css;
-///import baidu._util_.data;
-///import baidu.dom.appendTo;
-///import baidu.dom.css;
-
-(function(){
-
-var iframeDoc,
-    iframe,
-    curCSS,
-    rmargin = /^margin/,
-    rnumnonpx = /^-?(?:\d*\.)?\d+(?!px)[^\d\s]+$/i,
-    rposition = /^(top|right|bottom|left)$/,
-    elemdisplay = {};
-
-baidu.extend(baidu._util_,{
-    showHide:function( elements, show){
-        var elem, display,
-            values = [],
-            index = 0,
-            length = elements.length;
-
-        for ( ; index < length; index++ ) {
-            elem = elements[ index ];
-            if ( !elem.style ) {
-                continue;
-            }
-            values[ index ] = baidu._util_._data( elem, "olddisplay" );
-            if ( show ) {
-                // Reset the inline display of this element to learn if it is
-                // being hidden by cascaded rules or not
-                if ( !values[ index ] && elem.style.display === "none" ) {
-                    elem.style.display = "";
-                }
-
-                // Set elements which have been overridden with display: none
-                // in a stylesheet to whatever the default browser style is
-                // for such an element
-                if ( (elem.style.display === "" && curCSS( elem, "display" ) === "none") ||
-                    !baidu.dom.contains( elem.ownerDocument.documentElement, elem ) ) {
-                    values[ index ] = baidu._util_._data( elem, "olddisplay", css_defaultDisplay(elem.nodeName) );
-                }
-            } else {
-                display = curCSS( elem, "display" );
-
-                if ( !values[ index ] && display !== "none" ) {
-                    baidu._util_._data( elem, "olddisplay", display );
-                }
-            }
-        }
-
-        // Set the display of most of the elements in a second loop
-        // to avoid the constant reflow
-        for ( index = 0; index < length; index++ ) {
-            elem = elements[ index ];
-            if ( !elem.style ) {
-                continue;
-            }
-            if ( !show || elem.style.display === "none" || elem.style.display === "" ) {
-                elem.style.display = show ? values[ index ] || "" : "none";
-            }
-        }
-
-        return elements;
-    }
-});
-
-// NOTE: To any future maintainer, we've used both window.getComputedStyle
-// and getComputedStyle here to produce a better gzip size
-if ( window.getComputedStyle ) {
-    curCSS = function( elem, name ) {
-        var ret, width,
-            computed = getComputedStyle( elem, null ),
-            style = elem.style;
-
-        if ( computed ) {
-
-            ret = computed[ name ];
-            if ( ret === "" && !baidu.dom.contains( elem.ownerDocument.documentElement, elem ) ) {
-                ret = baidu.dom(elem).css( name );
-            }
-
-            // A tribute to the "awesome hack by Dean Edwards"
-            // WebKit uses "computed value (percentage if specified)" instead of "used value" for margins
-            // which is against the CSSOM draft spec: http://dev.w3.org/csswg/cssom/#resolved-values
-            if ( !baidu.support.pixelMargin && rmargin.test( name ) && rnumnonpx.test( ret ) ) {
-                width = style.width;
-                style.width = ret;
-                ret = computed.width;
-                style.width = width;
-            }
-        }
-
-        return ret;
-    };
-} else if ( document.documentElement.currentStyle ) {
-    curCSS = function( elem, name ) {
-        var left, rsLeft,
-            ret = elem.currentStyle && elem.currentStyle[ name ],
-            style = elem.style;
-
-        // Avoid setting ret to empty string here
-        // so we don't default to auto
-        if ( ret == null && style && style[ name ] ) {
-            ret = style[ name ];
-        }
-
-        // From the awesome hack by Dean Edwards
-        // http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
-
-        // If we're not dealing with a regular pixel number
-        // but a number that has a weird ending, we need to convert it to pixels
-        // but not position css attributes, as those are proportional to the parent element instead
-        // and we can't measure the parent instead because it might trigger a "stacking dolls" problem
-        if ( rnumnonpx.test( ret ) && !rposition.test( name ) ) {
-
-            // Remember the original values
-            left = style.left;
-            rsLeft = elem.runtimeStyle && elem.runtimeStyle.left;
-
-            // Put in the new values to get a computed value out
-            if ( rsLeft ) {
-                elem.runtimeStyle.left = elem.currentStyle.left;
-            }
-            style.left = name === "fontSize" ? "1em" : ret;
-            ret = style.pixelLeft + "px";
-
-            // Revert the changed values
-            style.left = left;
-            if ( rsLeft ) {
-                elem.runtimeStyle.left = rsLeft;
-            }
-        }
-
-        return ret === "" ? "auto" : ret;
-    };
-}
-
-// Try to determine the default display value of an element
-function css_defaultDisplay( nodeName ) {
-    if ( elemdisplay[ nodeName ] ) {
-        return elemdisplay[ nodeName ];
-    }
-
-    var elem = baidu.dom( "<" + nodeName + ">" ).appendTo( document.body ),
-        display = elem.css("display");
-    elem.remove();
-
-    // If the simple way fails,
-    // get element's real default display by attaching it to a temp iframe
-    if ( display === "none" || display === "" ) {
-        // Use the already-created iframe if possible
-        iframe = document.body.appendChild(
-            iframe || baidu.extend( document.createElement("iframe"), {
-                frameBorder: 0,
-                width: 0,
-                height: 0
-            })
-        );
-
-        // Create a cacheable copy of the iframe document on first call.
-        // IE and Opera will allow us to reuse the iframeDoc without re-writing the fake HTML
-        // document to it; WebKit & Firefox won't allow reusing the iframe document.
-        if ( !iframeDoc || !iframe.createElement ) {
-            iframeDoc = ( iframe.contentWindow || iframe.contentDocument ).document;
-            iframeDoc.write("<!doctype html><html><body>");
-            iframeDoc.close();
-        }
-
-        elem = iframeDoc.body.appendChild( iframeDoc.createElement(nodeName) );
-
-        display = curCSS( elem, "display" );
-        document.body.removeChild( iframe );
-    }
-
-    // Store the correct default display
-    elemdisplay[ nodeName ] = display;
-
-    return display;
-}
-
-
-
-})();
-
-
-
-/*
- * Tangram
- * Copyright 2009 Baidu Inc. All rights reserved.
- */
-
-///import baidu.type;
-///import baidu.object;
-
-/**
- * @description 判断一个对象是不是字面量对象，即判断这个对象是不是由{}或者new Object类似方式创建
- * @name baidu.object.isPlain
- * @function
- * @grammar baidu.object.isPlain(source)
- * @param {Object} source 需要检查的对象
- * @remark
- * 事实上来说，在Javascript语言中，任何判断都一定会有漏洞，因此本方法只针对一些最常用的情况进行了判断
- *             
- * @return {Boolean} 检查结果
- */
-baidu.object.isPlain  = baidu.isPlainObject;
-
-/**
- * @author wangxiao
- * @email  1988wangxiao@gmail.com
- */
-
-///import baidu.string;
-
-/**
- * @description 删除目标字符串两端的空白字符
- * @function 
- * @name baidu.string().trim()
- * @grammar baidu.string(str).trim()
- * @return {String} 删除两端空白字符后的字符串
- */
-
-/**
- * @description 删除目标字符串两端的空白字符
- * @function 
- * @name baidu.string.trim
- * @grammar baidu.string.trim(str)
- * @param {String} str 目标字符串
- * @return {String} 删除两端空白字符后的字符串
- */
-
-baidu.string.extend({
-    trim: function(){
-        var trimer = new RegExp('(^[\\s\\t\\xa0\\u3000]+)|([\\u3000\\xa0\\s\\t]+\x24)', 'g');
-        return function(){
-            return this.replace(trimer, '');
-        }
-    }()
-});
-///import baidu.dom;
-
-/**
- * @fileoverview
- * @name baidu.dom.each
- * @author meizz
- * @create 2012-06-05
- * @modify
- */
-
-/**
- * @description 枚举当前 TangramDom 对象里的所有 DOM 元素，并执行指定的函数
- * 指定的函数参数（index[, dom]），函数里的 this 指向 DOM 元素
- * @function
- * @name baidu.dom().each()
- * @grammar baidu.dom(args).each(iterator)
- * @param   {Function}      iterator    迭代器
- * @return {TangramDom} 返回之前匹配元素的TangramDom对象                tangramDom(this)
- * @example 
- 
- 
- 示例代码：
- //HTML片段
- <div>1</div>
- <div>2</div>
-
- //取得src属性
- baidu("div").size();  //2     
- */
-
-baidu.dom.extend({
-    each : function (iterator) {
-        baidu.check("function", "baidu.dom.each");
-        var i, result,
-            n = this.length;
-
-        for (i=0; i<n; i++) {
-            result = iterator.call( this[i], i, this[i], this );
-
-            if ( result === false || result == "break" ) { break;}
-        }
-
-        return this;
-    }
-});
-
 /// support magic - Tangram 1.x Code Start
 /*
  * Tangram
@@ -5249,7 +3231,7 @@ baidu.dom.extend({
  * date: 2009/11/17
  */
 
-///import baidu.dom;
+
 
 /**
  * @description 从文档中获取指定的DOM元素
@@ -5276,10 +3258,10 @@ baidu.dom.g = function(id) {
  * @author dron
  */
 
-///import baidu.event;
-///import baidu.dom.each;
-///import baidu.forEach;
-///import baidu._util_.eventBase.core;
+
+
+
+
 
 /**
  * @description 对当前 TangramDom 集合添加事件监听
@@ -5352,7 +3334,7 @@ baidu.dom.extend({
 });
 
 /// support - magic Tangram 1.x Code Start
-///import baidu.dom.g;
+
 baidu.event.on = baidu.on = function(element, evtName, handler){
     element = baidu.dom.g(element);
     baidu.dom(element).on(evtName.replace(/^\s*on/, ''), handler);
@@ -5360,16 +3342,16 @@ baidu.event.on = baidu.on = function(element, evtName, handler){
 };
 /// support - magic Tangram 1.x Code End
 
-///import baidu.createChain;
-///import baidu.object.isPlain;
-///import baidu.extend;
-///import baidu.string.trim;
-///import baidu.type;
-///import baidu.deferred;
-///import baidu.callbacks;
-///import baidu.id;
-///import baidu.support;
-///import baidu.dom.on;
+
+
+
+
+
+
+
+
+
+
 
 /**
  * @description 执行一个异步的ajax请求
@@ -6240,229 +4222,13 @@ void function(){
         });
     }
 }();
-///import baidu.ajax;
-///import baidu.type;
-baidu._util_.smartAjax = baidu._util_.smartAjax || function(method){
-    return function(url, data, callback, type){
-        if(baidu.type(data) === 'function'){
-            type = type || callback;
-            callback = data;
-            data = undefined;
-        }
-        baidu.ajax({
-            type: method,
-            url: url,
-            data: data,
-            success: callback,
-            dataType: type
-        });
-    };
-}
-/**
- * @author linlingyu
- */
-///import baidu._util_;
-///import baidu.type;
-///import baidu.browser.isStrict;
-
-baidu._util_.smartScroll = function(axis){
-    var orie = {scrollLeft: 'pageXOffset', scrollTop: 'pageYOffset'}[axis],
-        is = axis === 'scrollLeft',
-        ret = {};
-    function isDocument(ele){
-        return ele && ele.nodeType === 9;
-    }
-    function getWindow(ele){
-        return baidu.type(ele) == "Window" ? ele
-            : isDocument(ele) ? ele.defaultView || ele.parentWindow : false;
-    }
-    return {
-        get: function(ele){
-            var win = getWindow(ele);
-            return win ? (orie in win) ? win[orie]
-                : baidu.browser.isStrict && win.document.documentElement[axis]
-                    || win.document.body[axis] : ele[axis];
-        },
-        
-        set: function(ele, val){
-            if(!ele){return;}
-            var win = getWindow(ele);
-            win ? win.scrollTo(is ? val : this.get(ele), !is ? val : this.get(ele))
-                : ele[axis] = val;
-        }
-    };
-};
-/**
- * @author linlingyu
- */
-
-///import baidu.merge;
-///import baidu.type;
-/**
- * @description 转换一个类似数组的对象成为真正的JavaScript数组
- * @function 
- * @name baidu.makeArray
- * @grammar baidu.makeArray(obj)
- * @param {Object} obj 转换成一个原生数组的任何对象
- * @return {Array} 一个转换后的数组
- */
-baidu.makeArray = function(array, results){
-    var ret = results || [];
-    if(!array){return ret;}
-    array.length == null || ~'string|function|regexp'.indexOf(baidu.type(array)) ?
-        Array.prototype.push.call(ret, array) : baidu.merge(ret, array);
-    return ret;
-}
-/**
- * @author wangxiao
- * @email  1988wangxiao@gmail.com
- */
-
-///import baidu.forEach;
-///import baidu.extend;
-///import baidu.support;
-///import baidu.makeArray;
-///import baidu.dom;
-///import baidu.array.indexOf;
-///import baidu._util_;
-
-baidu.extend(baidu._util_,{
-
-	nodeName: function( elem, name ) {
-		return elem.nodeName && elem.nodeName.toUpperCase() === name.toUpperCase();
-	},
-
-	valHooks: {
-		option: {
-			get: function( elem ) {
-				// attributes.value is undefined in Blackberry 4.7 but
-				// uses .value. See #6932
-				var val = elem.attributes.value;
-				return !val || val.specified ? elem.value : elem.text;
-			}
-		},
-		select: {
-			get: function( elem ) {
-				var value, i, max, option,
-					index = elem.selectedIndex,
-					values = [],
-					options = elem.options,
-					one = elem.type === "select-one";
-
-				// Nothing was selected
-				if ( index < 0 ) {
-					return null;
-				}
-
-				// Loop through all the selected options
-				i = one ? index : 0;
-				max = one ? index + 1 : options.length;
-				for ( ; i < max; i++ ) {
-					option = options[ i ];
-
-					// Don't return options that are disabled or in a disabled optgroup
-					if ( option.selected && (baidu.support.optDisabled ? !option.disabled : option.getAttribute("disabled") === null) &&
-							(!option.parentNode.disabled || !baidu._util_.nodeName( option.parentNode, "optgroup" )) ) {
-
-						// Get the specific value for the option
-						value = baidu.dom( option ).val();
-
-						// We don't need an array for one selects
-						if ( one ) {
-							return value;
-						}
-
-						// Multi-Selects return an array
-						values.push( value );
-					}
-				}
-
-				// Fixes Bug #2551 -- select.val() broken in IE after form.reset()
-				if ( one && !values.length && options.length ) {
-					return baidu( options[ index ] ).val();
-				}
-
-				return values;
-			},
-
-			set: function( elem, value ) {
-				var values = baidu.makeArray( value );
-
-				baidu(elem).find("option").each(function() {
-					this.selected = baidu.array(values).indexOf( baidu(this).val()) >= 0;
-				});
-
-				if ( !values.length ) {
-					elem.selectedIndex = -1;
-				}
-				return values;
-			}
-		}
-	}
-//	
-});
-
-
-// IE6/7 do not support getting/setting some attributes with get/setAttribute
-if ( !baidu.support.getSetAttribute ) {
-
-	var fixSpecified = {
-		name: true,
-		id: true,
-		coords: true
-	};
-
-	// Use this for any attribute in IE6/7
-	// This fixes almost every IE6/7 issue
-	baidu._util_.valHooks.button = {
-		get: function( elem, name ) {
-			var ret;
-			ret = elem.getAttributeNode( name );
-			return ret && ( fixSpecified[ name ] ? ret.value !== "" : ret.specified ) ?
-				ret.value :
-				undefined;
-		},
-		set: function( elem, value, name ) {
-			// Set the existing or create a new attribute node
-			var ret = elem.getAttributeNode( name );
-			if ( !ret ) {
-				ret = document.createAttribute( name );
-				elem.setAttributeNode( ret );
-			}
-			return ( ret.value = value + "" );
-		}
-	};
-}
-
-// Radios and checkboxes getter/setter
-if ( !baidu.support.checkOn ) {
-	baidu.forEach([ "radio", "checkbox" ], function() {
-		baidu._util_.valHooks[ this ] = {
-			get: function( elem ) {
-				// Handle the case where in Webkit "" is returned instead of "on" if a value isn't specified
-				return elem.getAttribute("value") === null ? "on" : elem.value;
-			}
-		};
-	});
-}
-
-baidu.forEach([ "radio", "checkbox" ], function(item) {
-	baidu._util_.valHooks[ item ] = baidu.extend( baidu._util_.valHooks[ item ], {
-		set: function( elem, value ) {
-			if ( baidu.isArray( value ) ) {
-				return ( elem.checked = baidu.array(value).indexOf(baidu(elem).val()) >= 0 );
-			}
-		}
-	});
-});
-
 /*
  * @author wangxiao
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.createChain;
-///import baidu.type;
+
+
 
 /**
  * @description 对function的操作，解决内存泄露问题
@@ -6495,7 +4261,7 @@ function(fn){
 
 
 
-///import baidu.array.indexOf;
+
 /**
  * @fileoverview
  * @author meizz
@@ -6529,10 +4295,10 @@ baidu.array.extend({
     }
 });
 
-///import baidu.type;
-///import baidu.array;
-///import baidu.each;
-///import baidu.forEach;
+
+
+
+
 /**
  * @fileoverview
  * @author meizz
@@ -6578,7 +4344,7 @@ void function () {
         return baidu.isEnumerable(array) ? baidu.each(array, typeof iterator == "function" ? fn : "", context) : array;
     };
 }();
-///import baidu.array;
+
 
 /**
  * @fileoverview
@@ -6612,8 +4378,8 @@ baidu.array.extend({
     }
 });
 
-///import baidu.array;
-///import baidu.type;
+
+
 /**
  * @fileoverview
  * @author meizz
@@ -6654,8 +4420,8 @@ Array.prototype.every = function(iterator, context) {
 };
 
 
-///import baidu.array;
-///import baidu.type;
+
+
 /**
  * @fileoverview
  * @author meizz
@@ -6701,8 +4467,8 @@ Array.prototype.filter = function(iterator, context) {
 };
 
 
-///import baidu.type;
-///import baidu.array;
+
+
 
 /**
  * @fileoverview
@@ -6747,7 +4513,7 @@ baidu.array.extend({
     }
 });
 
-///import baidu.array;
+
 
 /**
  * 将两个数组参数合并成一个类似hashMap结构的对象，这个对象使用第一个数组做为key，使用第二个数组做为值，如果第二个参数未指定，则把对象的所有值置为true。
@@ -6790,7 +4556,7 @@ baidu.array.extend({
         return result;
     }
 });
-///import baidu.array;
+
 /**
  * @fileoverview
  * @author meizz
@@ -6838,8 +4604,8 @@ baidu.array.extend({
     }
 });
 
-///import baidu.array;
-///import baidu.type;
+
+
 
 /**
  * @fileoverview
@@ -6872,8 +4638,8 @@ Array.prototype.map = function (iterator, context) {
 
 
 
-///import baidu.array;
-///import baidu.type;
+
+
 
 /**
  * @fileoverview
@@ -6924,7 +4690,7 @@ Array.prototype.reduce = function (iterator, initializer) {
 };
 
 
-///import baidu.array;
+
 
 /**
  * @fileoverview
@@ -6965,7 +4731,7 @@ baidu.array.extend({
     }
 });
 
-///import baidu.array;
+
 
 /**
  * @fileoverview
@@ -6999,7 +4765,7 @@ baidu.array.extend({
         return this.splice(index, 1)[0];
     }
 });
-///import baidu.array;
+
 /**
  * @fileoverview
  * @author meizz
@@ -7046,42 +4812,10 @@ Array.prototype.some = function(iterator, context){
 /*
  * Tangram
  * Copyright 2009 Baidu Inc. All rights reserved.
- * 
- * path: baidu/lang/isFunction.js
- * author: rocy
- * version: 1.1.2
- * date: 2010/06/12
- * modify: 2012/6/29 mz
  */
 
-///import baidu.lang;
-///import baidu.type;
-
-/**
- * @description 判断目标参数是否为function或Function实例
- * @name baidu.lang.isFunction
- * @function
- * @grammar baidu.lang.isFunction(source)
- * @param {Any} source 目标参数
- * @version 1.2
- * @see baidu.lang.isString,baidu.lang.isObject,baidu.lang.isNumber,baidu.lang.isArray,baidu.lang.isElement,baidu.lang.isBoolean,baidu.lang.isDate
- * @meta standard
- * @return {boolean} 类型判断结果
- */
-//baidu.lang.isFunction = function (source) {
-    // chrome下,'function' == typeof /a/ 为true.
-//    return '[object Function]' == Object.prototype.toString.call(source);
-//};
-baidu.lang.isFunction = baidu.isFunction;
 
 
-/*
- * Tangram
- * Copyright 2009 Baidu Inc. All rights reserved.
- */
-
-///import baidu.object;
-///import baidu.extend;
 
 /**
  * @description 将源对象的所有属性拷贝到目标对象中
@@ -7113,6 +4847,38 @@ baidu.lang.isFunction = baidu.isFunction;
 //};
 baidu.object.extend = baidu.extend;
 
+/*
+ * Tangram
+ * Copyright 2009 Baidu Inc. All rights reserved.
+ * 
+ * path: baidu/lang/isFunction.js
+ * author: rocy
+ * version: 1.1.2
+ * date: 2010/06/12
+ * modify: 2012/6/29 mz
+ */
+
+
+
+
+/**
+ * @description 判断目标参数是否为function或Function实例
+ * @name baidu.lang.isFunction
+ * @function
+ * @grammar baidu.lang.isFunction(source)
+ * @param {Any} source 目标参数
+ * @version 1.2
+ * @see baidu.lang.isString,baidu.lang.isObject,baidu.lang.isNumber,baidu.lang.isArray,baidu.lang.isElement,baidu.lang.isBoolean,baidu.lang.isDate
+ * @meta standard
+ * @return {boolean} 类型判断结果
+ */
+//baidu.lang.isFunction = function (source) {
+    // chrome下,'function' == typeof /a/ 为true.
+//    return '[object Function]' == Object.prototype.toString.call(source);
+//};
+baidu.lang.isFunction = baidu.isFunction;
+
+
 
 
 
@@ -7126,7 +4892,7 @@ baidu.object.extend = baidu.extend;
  * @create 2012.08.31
  */
 
-///import baidu;
+
 
 /**
  * @description 将原baidu.lang里关于BaseClass和BaseEvent部分搬迁到此新命名空间下
@@ -7134,10 +4900,10 @@ baidu.object.extend = baidu.extend;
  * @name baidu.base
  */
 baidu.base = baidu.base || {};
-///import baidu.id;
-///import baidu.base;
-///import baidu.type;
-///import baidu.extend;
+
+
+
+
 
 /**
  * @description Tangram继承机制提供的一个基类，用户可以通过继承baidu.base.Class来获取它的属性及方法。
@@ -7346,7 +5112,7 @@ baidu.base.Event = function(type, target) {
 //  2011.11.23  meizz   添加 baiduInstance 这个全局方法，可以快速地通过guid得到实例对象
 //  2011.11.22  meizz   废除创建类时指定guid的模式，guid只作为只读属性
 
-///import baidu.base;
+
 
 
 /**
@@ -7389,7 +5155,7 @@ baidu.base.inherits = function (subClass, superClass, type) {
 };
 
 //  2011.11.22  meizz   为类添加了一个静态方法extend()，方便代码书写
-///import baidu.base;
+
 
 /**
  * @description 向某个类注册插件
@@ -7420,7 +5186,7 @@ baidu.base.register = function (Class, constructorHook, methods) {
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.browser;
+
 
 /**
  * @description 判断是否为chrome浏览器
@@ -7438,7 +5204,7 @@ baidu.base.register = function (Class, constructorHook, methods) {
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.browser;
+
 
 /**
  * @description 判断是否为firefox浏览器
@@ -7457,7 +5223,7 @@ baidu.base.register = function (Class, constructorHook, methods) {
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.browser;
+
 
 //IE 8下，以documentMode为准
 //在百度模板中，可能会有$，防止冲突，将$1 写成 \x241
@@ -7480,7 +5246,7 @@ baidu.base.register = function (Class, constructorHook, methods) {
  * date: 2009/11/23
  */
 
-///import baidu.browser;
+
 
 /**
  * @description 判断是否为gecko内核
@@ -7493,6 +5259,18 @@ baidu.base.register = function (Class, constructorHook, methods) {
  */
 //baidu.browser.isGecko = /gecko/i.test(navigator.userAgent) && !/like gecko/i.test(navigator.userAgent);
 
+
+
+/**
+ * @description 判断是否严格标准的渲染模式
+ * @function
+ * @name baidu.browser.isStrict
+ * @grammar baidu.browser.isStrict
+ * @meta standard
+ * @return {Boolean} 布尔值
+ */
+//baidu.browser.isStrict = document.compatMode == "CSS1Compat";
+
 /*
  * Tangram
  * Copyright 2009 Baidu Inc. All rights reserved.
@@ -7503,7 +5281,7 @@ baidu.base.register = function (Class, constructorHook, methods) {
  * date: 2009/11/23
  */
 
-///import baidu.browser;
+
 
 /**
  * @description 判断是否为webkit内核
@@ -7526,7 +5304,7 @@ baidu.base.register = function (Class, constructorHook, methods) {
  * date: 2009/11/23
  */
 
-///import baidu.browser;
+
 
 //try {
 //    if (/(\d+\.\d+)/.test(external.max_version)) {
@@ -7553,7 +5331,7 @@ baidu.base.register = function (Class, constructorHook, methods) {
  * date: 2009/11/23
  */
 
-///import baidu.browser;
+
 
 /**
  * @description 判断是否为opera浏览器
@@ -7578,7 +5356,7 @@ baidu.base.register = function (Class, constructorHook, methods) {
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.browser;
+
 
 //(function(){
 //    var ua = navigator.userAgent;
@@ -7609,7 +5387,7 @@ baidu.base.register = function (Class, constructorHook, methods) {
  * date: 2009/12/02
  */
 
-///import baidu;
+
 /**
  * @description 操作cookie的方法
  * @namespace
@@ -7627,7 +5405,7 @@ baidu.cookie = baidu.cookie || {};
  * date: 2009/11/15
  */
 
-///import baidu.cookie;
+
 
 /**
  * 验证字符串是否合法的cookie键名
@@ -7676,7 +5454,7 @@ baidu.cookie._isValidKey = function (key) {
  * date: 2009/11/15
  */
 
-///import baidu.cookie._isValidKey;
+
 
 /**
  * @description 获取cookie的值，不对值进行解码
@@ -7709,7 +5487,7 @@ baidu.cookie.getRaw = function (key) {
  * date: 2009/11/15
  */
 
-///import baidu.cookie.getRaw;
+
 
 /**
  * @description 获取cookie的值，用decodeURIComponent进行解码
@@ -7739,7 +5517,7 @@ baidu.cookie.get = function (key) {
  * date: 2009/11/15
  */
 
-///import baidu.cookie._isValidKey;
+
 
 /**
  * @description 设置cookie的值，不对值进行编码
@@ -7801,7 +5579,7 @@ baidu.cookie.setRaw = function (key, value, options) {
  * date: 2009/11/15
  */
 
-///import baidu.cookie.setRaw;
+
 
 /**
  * @description 删除cookie的值
@@ -7827,7 +5605,7 @@ baidu.cookie.remove = function (key, options) {
  * date: 2009/11/15
  */
 
-///import baidu.cookie.setRaw;
+
 
 /**
  * @description 设置cookie的值，用encodeURIComponent进行编码
@@ -7860,8 +5638,8 @@ baidu.cookie.set = function (key, value, options) {
     baidu.cookie.setRaw(key, encodeURIComponent(value), options);
 };
 
-///import baidu.extend;
-///import baidu.base.Class;
+
+
 
 /**
  * @description 创建一个类，包括创造类的构造器、继承基类Class
@@ -7939,7 +5717,7 @@ baidu.createClass = /**@function*/function(constructor, type, options) {
 // 20121105 meizz   给类添加了几个静态属性方法：.options .superClass .inherits() .extend() .register()
 
 
-///import baidu.base.Class;
+
 
 /**
  * @description 创建一个baidu.Class的单例实例，主要用于创建 EventCenter DataCenter等全局唯一对象
@@ -7970,7 +5748,7 @@ baidu.createSingle = function (json) {
  * date: 2009/12/04
  */
 
-///import baidu;
+
 /**
  * @description 操作日期的方法
  * @namespace
@@ -7982,8 +5760,8 @@ baidu.date = baidu.date || {};
  * @author wangxiao
  * @email  1988wangxiao@gmail.com
  */
-///import baidu.createChain;
-///import baidu.forEach;
+
+
 /**
  * @description number对象链式语法的链头
  * @name baidu.number()
@@ -8009,7 +5787,7 @@ baidu.createChain('number', function(number){
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.number;
+
 
 
 
@@ -8057,8 +5835,8 @@ baidu.number.extend({
  * date: 2009/12/04
  */
 
-///import baidu.date;
-///import baidu.number.pad;
+
+
 
 /**
  * @description 对目标日期对象进行格式化
@@ -8136,7 +5914,7 @@ baidu.date.format = function (source, pattern) {
  * date: 2009/12/04
  */
 
-///import baidu.date;
+
 
 /**
  * @description 将目标字符串转换成日期对象
@@ -8189,196 +5967,109 @@ baidu.date.parse = function (source) {
 
 
 
-/// support magic - Tangram 1.x Code Start
-/*
- * Tangram
- * Copyright 2009 Baidu Inc. All rights reserved.
- * 
- * path: baidu/dom/_NAME_ATTRS.js
- * author: allstar, erik
- * version: 1.1.0
- * date: 2009/12/2
- */
 
-///import baidu.dom;
-///import baidu.browser.ie;
 
 /**
- * 提供给setAttr与getAttr方法作名称转换使用
- * ie6,7下class要转换成className
- * @meta standard
+ * @fileoverview
+ * @author meizz
+ * @create 2012-07-05
+ * @modify
  */
-
-baidu.dom._NAME_ATTRS = (function () {
-    var result = {
-        'cellpadding': 'cellPadding',
-        'cellspacing': 'cellSpacing',
-        'colspan': 'colSpan',
-        'rowspan': 'rowSpan',
-        'valign': 'vAlign',
-        'usemap': 'useMap',
-        'frameborder': 'frameBorder'
-    };
-    
-    if (baidu.browser.ie < 8) {
-        result['for'] = 'htmlFor';
-        result['class'] = 'className';
-    } else {
-        result['htmlFor'] = 'for';
-        result['className'] = 'class';
-    }
-    
-    return result;
-})();
-/// support magic - Tangram 1.x Code End
-
-/// support magic - Tangram 1.x Code Start
-/*
- * Tangram
- * Copyright 2009 Baidu Inc. All rights reserved.
- * 
- * path: baidu/dom/_styleFilters.js
- * author: allstar
- * version: 1.1.0
- * date: 2009/12/02
- */
-
-///import baidu.dom;
 
 /**
- * 提供给setStyle与getStyle使用
- */
-baidu.dom._styleFilter = baidu.dom._styleFilter || [];
-/// support magic - Tangram 1.x Code End
-
-
-
-/// support magic - Tangram 1.x Code Start
-/*
- * Tangram
- * Copyright 2009 Baidu Inc. All rights reserved.
- * 
- * path: baidu/dom/_styleFilter/filter.js
- * author: allstar, erik
- * version: 1.1.0
- * date: 2009/12/02
- */
-
-///import baidu.dom._styleFilter;
-
-/**
- * 为获取和设置样式的过滤器
- * @private
- * @meta standard
- */
-baidu.dom._styleFilter.filter = function (key, value, method) {
-    for (var i = 0, filters = baidu.dom._styleFilter, filter; filter = filters[i]; i++) {
-        if (filter = filter[method]) {
-            value = filter(key, value);
-        }
-    }
-
-    return value;
-};
-/// support magic - Tangram 1.x Code End
-
-
-
-/// support magic - Tangram 1.x Code Start
-/*
- * Tangram
- * Copyright 2009 Baidu Inc. All rights reserved.
- * 
- * path: baidu/dom/_styleFixer.js
- * author: allstar
- * version: 1.1.0
- * date: 2009/11/17
- */
-
-///import baidu.dom;
-
-/**
- * 提供给setStyle与getStyle使用
- */
-baidu.dom._styleFixer = baidu.dom._styleFixer || {};
-/// support magic - Tangram 1.x Code End
-
-
-
-
-
-
-
-
-
-/// support magic - Tangram 1.x Code Start
-/*
- * Tangram
- * Copyright 2009 Baidu Inc. All rights reserved.
- */
-
-///import baidu.dom.g;
-///import baidu.dom.getComputedStyle;
-///import baidu.dom._styleFixer;
-///import baidu.dom._styleFilter.filter;
-///import baidu.string.toCamelCase;
-
-/**
- * 获取目标元素的样式值
- * @name baidu.dom.getStyle
+ * @description 通过 HTMLString 创建 DOM 对象
+ *
  * @function
- * @grammar baidu.dom.getStyle(element, key)
- * @param {HTMLElement|string} element 目标元素或目标元素的id
- * @param {string} key 要获取的样式名
- * @remark
- * 
- * 为了精简代码，本模块默认不对任何浏览器返回值进行归一化处理（如使用getStyle时，不同浏览器下可能返回rgb颜色或hex颜色），也不会修复浏览器的bug和差异性（如设置IE的float属性叫styleFloat，firefox则是cssFloat）。<br />
- * baidu.dom._styleFixer和baidu.dom._styleFilter可以为本模块提供支持。<br />
- * 其中_styleFilter能对颜色和px进行归一化处理，_styleFixer能对display，float，opacity，textOverflow的浏览器兼容性bug进行处理。	
- * @shortcut getStyle
- * @meta standard
- * @see baidu.dom.setStyle,baidu.dom.setStyles, baidu.dom.getComputedStyle
- *             
- * @return {string} 目标元素的样式值
+ * @name baidu.dom.createElements
+ * @grammar baidu.dom.createElements(HTMLString)
+ * @param   {HTMLString}    htmlstring HTMLString
+ * @return  {$DOM}          new TangramDom
  */
-// TODO
-// 1. 无法解决px/em单位统一的问题（IE）
-// 2. 无法解决样式值为非数字值的情况（medium等 IE）
-baidu.dom.getStyle = function (element, key) {
-    var dom = baidu.dom;
+baidu.dom.createElements = function() {
+    var tagReg  = /<(\w+)/i,
+        rhtml = /<|&#?\w+;/,
+        tagMap  = {
+            area    : [1, "<map>", "</map>"],
+            col     : [2, "<table><tbody></tbody><colgroup>", "</colgroup></table>"],
+            legend  : [1, "<fieldset>", "</fieldset>"],
+            option  : [1, "<select multiple='multiple'>", "</select>"],
+            td      : [3, "<table><tbody><tr>", "</tr></tbody></table>"],
+            thead   : [1, "<table>", "</table>"],
+            tr      : [2, "<table><tbody>", "</tbody></table>"],
+            _default: [0, "", ""]
+        };
 
-    element = dom.g(element);
-    key = baidu.string.toCamelCase(key);
-    //computed style, then cascaded style, then explicitly set style.
-    var value = element.style[key] ||
-                (element.currentStyle ? element.currentStyle[key] : "") || 
-                dom.getComputedStyle(element, key);
+    // 建立映射
+    tagMap.optgroup = tagMap.option;
+    tagMap.tbody = tagMap.tfoot = tagMap.colgroup = tagMap.caption = tagMap.thead;
+    tagMap.th = tagMap.td;
 
-    // 在取不到值的时候，用fixer进行修正
-    if (!value || value == 'auto') {
-        var fixer = dom._styleFixer[key];
-        if(fixer){
-            value = fixer.get ? fixer.get(element, key, value) : baidu.dom.getStyle(element, fixer);
+    // 将<script>解析成正常可执行代码
+    function parseScript ( box, doc ) {
+        var list = box.getElementsByTagName("SCRIPT"),
+            i, script, item;
+
+        for ( i=list.length-1; i>=0; i-- ) {
+            item = list[ i ];
+            script = doc.createElement( "SCRIPT" );
+
+            item.id && (script.id = item.id);
+            item.src && (script.src = item.src);
+            item.type && (script.type = item.type);
+            script[ item.text ? "text" : "textContent" ] = item.text || item.textContent;
+
+            item.parentNode.replaceChild( script, item );
         }
     }
-    
-    /* 检查结果过滤器 */
-    if (fixer = dom._styleFilter) {
-        value = fixer.filter(key, value, 'get');
-    }
 
-    return value;
-};
+    return function( htmlstring, doc ) {
+        baidu.isNumber( htmlstring ) && ( htmlstring = htmlstring.toString() );
+        doc = doc || document;
 
-/// support magic - Tangram 1.x Code End
+        var wrap, depth, box,
+            hs  = htmlstring,
+            n   = hs.length,
+            div = doc.createElement("div"),
+            df  = doc.createDocumentFragment(),
+            result = [];
+
+        if ( baidu.isString( hs ) ) {
+            if(!rhtml.test(hs)){// TextNode
+                result.push( doc.createTextNode( hs ) );
+            }else {//htmlString
+                wrap = tagMap[ hs.match( tagReg )[1].toLowerCase() ] || tagMap._default;
+
+                div.innerHTML = "<i>mz</i>" + wrap[1] + hs + wrap[2];
+                div.removeChild( div.firstChild );  // for ie (<script> <style>)
+                parseScript(div, doc);
+
+                depth = wrap[0];
+                box = div;
+                while ( depth -- ) { box = box.firstChild; };
+
+                baidu.merge( result, box.childNodes );
+
+                // 去除 item.parentNode
+                baidu.forEach( result, function (dom) {
+                    df.appendChild( dom );
+                } );
+
+                div = box = null;
+            }
+        }
+
+        div = null;
+
+        return result;
+    };
+}();
 
 
-///import baidu.dom;
-///import baidu.merge;
-///import baidu.type;
-///import baidu.query;
-///import baidu.array.unique;
-///import baidu.dom.createElements;
+
+
+
+
+
 
 /**
  * @fileoverview
@@ -8509,9 +6200,9 @@ baidu.dom.extend({
 
  */
 
-///import baidu;
-///import baidu.dom;
-///import baidu.forEach;
+
+
+
 
 baidu.dom.extend({
     addClass: function(value){
@@ -8557,9 +6248,386 @@ baidu.dom.extend({
  * @author linlingyu
  */
 
-///import baidu._util_.smartInsert;
-///import baidu.dom.getDocument;
-///import baidu.merge;
+/**
+ * @description 取得匹配元素所属的document对象
+ * @function 
+ * @name baidu.dom().getDocument()
+ * @grammar baidu.dom(args).getDocument()
+ * @return {document} 返回一个document对象
+ */
+/**
+ * @description 获取目标元素所属的document对象
+ * @function 
+ * @name baidu.dom.getDocument
+ * @grammar baidu.dom.getDocument(element)
+ * @param {String|Element} element 目标元素或目标元素的id
+ * @return {document} 返回一个document对象
+ */
+baidu.dom.extend({
+    getDocument: function(){
+    	if(this.size()<=0){return undefined;}
+        var ele = this[0];
+        return ele.nodeType == 9 ? ele : ele.ownerDocument || ele.document;
+    }
+});
+
+
+
+baidu._util_.cleanData = function(array){
+    var tangId;
+    for(var i = 0, ele; ele = array[i]; i++){
+        tangId = baidu.id(ele, 'get');
+        if(!tangId){continue;}
+        baidu._util_.eventBase.removeAll(ele);
+        baidu.id(ele, 'remove');
+    }
+}
+/**
+ * @author linlingyu
+ */
+
+
+
+/**
+ * @description 将匹配到的DOM元素的内部内容全部清空
+ * @function 
+ * @name baidu.dom().empty()
+ * @grammar baidu.dom(args).empty()
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ * @example
+ 该方法会移除掉匹配元素中的元素，但是该方法不会去移除已经绑定在元素上面的事件，
+ 如果要移除已经绑定的事件，使用.remove()方法。
+
+ 示例代码：
+ //HTML代码片段
+ <div>
+    <h1>test1</h1>
+    <h2>test2</h2>
+ </div>
+
+ //清除div中的内容
+ baidu('div').empty();
+
+ //结果：
+ <div>
+ </div>
+
+ */
+
+
+baidu.dom.extend({
+    empty: function(){
+        for(var i = 0, item; item = this[i]; i++){
+            item.nodeType === 1 && baidu._util_.cleanData(item.getElementsByTagName('*'));
+            while(item.firstChild){
+                item.removeChild(item.firstChild);
+            }
+        }
+        return this;
+    }
+});
+
+
+/**
+ * @author linlingyu
+ */
+
+
+
+
+/**
+ * @description 在匹配的每个DOM元素内部的末端插入内容
+ * @function 
+ * @name baidu.dom().append()
+ * @grammar baidu.dom(args).append(content1[,content2])
+ * @param {HTMLString|Element|TangramDom} content1 支持一个DOM元素或是一段HTMLString或是一个TangramDom对象
+ * @param {HTMLString|Array|Element|TangramDom} content2 支持一个或多个DOM元素或是DOM元素的数组或是一段HTMLString或是一个TangramDom对象
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ * @example
+ .append()函数将特定内容插入到每个匹配元素里面的最后面，作为它的最后一个子元素（last child）, 
+ 如果要作为第一个子元素 （first child），用.prepend()或.prependTo()
+ 
+ .append() 和.appendTo()实现同样的功能，主要的不同是语法——内容和目标的位置不同。
+ 对于.append()，选择表达式在函数的前面，参数是将要插入的内容。
+ 对于.appendTo()刚好相反，内容在方法前面，它将被放在参数里元素的末尾。
+
+ 另，如果有多个目标元素，内容将被复制然后，被插入到每个目标后面；
+ 如果一个被选中的元素被插在另外一个地方，这是移动而不是复制。
+
+ 示例代码：
+ //HTML代码片段
+ <div id='body'>
+   <h1>test1</h1>
+   <div class='content'></div>
+ </div>
+
+ //可以创建内容然后同时插在好几个元素后面
+ baidu('#body').append('<h2>footer</h2>');
+
+ //插入后，得到新内容
+ <div id='body'>
+   <h1>test1</h1>
+   <div class='content'></div>
+   <h2>footer</h2>
+ </div>
+
+ //也可以在页面上选择一个元素然后插在另一个元素后面，
+ //如果一个被选中的元素被插在另外一个地方，这是移动而不是复制。
+
+ baidu('#body').append(baidu('h2'));  //结果同上
+
+ */
+
+/**
+ * @description 在匹配的每个DOM元素内部的末端插入内容
+ * @function 
+ * @name baidu.dom().append()
+ * @grammar baidu.dom(args).append(fn)
+ * @param {Function} fn 支持一个函数作为参数，函数最终需要返回一个HTMLString|Element|TangramDom
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ * @example baidu.dom(args).append(function(index,html){})
+ */
+
+baidu.dom.extend({
+    append: function(){
+        baidu.check('^(?:string|function|HTMLElement|\\$DOM)(?:,(?:string|array|HTMLElement|\\$DOM))*$', 'baidu.dom.append');
+        baidu._util_.smartInsert(this, arguments, function(child){
+            this.nodeType === 1 && this.appendChild(child);
+        });
+        return this;
+    }
+});
+/*
+ * @author wangxiao
+ * @email  1988wangxiao@gmail.com
+ */
+/**
+ * @description 从匹配的第一个元素中获取HTML内容。
+ * @function 
+ * @name baidu.dom().html()
+ * @grammar baidu.dom(args).html()
+ * @return {String|Undefined} HTML内容
+ * @example
+ 在一个HTML文档中，我们可以使用.html()方法来获取任意一个元素的内容。
+ 如果选择器匹配多于一个的元素，那么只有第一个匹配元素的 HTML 内容会被获取。
+
+ 示例代码：
+ //HTML代码片段
+ <div>
+   <h1>title</h1>
+   <p>content</p>
+ </div>
+
+ //获取HTML
+ baidu('div').html();  //得到 <h1>title</h1><p>content</p>
+
+ */
+ /**
+ * @description 设置每一个匹配元素的html内容。
+ * @function 
+ * @name baidu.dom().html()
+ * @grammar baidu.dom(args).html(htmlString)
+ * @param {String} htmlString 用来设置每个匹配元素的一个HTML 字符串。
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ * @example
+ 我们可以使用.html()来设置元素的内容，在这些元素的任何内容完全被新的内容取代。
+ 如果匹配多个元素，则将会改变所有的HTML，符合get first set all原则。
+
+ 示例代码：
+ //HTML代码片段
+ <div>
+   <h1>title</h1>
+   <p>content</p>
+ </div>
+
+ //重置HTML
+ baidu('div').html('<input>');
+ 
+ //生成代码
+ <div>
+   <input>
+ </div>
+ 
+ */
+ /**
+ * @description 设置每一个匹配元素的html内容。
+ * @function 
+ * @name baidu.dom().html()
+ * @grammar baidu.dom(args).html(fn)
+ * @param {Function} fn 用来返回设置HTML内容的一个函数。接收元素的索引位置和元素旧的HTML作为参数。
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ * @example baidu.dom(args).html(function(index, html))
+ */
+
+
+
+
+
+
+
+
+baidu.dom.extend({
+    html: function(value){
+
+        var bd = baidu.dom,
+            bt = baidu._util_,
+            me = this,
+            isSet = false,
+            result;
+
+        //当dom选择器为空时
+        if(this.size()<=0){
+            switch(typeof value){
+                case 'undefined':
+                    return undefined;
+                break;
+                default:
+                    return me;
+                break;
+            }            
+        }
+        
+        var nodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figcaption|figure|footer|" +
+        "header|hgroup|mark|meter|nav|output|progress|section|summary|time|video",
+            rnoInnerhtml = /<(?:script|style|link)/i,
+            rnoshimcache = new RegExp("<(?:" + nodeNames + ")[\\s/>]", "i"),
+            rleadingWhitespace = /^\s+/,
+            rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi,
+            rtagName = /<([\w:]+)/,
+            wrapMap = {
+                option: [ 1, "<select multiple='multiple'>", "</select>" ],
+                legend: [ 1, "<fieldset>", "</fieldset>" ],
+                thead: [ 1, "<table>", "</table>" ],
+                tr: [ 2, "<table><tbody>", "</tbody></table>" ],
+                td: [ 3, "<table><tbody><tr>", "</tr></tbody></table>" ],
+                col: [ 2, "<table><tbody></tbody><colgroup>", "</colgroup></table>" ],
+                area: [ 1, "<map>", "</map>" ],
+                _default: [ 0, "", "" ]
+            };
+        wrapMap.optgroup = wrapMap.option;
+        wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
+        wrapMap.th = wrapMap.td;
+
+        // IE6-8 can't serialize link, script, style, or any html5 (NoScope) tags,
+        // unless wrapped in a div with non-breaking characters in front of it.
+        if ( !baidu.support.htmlSerialize ) {
+            wrapMap._default = [ 1, "X<div>", "</div>" ];
+        }
+
+        baidu.forEach(me,function(elem, index){
+            
+            if(result){
+                return;
+            };
+            var tangramDom = bd(elem);
+            switch(typeof value){
+                case 'undefined':
+        
+                    //get first
+                    result = ( elem.nodeType === 1 ? elem.innerHTML : undefined );
+                    return result;
+
+                break;
+
+                case 'number':
+                    value = String(value);
+                case 'string':
+
+                    //set all
+                    isSet = true;
+
+                    // See if we can take a shortcut and just use innerHTML
+                    if ( !rnoInnerhtml.test( value ) &&
+                        ( baidu.support.htmlSerialize || !rnoshimcache.test( value )  ) &&
+                        ( baidu.support.leadingWhitespace || !rleadingWhitespace.test( value ) ) &&
+                        !wrapMap[ ( rtagName.exec( value ) || ["", ""] )[1].toLowerCase() ] ) {
+
+                        value = value.replace( rxhtmlTag, "<$1></$2>" );
+
+                        try {
+
+                            // Remove element nodes and prevent memory leaks
+                            if ( elem.nodeType === 1 ) {
+                                tangramDom.empty();
+                                elem.innerHTML = value;
+                            }
+
+                            elem = 0;
+
+                        // If using innerHTML throws an exception, use the fallback method
+                        } catch(e) {}
+                    }
+
+                    if ( elem ) {
+                        me.empty().append( value );
+                    }
+
+                break;
+
+                case 'function':
+
+                    //set all
+                    isSet = true;
+                    tangramDom.html(value.call(elem, index, tangramDom.html()));
+                break;
+            };
+        });
+        
+        return isSet?me:result;
+    }
+});
+/**
+ * @author linlingyu
+ */
+
+
+
+
+
+
+
+
+baidu._util_.smartInsert = function(tang, args, callback){
+    if(args.length <= 0 || tang.size() <= 0){return;}
+    if(baidu.type(args[0]) === 'function'){
+        var fn = args[0],
+            tangItem;
+        return baidu.forEach(tang, function(item, index){
+            tangItem = baidu.dom(item);
+            args[0] = fn.call(item, index, tangItem.html());
+            baidu._util_.smartInsert(tangItem, args, callback);
+        });
+    }
+    var doc = tang.getDocument() || document,
+        fragment = doc.createDocumentFragment(),
+        len = tang.length - 1,
+        firstChild;
+    for(var i = 0, item; item = args[i]; i++){
+        if(item.nodeType){
+            fragment.appendChild(item);
+        }else{
+            baidu.forEach(~'string|number'.indexOf(baidu.type(item)) ?
+                baidu.dom.createElements(item, doc)
+                    : item, function(ele){
+                        fragment.appendChild(ele);
+                    });
+        }
+    }
+    if(!(firstChild = fragment.firstChild)){return;}
+    baidu.forEach(tang, function(item, index){
+        callback.call(item.nodeName.toLowerCase() === 'table'
+            && firstChild.nodeName.toLowerCase() === 'tr' ?
+                item.tBodies[0] || item.appendChild(item.ownerDocument.createElement('tbody'))
+                    : item, index < len ? fragment.cloneNode(true) : fragment);
+    });
+};
+/**
+ * @author linlingyu
+ */
+
+
+
+
 
 /**
  * @description 在匹配的每个DOM元素后面插入新的内容
@@ -8622,6 +6690,537 @@ baidu.dom.extend({
         return this;
     }
 });
+
+
+
+/**
+ * @fileoverview
+ * @author meizz
+ * @create 2012-05-28
+ * @modify
+ */
+
+/**
+ * @description 查找当前元素之前所有的同辈元素，直到遇到匹配的那个元素为止
+ *
+ * @function
+ * @name baidu.dom().map()
+ * @grammar baidu.dom(args).map(iterator)
+ * @param   {Function}            iterator    遍历函数
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象        old TangramDom
+ */
+baidu.dom.extend({
+    map : function (iterator) {
+        baidu.check("function","baidu.dom.map");
+        var me = this,
+            td = baidu.dom();
+
+        baidu.forEach(this, function( dom, index ){
+            td[td.length ++] = iterator.call( dom, index, dom, dom );
+        });
+
+        return td;
+    }
+});
+
+//Sizzle.isXML
+
+baidu._util_.isXML = function(ele) {
+    var docElem = (ele ? ele.ownerDocument || ele : 0).documentElement;
+    return docElem ? docElem.nodeName !== 'HTML' : false;
+};
+
+/**
+ * @author linlingyu
+ */
+
+
+
+
+
+
+/**
+ * @description 对匹配元素进行深度克隆
+ * @function 
+ * @name baidu.dom().clone()
+ * @grammar baidu.dom(args).clone([withDataAndEvents[,deepWithDataAndEvents]])
+ * @param {Boolean} withDataAndEvents 一个可选的布尔值参数，当参数为true时，表示当次克隆需要将该匹配元素的数据和事件也做克隆
+ * @param {Boolean} deepWithDataAndEvents 一个可选的布尔值参数，当参数为true时，表示当次克隆需要将该匹配元素的所有子元素的数据和事件也做克隆
+ * @return {TangramDom} 接口最终返回一个TangramDom对象，该对象包装了克隆的节点
+ * @example
+ .clone()方法深度复制所有匹配的元素，包括所有匹配元素、匹配元素的下级元素、文字节点。
+ 当和插入方法联合使用时，.clone()对于复制页面上的元素很方便。
+ 
+ 注意：如果也要克隆事件，需要传入参数。
+
+ 示例代码：
+ //HTML代码片段
+ <div id='body'>
+   <h1>test1</h1>
+   <div class='content'></div>
+ </div>
+ <h2>footer</h2>
+
+ //通常我们将页面上一个元素插入到DOM里另立个地方，它会被从老地方移走：
+ baidu('h2').appendTo(baidu('#body'));
+
+ //插入后，得到新内容
+ <div id='body'>
+   <h1>test1</h1>
+   <div class='content'></div>
+   <h2>footer</h2>
+ </div>
+
+ //但是我们如果需要的是复制而不是移除，我们可以像下面这样写代码：
+ baidu('h2').clone().appendTo(baidu('#body'));
+
+ //插入后，得到新内容
+ <div id='body'>
+   <h1>test1</h1>
+   <div class='content'></div>
+   <h2>footer</h2>
+ </div>
+ <h2>footer</h2>
+
+ //仅克隆当前节点的事件
+ baidu('h2').clone(true);
+
+ //克隆当前节点及所有子节点的全部事件
+ baidu('h2').clone(true,true);
+
+ */
+
+baidu.dom.extend({
+    clone: function(){
+        var event = baidu._util_.eventBase;
+        //
+        function getAll(ele){
+            return ele.getElementsByTagName ? ele.getElementsByTagName('*')
+                : (ele.querySelectorAll ? ele.querySelectorAll('*') : []);
+        }
+        //
+        function cloneFixAttributes(src, dest){
+            dest.clearAttributes && dest.clearAttributes();
+            dest.mergeAttributes && dest.mergeAttributes(src);
+            switch(dest.nodeName.toLowerCase()){
+                case 'object':
+                    dest.outerHTML = src.outerHTML;
+                    break;
+                case 'textarea':
+                case 'input':
+                    if(~'checked|radio'.indexOf(src.type)){
+                        src.checked && (dest.defaultChecked = dest.checked = src.checked);
+                        dest.value !== src.value && (dest.value = src.value);
+                    }
+                    dest.defaultValue = src.defaultValue;
+                    break;
+                case 'options':
+                    dest.selected = src.defaultSelected;
+                    break;
+                case 'script':
+                    dest.text !== src.text && (dest.text = src.text);
+                    break;
+            }
+            dest[baidu.key] && dest.removeAttribute(baidu.key);
+        }
+        //
+        function cloneCopyEvent(src, dest){
+        	if(dest.nodeType !== 1 || !baidu.id(src, 'get')){return;}
+        	var defaultEvents = event.get(src);
+        	for(var i in defaultEvents){
+        	    for(var j = 0, handler; handler = defaultEvents[i][j]; j++){
+        	        event.add(dest, i, handler);
+        	    }
+        	}
+        }
+        //
+        function clone(ele, dataAndEvents, deepDataAndEvents){
+            var cloneNode = ele.cloneNode(true),
+                srcElements, destElements, len;
+            //IE
+            if((!baidu.support.noCloneEvent || !baidu.support.noCloneChecked)
+                && (ele.nodeType === 1 || ele.nodeType === 11) && !baidu._util_.isXML(ele)){
+                    cloneFixAttributes(ele, cloneNode);
+                    srcElements = getAll( ele );
+                    destElements = getAll( cloneNode );
+                    len = srcElements.length;
+                    for(var i = 0; i < len; i++){
+                        destElements[i] && cloneFixAttributes(srcElements[i], destElements[i]);
+                    }
+            }
+            if(dataAndEvents){
+                cloneCopyEvent(ele, cloneNode);
+                if(deepDataAndEvents){
+                    srcElements = getAll( ele );
+                    destElements = getAll( cloneNode );
+                    len = srcElements.length;
+                    for(var i = 0; i < len; i++){
+                    	cloneCopyEvent(srcElements[i], destElements[i]);
+                    }
+                }
+            }
+            return cloneNode;
+        }
+        //
+        return function(dataAndEvents, deepDataAndEvents){
+            dataAndEvents = !!dataAndEvents;
+            deepDataAndEvents = !!deepDataAndEvents;
+            return this.map(function(){
+                return clone(this, dataAndEvents, deepDataAndEvents);
+            });
+        }
+    }()
+});
+
+/**
+ * @author linlingyu
+ */
+
+
+
+
+
+
+
+
+
+baidu._util_.smartInsertTo = function(tang, target, callback, orie){
+    var insert = baidu.dom(target),
+        first = insert[0],
+        tangDom;
+        
+    if(orie && first && (!first.parentNode || first.parentNode.nodeType === 11)){
+        orie = orie === 'before';
+        tangDom = baidu.merge(orie ? tang : insert, !orie ? tang : insert);
+        if(tang !== tangDom){
+            tang.length = 0;
+            baidu.merge(tang, tangDom);
+        }
+    }else{
+        for(var i = 0, item; item = insert[i]; i++){
+            baidu._util_.smartInsert(baidu.dom(item), i > 0 ? tang.clone(true) : tang, callback);
+        }
+    }
+};
+
+/**
+ * @author linlingyu
+ */
+
+
+
+/**
+ * @description 将匹配到的DOM元素插入到参数指定的DOM元素内部的末端
+ * @function 
+ * @name baidu.dom().appendTo()
+ * @grammar baidu.dom(args).appendTo(target)
+ * @param {HTMLString|selector|Element|TangramDom} target 一个HTMLString或是选择器字符串或是DOM元素或是TangramDom对象
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ * @example
+ .appendTo()函数将特定内容插入到每个匹配元素里面的最后面，作为它的最后一个子元素（last child）, 
+ 如果要作为第一个子元素 （first child），用.prepend()或.prependTo()
+ 
+ .append() 和.appendTo()实现同样的功能，主要的不同是语法——内容和目标的位置不同。
+ 对于.append()，选择表达式在函数的前面，参数是将要插入的内容。
+ 对于.appendTo()刚好相反，内容在方法前面，它将被放在参数里元素的末尾。
+
+ 另，如果有多个目标元素，内容将被复制然后，被插入到每个目标后面；
+ 如果一个被选中的元素被插在另外一个地方，这是移动而不是复制。
+
+ 示例代码：
+ //HTML代码片段
+ <div id='body'>
+   <h1>test1</h1>
+   <div class='content'></div>
+ </div>
+
+ //可以创建内容然后同时插在好几个元素后面
+ baidu('<h2>footer</h2>').appendTo(baidu('#body'));
+
+ //插入后，得到新内容
+ <div id='body'>
+   <h1>test1</h1>
+   <div class='content'></div>
+   <h2>footer</h2>
+ </div>
+
+ //也可以在页面上选择一个元素然后插在另一个元素后面，
+ //如果一个被选中的元素被插在另外一个地方，这是移动而不是复制。
+
+ baidu('h2').after(baidu('#body'));  //结果同上
+
+ */
+baidu.dom.extend({
+    appendTo: function(target){
+        baidu.check('^(?:string|HTMLElement|\\$DOM)$', 'baidu.dom.appendTo');
+        baidu._util_.smartInsertTo(this, target, function(child){
+            this.appendChild(child);
+        });
+        return this;
+    }
+});
+/**
+ * @author wangxiao
+ * @email  1988wangxiao@gmail.com
+ */
+
+
+
+
+
+
+baidu.extend(baidu._util_,{
+	rfocusable:/^(?:button|input|object|select|textarea)$/i,
+	rclickable:/^a(?:rea)?$/i,
+	rboolean:/^(?:autofocus|autoplay|async|checked|controls|defer|disabled|hidden|loop|multiple|open|readonly|required|scoped|selected)$/i,
+	propFix:{
+		tabindex: "tabIndex",
+		readonly: "readOnly",
+		"for": "htmlFor",
+		"class": "className",
+		maxlength: "maxLength",
+		cellspacing: "cellSpacing",
+		cellpadding: "cellPadding",
+		rowspan: "rowSpan",
+		colspan: "colSpan",
+		usemap: "useMap",
+		frameborder: "frameBorder",
+		contenteditable: "contentEditable"
+	},
+	propHooks: {
+		tabIndex:{
+			get: function( elem ) {
+
+				var bu = baidu._util_;
+				// elem.tabIndex doesn't always return the correct value when it hasn't been explicitly set
+				// http://fluidproject.org/blog/2008/01/09/getting-setting-and-removing-tabindex-values-with-javascript/
+				var attributeNode = elem.getAttributeNode("tabindex");
+
+				return attributeNode && attributeNode.specified ?
+					parseInt( attributeNode.value, 10 ) :
+					bu.rfocusable.test( elem.nodeName ) || bu.rclickable.test( elem.nodeName ) && elem.href ?
+						0 :
+						undefined;
+			}
+		}
+	}
+});
+
+// IE6/7 call enctype encoding
+if ( !baidu.support.enctype ) {
+	var bu = baidu._util_;
+	bu.propFix.enctype = "encoding";
+};
+
+// Safari mis-reports the default selected property of an option
+// Accessing the parent's selectedIndex property fixes it
+if ( !baidu.support.optSelected ) {
+	var bu = baidu._util_;
+	bu.propHooks.selected = baidu.extend( bu.propHooks.selected, {
+		get: function( elem ) {
+			var parent = elem.parentNode;
+
+			if ( parent ) {
+				parent.selectedIndex;
+
+				// Make sure that it also works with optgroups, see #5701
+				if ( parent.parentNode ) {
+					parent.parentNode.selectedIndex;
+				}
+			}
+			return null;
+		}
+	});
+};
+
+/**
+ * @author wangxiao
+ * @email  1988wangxiao@gmail.com
+ */
+
+
+
+
+
+
+baidu.extend(baidu,{
+    _error : function( msg ) {
+        throw new Error( msg );
+    },
+    _nodeName : function( elem, name ) {
+        return elem.nodeName && elem.nodeName.toUpperCase() === name.toUpperCase();
+    }    
+});
+
+baidu.extend(baidu._util_,{
+	rfocusable : /^(?:button|input|object|select|textarea)$/i,
+	rtype : /^(?:button|input)$/i,
+	rclickable : /^a(?:rea)?$/i,
+	nodeHook:{},
+	attrHooks: {
+		type: {
+			set: function( elem, value ) {
+				var bu = baidu._util_;
+				// We can't allow the type property to be changed (since it causes problems in IE)
+				if ( bu.rtype.test( elem.nodeName ) && elem.parentNode ) {
+					baidu._error( "type property can't be changed" );
+				} else if ( !baidu.support.radioValue && value === "radio" && baidu._nodeName(elem, "input") ) {
+					// Setting the type on a radio button after the value resets the value in IE6-9
+					// Reset value to it's default in case type is set after value
+					// This is for element creation
+					var val = elem.value;
+					elem.setAttribute( "type", value );
+					if ( val ) {
+						elem.value = val;
+					}
+					return value;
+				}
+			}
+		},
+		// Use the value property for back compat
+		// Use the nodeHook for button elements in IE6/7 (#1954)
+		value: {
+			get: function( elem, name ) {
+				var bu = baidu._util_;
+				if ( bu.nodeHook && baidu._nodeName( elem, "button" ) ) {
+					return bu.nodeHook.get( elem, name );
+				}
+				return name in elem ?
+					elem.value :
+					null;
+			},
+			set: function( elem, value, name ) {
+				if ( bu.nodeHook && baidu._nodeName( elem, "button" ) ) {
+					return bu.nodeHook.set( elem, value, name );
+				}
+				// Does not return so that setAttribute is also used
+				elem.value = value;
+			}
+		}
+	},
+	// Hook for boolean attributes
+	boolHook : {
+		get: function( elem, name ) {
+			// Align boolean attributes with corresponding properties
+			// Fall back to attribute presence where some booleans are not supported
+			var attrNode,
+				property = baidu(elem).prop( name );
+			return property === true || typeof property !== "boolean" && ( attrNode = elem.getAttributeNode(name) ) && attrNode.nodeValue !== false ?
+				name.toLowerCase() :
+				undefined;
+		},
+		set: function( elem, value, name ) {
+			var propName;
+			if ( value === false ) {
+				// Remove boolean attributes when set to false
+				baidu(elem).removeAttr( name );
+			} else {
+				// value is true since we know at this point it's type boolean and not false
+				// Set boolean attributes to the same name and set the DOM property
+				propName = baidu._util_.propFix[ name ] || name;
+				if ( propName in elem ) {
+					// Only set the IDL specifically if it already exists on the element
+					elem[ propName ] = true;
+				}
+
+				elem.setAttribute( name, name.toLowerCase() );
+			}
+			return name;
+		}
+	}
+});
+
+// Add the tabIndex propHook to attrHooks for back-compat (different case is intentional)
+baidu._util_.attrHooks.tabindex = baidu._util_.propHooks.tabIndex;
+
+// IE6/7 do not support getting/setting some attributes with get/setAttribute
+if ( !baidu.support.getSetAttribute ) {
+
+	var bu = baidu._util_,
+		fixSpecified = {
+			name: true,
+			id: true,
+			coords: true
+		};
+
+	// Use this for any attribute in IE6/7
+	// This fixes almost every IE6/7 issue
+	bu.nodeHook = {
+		get: function( elem, name ) {
+			var ret;
+			ret = elem.getAttributeNode( name );
+			return ret && ( fixSpecified[ name ] ? ret.nodeValue !== "" : ret.specified ) ?
+				ret.nodeValue :
+				undefined;
+		},
+		set: function( elem, value, name ) {
+			// Set the existing or create a new attribute node
+			var ret = elem.getAttributeNode( name );
+			if ( !ret ) {
+				ret = document.createAttribute( name );
+				elem.setAttributeNode( ret );
+			}
+			return ( ret.nodeValue = value + "" );
+		}
+	};
+
+	// Apply the nodeHook to tabindex
+	bu.attrHooks.tabindex.set = bu.nodeHook.set;
+
+    // Set width and height to auto instead of 0 on empty string( Bug #8150 )
+    // This is for removals
+    baidu.forEach([ "width", "height" ], function( name ) {
+        bu.attrHooks[ name ] = baidu.extend( bu.attrHooks[ name ], {
+            set: function( elem, value ) {
+                if ( value === "" ) {
+                    elem.setAttribute( name, "auto" );
+                    return value;
+                }
+            }
+        });
+    });
+
+	// Set contenteditable to false on removals(#10429)
+	// Setting to empty string throws an error as an invalid value
+	bu.attrHooks.contenteditable = {
+		get: bu.nodeHook.get,
+		set: function( elem, value, name ) {
+			if ( value === "" ) {
+				value = "false";
+			}
+			bu.nodeHook.set( elem, value, name );
+		}
+	};
+};
+
+// Some attributes require a special call on IE
+if ( !baidu.support.hrefNormalized ) {
+	var bu = baidu._util_;
+    baidu.forEach([ "href", "src", "width", "height" ], function( name ) {
+        bu.attrHooks[ name ] = baidu.extend( bu.attrHooks[ name ], {
+            get: function( elem ) {
+                var ret = elem.getAttribute( name, 2 );
+                return ret === null ? undefined : ret;
+            }
+        });
+    });
+};
+
+if ( !baidu.support.style ) {
+	var bu = baidu._util_;
+	bu.attrHooks.style = {
+		get: function( elem ) {
+			// Return undefined in the case of empty string
+			// Normalize to lowercase since IE uppercases css property names
+			return elem.style.cssText.toLowerCase() || undefined;
+		},
+		set: function( elem, value ) {
+			return ( elem.style.cssText = "" + value );
+		}
+	};
+};
+
+
 /**
  * @author wangxiao
  * @email  1988wangxiao@gmail.com
@@ -8727,12 +7326,12 @@ baidu.dom.extend({
     }
  });
  */
-///import baidu;
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.support;
-///import baidu._util_.isXML;
-///import baidu._util_.propHooks;
+
+
+
+
+
+
 
 baidu.dom.extend({
     prop:function(name,value){
@@ -8835,6 +7434,170 @@ baidu.dom.extend({
     }
 });
 /**
+ * @author linlingyu
+ */
+
+
+
+/**
+ * @description 转换一个类似数组的对象成为真正的JavaScript数组
+ * @function 
+ * @name baidu.makeArray
+ * @grammar baidu.makeArray(obj)
+ * @param {Object} obj 转换成一个原生数组的任何对象
+ * @return {Array} 一个转换后的数组
+ */
+baidu.makeArray = function(array, results){
+    var ret = results || [];
+    if(!array){return ret;}
+    array.length == null || ~'string|function|regexp'.indexOf(baidu.type(array)) ?
+        Array.prototype.push.call(ret, array) : baidu.merge(ret, array);
+    return ret;
+}
+/**
+ * @author wangxiao
+ * @email  1988wangxiao@gmail.com
+ */
+
+
+
+
+
+
+
+
+
+baidu.extend(baidu._util_,{
+
+	nodeName: function( elem, name ) {
+		return elem.nodeName && elem.nodeName.toUpperCase() === name.toUpperCase();
+	},
+
+	valHooks: {
+		option: {
+			get: function( elem ) {
+				// attributes.value is undefined in Blackberry 4.7 but
+				// uses .value. See #6932
+				var val = elem.attributes.value;
+				return !val || val.specified ? elem.value : elem.text;
+			}
+		},
+		select: {
+			get: function( elem ) {
+				var value, i, max, option,
+					index = elem.selectedIndex,
+					values = [],
+					options = elem.options,
+					one = elem.type === "select-one";
+
+				// Nothing was selected
+				if ( index < 0 ) {
+					return null;
+				}
+
+				// Loop through all the selected options
+				i = one ? index : 0;
+				max = one ? index + 1 : options.length;
+				for ( ; i < max; i++ ) {
+					option = options[ i ];
+
+					// Don't return options that are disabled or in a disabled optgroup
+					if ( option.selected && (baidu.support.optDisabled ? !option.disabled : option.getAttribute("disabled") === null) &&
+							(!option.parentNode.disabled || !baidu._util_.nodeName( option.parentNode, "optgroup" )) ) {
+
+						// Get the specific value for the option
+						value = baidu.dom( option ).val();
+
+						// We don't need an array for one selects
+						if ( one ) {
+							return value;
+						}
+
+						// Multi-Selects return an array
+						values.push( value );
+					}
+				}
+
+				// Fixes Bug #2551 -- select.val() broken in IE after form.reset()
+				if ( one && !values.length && options.length ) {
+					return baidu( options[ index ] ).val();
+				}
+
+				return values;
+			},
+
+			set: function( elem, value ) {
+				var values = baidu.makeArray( value );
+
+				baidu(elem).find("option").each(function() {
+					this.selected = baidu.array(values).indexOf( baidu(this).val()) >= 0;
+				});
+
+				if ( !values.length ) {
+					elem.selectedIndex = -1;
+				}
+				return values;
+			}
+		}
+	}
+//	
+});
+
+
+// IE6/7 do not support getting/setting some attributes with get/setAttribute
+if ( !baidu.support.getSetAttribute ) {
+
+	var fixSpecified = {
+		name: true,
+		id: true,
+		coords: true
+	};
+
+	// Use this for any attribute in IE6/7
+	// This fixes almost every IE6/7 issue
+	baidu._util_.valHooks.button = {
+		get: function( elem, name ) {
+			var ret;
+			ret = elem.getAttributeNode( name );
+			return ret && ( fixSpecified[ name ] ? ret.value !== "" : ret.specified ) ?
+				ret.value :
+				undefined;
+		},
+		set: function( elem, value, name ) {
+			// Set the existing or create a new attribute node
+			var ret = elem.getAttributeNode( name );
+			if ( !ret ) {
+				ret = document.createAttribute( name );
+				elem.setAttributeNode( ret );
+			}
+			return ( ret.value = value + "" );
+		}
+	};
+}
+
+// Radios and checkboxes getter/setter
+if ( !baidu.support.checkOn ) {
+	baidu.forEach([ "radio", "checkbox" ], function() {
+		baidu._util_.valHooks[ this ] = {
+			get: function( elem ) {
+				// Handle the case where in Webkit "" is returned instead of "on" if a value isn't specified
+				return elem.getAttribute("value") === null ? "on" : elem.value;
+			}
+		};
+	});
+}
+
+baidu.forEach([ "radio", "checkbox" ], function(item) {
+	baidu._util_.valHooks[ item ] = baidu.extend( baidu._util_.valHooks[ item ], {
+		set: function( elem, value ) {
+			if ( baidu.isArray( value ) ) {
+				return ( elem.checked = baidu.array(value).indexOf(baidu(elem).val()) >= 0 );
+			}
+		}
+	});
+});
+
+/**
  * @author wangxiao
  * @email  1988wangxiao@gmail.com
  */
@@ -8888,11 +7651,11 @@ baidu.dom.extend({
  * @return {TangramDom} 返回之前匹配元素的TangramDom对象
  * @example baidu.dom("<div>").val(function(index, value){});
  */ 
-///import baidu;
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.type;
-///import baidu._util_.valHooks;
+
+
+
+
+
 
 baidu.dom.extend({
     val: function(value){
@@ -8992,6 +7755,389 @@ baidu.dom.extend({
 });
 
 /**
+ * @author linlingyu
+ */
+
+
+
+
+baidu._util_.access = function(key, value, callback){
+    if( this.size()<=0 ){
+        return this;
+    };
+    switch(baidu.type(key)){
+        case 'string'://高频
+            if(value === undefined){
+                return callback.call(this, this[0], key);
+            }else{
+                for(var i = 0, ele; ele = this[i]; i++){
+                    callback.call(this, ele, key,
+                        baidu.type(value) === 'function' ? value.call(ele, i, callback.call(this, ele, key)) : value);
+                }
+            }
+            break;
+        case 'object':
+            for(var i in key){
+                baidu._util_.access.call(this, i, key[i], callback);
+            }
+            break;
+    }
+    return this;
+};
+/**
+ * @author linlingyu
+ */
+
+/**
+ * @description 取得第一个匹配元素的computed style值。如果元素的样式值不能被浏览器计算，则会返回空字符串（IE）
+ * @function 
+ * @name baidu.dom().getComputedStyle()
+ * @grammar baidu.dom(args).getComputedStyle(key)
+ * @param {String} key 参数是一个css的属性名称，通过该属性名称取得第一个匹配元素的computed style值
+ * @return {String} 返回一个字符串的computed style值
+ */
+/**
+ * @description 取得第一个匹配元素的computed style值。如果元素的样式值不能被浏览器计算，则会返回空字符串（IE）
+ * @function 
+ * @name baidu.dom.getComputedStyle
+ * @grammar baidu.dom.getComputedStyle(element, key)
+ * @param {String|Element} element 目标元素或目标元素的id
+ * @param {String} key 参数是一个css的属性名称，通过该属性名称取得第一个匹配元素的computed style值
+ * @return {String} 返回一个字符串的computed style值
+ */
+baidu.dom.extend({
+    getComputedStyle: function(key){
+        var defaultView = this[0].ownerDocument.defaultView,
+            computedStyle = defaultView && defaultView.getComputedStyle
+                && defaultView.getComputedStyle(this[0], null),
+            val = computedStyle ? (computedStyle.getPropertyValue(key) || computedStyle[key]) : '';
+        return val || this[0].style[key];
+    }
+});
+/**
+ * @author linlingyu
+ */
+
+/**
+ * @description 取得第一个匹配元素的 currentStyle 值，兼容非IE浏览器某些样式名称或者值需要hack的话，需要别外处理
+ * @function 
+ * @name baidu.dom().getCurrentStyle()
+ * @grammar baidu.dom(args).getCurrentStyle(key)
+ * @param {String} key 参数是一个css的属性名称，通过该属性名称取得第一个匹配元素的 currentStyle 值
+ * @return {String} 返回一个字符串的 currentStyle 值
+ */
+/**
+ * @description 取得第一个匹配元素的 currentStyle 值，兼容非IE浏览器某些样式名称或者值需要hack的话，需要别外处理
+ * @function 
+ * @name baidu.dom.getCurrentStyle
+ * @grammar baidu.dom.getCurrentStyle(element, key)
+ * @param {String|Element} element 目标元素或目标元素的id
+ * @param {String} key 参数是一个css的属性名称，通过该属性名称取得第一个匹配元素的 currentStyle 值
+ * @return {String} 返回一个字符串的 currentStyle 值
+ */
+baidu.dom.extend({
+    getCurrentStyle: function(){
+        var css = document.documentElement.currentStyle ?
+            function(key){return this[0].currentStyle ? this[0].currentStyle[key] : this[0].style[key];}
+                : function(key){return this.getComputedStyle(key);}
+        return function(key){
+            return css.call(this, key);
+        }
+    }()
+});
+/**
+ * @author linlingyu
+ */
+
+
+
+
+
+baidu._util_.getWidthOrHeight = function(){
+    var ret = {},
+        cssShow = {position: 'absolute', visibility: 'hidden', display: 'block'};
+    function swap(ele, options){
+        var defaultVal = {};
+        for(var i in options){
+            defaultVal[i] = ele.style[i];
+            ele.style[i] = options[i];
+        }
+        return defaultVal;
+    }
+    baidu.forEach(['Width', 'Height'], function(item){
+        var cssExpand = {Width: ['Right', 'Left'], Height: ['Top', 'Bottom']}[item];
+        ret['get' + item] = function(ele, extra){
+            var tang = baidu.dom(ele),
+                rect = ele['offset' + item],
+                defaultValue = rect === 0 && swap(ele, cssShow),
+                delString = 'padding|border';
+            defaultValue && (rect = ele['offset' + item]);
+            extra && baidu.forEach(extra.split('|'), function(val){
+                if(!~delString.indexOf(val)){//if val is margin
+                    rect += parseFloat(tang.getCurrentStyle(val + cssExpand[0])) || 0;
+                    rect += parseFloat(tang.getCurrentStyle(val + cssExpand[1])) || 0;
+                }else{//val is border or padding
+                    delString = delString.replace(new RegExp('\\|?' + val + '\\|?'), '');
+                }
+            });
+            delString && baidu.forEach(delString.split('|'), function(val){
+                rect -= parseFloat(tang.getCurrentStyle(val + cssExpand[0] + (val === 'border' ? 'Width' : ''))) || 0;
+                rect -= parseFloat(tang.getCurrentStyle(val + cssExpand[1] + (val === 'border' ? 'Width' : ''))) || 0;
+            });
+            defaultValue && swap(ele, defaultValue);
+            return rect;
+        }
+    });
+    //
+    return function(ele, key, extra){
+        return ret[key === 'width' ? 'getWidth' : 'getHeight'](ele, extra);
+    }
+}();
+/**
+ * @author wangxiao
+ * @email  1988wangxiao@gmail.com
+ */
+
+
+
+/**
+ * @description 将目标字符串进行驼峰化处理
+ * @function 
+ * @name baidu.string().toCamelCase()
+ * @grammar baidu.string(str).toCamelCase()
+ * @return {String} 驼峰化处理后的字符串
+ */
+
+/**
+ * @description 将目标字符串进行驼峰化处理
+ * @function 
+ * @name baidu.string.toCamelCase
+ * @grammar baidu.string.toCamelCase(str)
+ * @param {String} str 目标字符串
+ * @return {String} 驼峰化处理后的字符串
+ */
+
+ //支持单词以“-_”分隔
+ //todo:考虑以后去掉下划线支持？
+baidu.string.extend({
+    toCamelCase : function () {
+    	var source = this.valueOf();
+        //提前判断，提高getStyle等的效率 thanks xianwei
+        if (source.indexOf('-') < 0 && source.indexOf('_') < 0) {
+            return source;
+        }
+        return source.replace(/[-_][^-_]/g, function (match) {
+            return match.charAt(1).toUpperCase();
+        });
+    }
+});
+
+/**
+ * @author linlingyu
+ */
+
+
+
+
+
+
+
+
+
+baidu.dom.styleFixer = function(){
+    var alpha = /alpha\s*\(\s*opacity\s*=\s*(\d{1,3})/i,
+        nonpx = /^-?(?:\d*\.)?\d+(?!px)[^\d\s]+$/i,
+        cssNumber = 'fillOpacity,fontWeight,opacity,orphans,widows,zIndex,zoom',
+        cssProps = {
+            'float': baidu.support.cssFloat ? 'cssFloat' : 'styleFloat'
+        },
+        cssMapping = {
+            fontWeight: {normal: 400, bold: 700, bolder: 700, lighter: 100}
+        },
+        cssHooks = {
+            opacity: {},
+            width: {},
+            height: {},
+            fontWeight: {
+                get: function(ele, key){
+                    var ret = style.get(ele, key);
+                    return cssMapping.fontWeight[ret] || ret;
+                }
+            }
+        },
+        style = {
+            set: function(ele, key, val){ele.style[key] = val;}
+        };
+    baidu.extend(cssHooks.opacity, baidu.support.opacity ? {
+        get: function(ele, key){
+            var ret = baidu.dom(ele).getCurrentStyle(key);
+            return ret === '' ? '1' : ret;
+        }
+    } : {
+        get: function(ele){
+            return alpha.test((ele.currentStyle || ele.style).filter || '') ? parseFloat(RegExp.$1) / 100 : '1';
+        },
+        set: function(ele, key, value){
+            var filterString = (ele.currentStyle || ele.style).filter || '',
+                opacityValue = value * 100;
+                ele.style.zoom = 1;
+                ele.style.filter = alpha.test(filterString) ? filterString.replace(alpha, 'Alpha(opacity=' + opacityValue)
+                    : filterString + ' progid:dximagetransform.microsoft.Alpha(opacity='+ opacityValue +')';
+        }
+    });
+    //
+    baidu.forEach(['width', 'height'], function(item){
+        cssHooks[item] = {
+            get: function(ele){
+                return baidu._util_.getWidthOrHeight(ele, item) + 'px';
+            },
+            set: function(ele, key, val){
+                baidu.type(val) === 'number' && val < 0 && (val = 0);
+                style.set(ele, key, val);
+            }
+        };
+    });
+    
+    baidu.extend(style, document.documentElement.currentStyle? {
+        get: function(ele, key){
+            var val = baidu.dom(ele).getCurrentStyle(key),
+                defaultLeft;
+            if(nonpx.test(val)){
+                defaultLeft = ele.style.left;
+                ele.style.left = key === 'fontSize' ? '1em' : val;
+                val = ele.style.pixelLeft + 'px';
+                ele.style.left = defaultLeft;
+            }
+            return val;
+        }
+    } : {
+        get: function(ele, key){
+            return baidu.dom(ele).getCurrentStyle(key);
+        }
+    });
+    
+    //
+    return function(ele, key, val){
+        var origKey = baidu.string(key).toCamelCase(),
+            method = val === undefined ? 'get' : 'set',
+            origVal, hooks;
+        origKey = cssProps[origKey] || origKey;
+        origVal = baidu.type(val) === 'number' && !~cssNumber.indexOf(origKey) ? val + 'px' : val;
+        hooks = cssHooks.hasOwnProperty(origKey) && cssHooks[origKey][method] || style[method];
+        return hooks(ele, origKey, origVal);
+    };
+}();
+/**
+ * @author linlingyu
+ */
+
+
+
+
+/**
+ * @description 取得第一个匹配元素或是设置多个匹配元素的css属性
+ * @function 
+ * @name baidu.dom().css()
+ * @grammar baidu.dom(args).css(key)
+ * @param {String} key 一个css的属性名称
+ * @return {String} 返回取得的值的字符串
+ * @example 
+ .css()方法是为匹配的元素集合中获取第一个元素的样式属性值简单方法，
+ 特别是针对不同的浏览器能访问大多数的性质和不同类型的浏览器某几个属性，
+ .css()方法解决了浏览器差异。
+
+ 示例代码：
+ //HTML代码片段
+ <div style="background-color:blue;"></div>
+
+ //取得背景色
+ baidu("div").css("background-color");  //blue
+
+ */
+
+/**
+ * @description 取得第一个匹配元素或是设置多个匹配元素的css属性
+ * @function 
+ * @name baidu.dom().css()
+ * @grammar baidu.dom(args).css(key, value)
+ * @param {String} key 一个css的属性名称
+ * @param {Number|String} value 一个对应key的css的属性值，通过key与value的键和值来设置匹配元素的css属性，当value是一个空字符串时，表示要删除当前属性
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ * @example 
+ .css()方法使得设置元素的CSS属性快速而又简单。
+ 这个方法可以使用任何一个CSS属性名和用空格隔开的值，或者一个“名/值对”对象(JavaScript Object)作为参数。
+ 示例代码： //HTML代码片段
+ <div style="background-color:blue;"></div>
+
+ //取得背景色
+ baidu("div").css("background-color","red");  //blue
+ 
+ */
+
+/**
+ * @description 设置第一个匹配元素或是设置多个匹配元素的多个css属性
+ * @function 
+ * @name baidu.dom().css()
+ * @grammar baidu.dom(args).css(map)
+ * @param {Object} map 一个具有key-value键值对的json数据，通过该map可以一次设置匹配元素的多个css属性的值
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ * @example 
+ .css()方法使得设置元素的CSS属性快速而又简单。
+ 这个方法可以使用任何一个CSS属性名和用空格隔开的值，或者一个“名/值对”对象(JavaScript Object)作为参数。
+ 示例代码： //HTML代码片段
+ <div style="position:absolute;left:20px;right:20px;background-color:blue;"></div>
+
+ //设置css
+ baidu("div").css({
+ 	"background-color":"red",
+ 	"left":"30px",
+ 	"right":"40px"
+ });
+ 
+ */
+
+/**
+ * @description 取得第一个匹配元素或是设置多个匹配元素的css属性
+ * @function 
+ * @name baidu.dom().css()
+ * @grammar baidu.dom(args).css(key, fn)
+ * @param {String} key 一个css的属性名称
+ * @param {function} fn 接收两个参数，index参数表示匹配元素在集合中的索引，value表示当前key的css属性对应的值，fn最终需要返回一个对应key的css属性值
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ * @example
+ 该接口为迭代器方法，可以获取每个匹配元素的对应css属性和index（索引值），并且将函数返回值设置为对应的css属性；
+ 通过使用一个函数来设置css属性，我们可以根据元素的css属性来计算值。
+ 举个例子，我们可以把新的值与现有的值联系在一起，允许我们通过函数来传递改变新值。
+
+ 示例代码：
+ //HTML代码片段
+ <div style="background-color:blue;"></div>
+ <div style="background-color:blue;"></div>
+
+ //迭代器方法
+ //通过使用一个函数来设置className，我们可以根据元素的className来计算值。
+ //举个例子，我们可以把新的值与现有的值联系在一起，允许我们通过函数来传递改变新值。
+ baidu('div').css("background-color",function(index,css){
+    alert(index);
+    alert(css);
+    if(index==1){
+       return "red";
+    }
+ });
+
+ */
+
+baidu.dom.extend({
+    css: function(key, value){
+        baidu.check('^(?:(?:string(?:,(?:number|string|function))?)|object)$', 'baidu.dom.css');
+        return baidu._util_.access.call(this, key, value, function(ele, key, val){
+            var styleFixer = baidu.dom.styleFixer;
+            return styleFixer ? styleFixer(ele, key, val)
+                : (val === undefined ? this.getCurrentStyle(key) : ele.style[key] = val);
+        });
+    }
+});
+/**
  * @author wangxiao
  * @email  1988wangxiao@gmail.com
  */
@@ -9052,12 +8198,12 @@ baidu.dom.extend({
  * @example baidu.dom("<div>").text(function(index, text))
  */
 
-///import baidu;
-///import baidu.dom;
-///import baidu.dom.empty;
-///import baidu.forEach;
-///import baidu.dom.append;
-///import baidu.support;
+
+
+
+
+
+
 
 baidu.dom.extend({
     text: function(value){
@@ -9158,11 +8304,42 @@ baidu.dom.extend({
 /**
  * @author linlingyu
  */
-///import baidu.dom;
-///import baidu.type;
-///import baidu._util_.access;
-///import baidu._util_.getWidthOrHeight;
-///import baidu._util_.getWindowOrDocumentWidthOrHeight;
+
+
+
+
+
+
+baidu._util_.getWindowOrDocumentWidthOrHeight = baidu._util_.getWindowOrDocumentWidthOrHeight || function(){
+    var ret = {'window': {}, 'document': {}};
+    baidu.forEach(['Width', 'Height'], function(item){
+        var clientProp = 'client' + item,
+            offsetProp = 'offset' + item,
+            scrollProp = 'scroll' + item;
+        ret['window']['get' + item] = function(ele){
+            var doc = ele.document,
+                rectValue = doc.documentElement[clientProp];
+            return baidu.browser.isStrict && rectValue
+                || doc.body && doc.body[clientProp] || rectValue;
+        };
+        ret['document']['get' + item] = function(ele){
+            var doc = ele.documentElement;
+            return doc[clientProp] >= doc[scrollProp] ? doc[clientProp]
+                : Math.max(ele.body[scrollProp], doc[scrollProp], ele.body[offsetProp], doc[offsetProp]);
+        }
+    });
+    return function(ele, type, key){
+        return ret[type][key === 'width' ? 'getWidth' : 'getHeight'](ele);
+    }
+}();
+/**
+ * @author linlingyu
+ */
+
+
+
+
+
 /**
  * @description 取得第一个匹配元素或是设置多个匹配元素的宽度，该宽度忽略margin, border, padding的计算
  * @function 
@@ -9243,10 +8420,10 @@ baidu.dom.extend({
 /**
  * @author linlingyu
  */
-///import baidu.dom;
-///import baidu._util_.access;
-///import baidu._util_.getWidthOrHeight;
-///import baidu._util_.getWindowOrDocumentWidthOrHeight;
+
+
+
+
 /**
  * @description 取得第一个匹配元素或是设置多个匹配元素的高度，该高度忽略margin, border, padding的计算
  * @function 
@@ -9329,8 +8506,8 @@ baidu.dom.extend({
 /**
  * @author linlingyu
  */
-///import baidu.dom;
-///import baidu.dom.getDocument;
+
+
 
 /**
  * @description 取得匹配元素所属的window对象
@@ -9356,12 +8533,12 @@ baidu.dom.extend({
 /**
  * @author linlingyu
  */
-///import baidu.dom;
-///import baidu.type;
-///import baidu.support;
-///import baidu.dom.getWindow;
-///import baidu.dom.getDocument;
-///import baidu.dom.getCurrentStyle;
+
+
+
+
+
+
 
 /**
  * @description 取得第一个匹配元素或是设置多个匹配元素相对于文档的偏移量
@@ -9520,10 +8697,10 @@ baidu.dom.extend({
 
  */
 
-///import baidu.forEach;
-///import baidu.support;
-///import baidu._util_.propHooks;
-///import baidu.dom.attr;
+
+
+
+
 
 baidu.dom.extend({
     removeAttr: function(value){
@@ -9673,23 +8850,23 @@ baidu.dom.extend({
  });
  */
 
-///import baidu;
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.support;
 
-///import baidu._util_.attrHooks;
 
-///import baidu.dom.prop;
-///import baidu.dom.val;
-///import baidu.dom.css;
-///import baidu.dom.html;
-///import baidu.dom.text;
-///import baidu.dom.width;
-///import baidu.dom.height;
-///import baidu.dom.offset;
-///import baidu._util_.isXML;
-///import baidu.dom.removeAttr;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 baidu.dom.extend({
     attr:function(name,value){
@@ -9828,9 +9005,9 @@ baidu.dom.extend({
 /**
  * @author linlingyu
  */
-///import baidu._util_.smartInsert;
-///import baidu.dom.getDocument;
-///import baidu.merge;
+
+
+
 /**
  * @description 在匹配的每个DOM元素前面插入新的内容
  * @function 
@@ -9902,7 +9079,7 @@ baidu.dom.extend({
  * @author dron
  */
 
-///import baidu.dom.on;
+
 
 /**
  * @description 对指定的TangramDom集合绑定一个自定义事件
@@ -9920,12 +9097,12 @@ baidu.dom.extend({
 		return this.on(type, undefined, data, fn);
 	}
 });
-///import baidu.dom;
-///import baidu.type;
-///import baidu.query;
-///import baidu.forEach;
-///import baidu.merge;
-///import baidu.array.unique;
+
+
+
+
+
+
 
 /**
  * @fileoverview
@@ -10027,11 +9204,11 @@ baidu.dom.match = function(){
 }();
 
 
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.type;
-///import baidu.dom.each;
-///import baidu.dom.match;
+
+
+
+
+
 
 /**
  * @fileoverview
@@ -10064,9 +9241,9 @@ baidu.dom.extend({
 
 
 
-///import baidu.forEach;
-///import baidu.dom.match;
-///import baidu.array.unique;
+
+
+
 
 /**
  * @fileoverview
@@ -10106,8 +9283,8 @@ baidu.dom.extend({
 /**
  * @author linlingyu
  */
-///import baidu.dom;
-///import baidu.makeArray;
+
+
 /**
  * @description 取得匹配元素内部第一级的子节点，包括文本节点等，如果匹配元素是一个iframe，并且同域，则可以返回iframe的文档
  * @function 
@@ -10128,15 +9305,58 @@ baidu.dom.extend({
         return baidu.merge(this, ret);
     }
 });
+/// support magic - Tangram 1.x Code Start
+/*
+ * Tangram
+ * Copyright 2009 Baidu Inc. All rights reserved.
+ * 
+ * path: baidu/dom/_NAME_ATTRS.js
+ * author: allstar, erik
+ * version: 1.1.0
+ * date: 2009/12/2
+ */
 
 
 
 
-///import baidu.id;
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.type;
-///import baidu.global;
+/**
+ * 提供给setAttr与getAttr方法作名称转换使用
+ * ie6,7下class要转换成className
+ * @meta standard
+ */
+
+baidu.dom._NAME_ATTRS = (function () {
+    var result = {
+        'cellpadding': 'cellPadding',
+        'cellspacing': 'cellSpacing',
+        'colspan': 'colSpan',
+        'rowspan': 'rowSpan',
+        'valign': 'vAlign',
+        'usemap': 'useMap',
+        'frameborder': 'frameBorder'
+    };
+    
+    if (baidu.browser.ie < 8) {
+        result['for'] = 'htmlFor';
+        result['class'] = 'className';
+    } else {
+        result['htmlFor'] = 'for';
+        result['className'] = 'class';
+    }
+    
+    return result;
+})();
+/// support magic - Tangram 1.x Code End
+
+
+
+
+
+
+
+
+
+
 
 /**
  * @fileoverview
@@ -10213,8 +9433,8 @@ baidu.dom.extend({
  * date: 2009/12/1
  */
 
-///import baidu.id;
-///import baidu.lang;
+
+
 
 /**
  * @description Tangram继承机制提供的一个基类，用户可以通过继承baidu.lang.Class来获取它的属性及方法。
@@ -10284,7 +9504,7 @@ baidu.lang.Class.prototype.toString = function(){
  * modify: 2011/11/23
  */
 
-///import baidu.lang.Class;
+
 
  
 /**
@@ -10341,8 +9561,8 @@ baidu.lang.Class.prototype.removeEventListener = function (type, handler) {
  * date: 2010/02/04
  */
 
-///import baidu.id;
-///import baidu.lang;
+
+
 
 /**
  * @description 返回一个当前页面的唯一标识字符串。
@@ -10375,8 +9595,8 @@ baidu.lang.guid = function() {
  * modify: 2012/6/29 mz
  */
 
-///import baidu.lang;
-///import baidu.type;
+
+
 
 /**
  * @description 判断目标参数是否string类型或String对象
@@ -10406,9 +9626,9 @@ baidu.lang.isString = baidu.isString;
  * modify: 2011/11/24 meizz
  */
 
-///import baidu.lang.Class;
-///import baidu.lang.guid;
-///import baidu.lang.isString;
+
+
+
 
 /**
  * @description 自定义的事件对象。
@@ -10516,7 +9736,7 @@ baidu.lang.Class.prototype.addEventListener = function (type, handler, key) {
  * @author dron
  */
 
-///import baidu.dom.on;
+
 
 /**
  * @description 对指定的TangramDom集合添加事件代理
@@ -10538,8 +9758,8 @@ baidu.dom.extend({
     	return this.on( type, selector, data, fn );
 	}
 });
-///import baidu.dom;
-///import baidu.dom.match;
+
+
 
 /**
  * @fileoverview
@@ -10591,8 +9811,8 @@ baidu.dom.extend({
  * @author linlingyu
  */
  
-///import baidu.dom.filter;
-///import baidu._util_.cleanData;
+
+
 /**
  * @description 将匹配到的DOM元素从文档中移除，并移除对应的DOM元素的事件
  * @function 
@@ -10646,7 +9866,7 @@ baidu.dom.extend({
 /**
  * @author linlingyu
  */
-///import baidu.dom.remove;
+
 /**
  * @description 将匹配到的DOM元素从文档中移除，并不移除对应的DOM元素的事件
  * @function 
@@ -10680,7 +9900,134 @@ baidu.dom.extend({
     }
 });
 /// support magic - Tangram 1.x Code Start
-///import baidu.dom.on;
+/*
+ * Tangram
+ * Copyright 2009 Baidu Inc. All rights reserved.
+ * 
+ * path: baidu/dom/_styleFixer.js
+ * author: allstar
+ * version: 1.1.0
+ * date: 2009/11/17
+ */
+
+
+
+/**
+ * 提供给setStyle与getStyle使用
+ */
+baidu.dom._styleFixer = baidu.dom._styleFixer || {};
+/// support magic - Tangram 1.x Code End
+
+/// support magic - Tangram 1.x Code Start
+/*
+ * Tangram
+ * Copyright 2009 Baidu Inc. All rights reserved.
+ * 
+ * path: baidu/dom/_styleFilters.js
+ * author: allstar
+ * version: 1.1.0
+ * date: 2009/12/02
+ */
+
+
+
+/**
+ * 提供给setStyle与getStyle使用
+ */
+baidu.dom._styleFilter = baidu.dom._styleFilter || [];
+/// support magic - Tangram 1.x Code End
+
+/// support magic - Tangram 1.x Code Start
+/*
+ * Tangram
+ * Copyright 2009 Baidu Inc. All rights reserved.
+ * 
+ * path: baidu/dom/_styleFilter/filter.js
+ * author: allstar, erik
+ * version: 1.1.0
+ * date: 2009/12/02
+ */
+
+
+
+/**
+ * 为获取和设置样式的过滤器
+ * @private
+ * @meta standard
+ */
+baidu.dom._styleFilter.filter = function (key, value, method) {
+    for (var i = 0, filters = baidu.dom._styleFilter, filter; filter = filters[i]; i++) {
+        if (filter = filter[method]) {
+            value = filter(key, value);
+        }
+    }
+
+    return value;
+};
+/// support magic - Tangram 1.x Code End
+
+/// support magic - Tangram 1.x Code Start
+/*
+ * Tangram
+ * Copyright 2009 Baidu Inc. All rights reserved.
+ */
+
+
+
+
+
+
+
+/**
+ * 获取目标元素的样式值
+ * @name baidu.dom.getStyle
+ * @function
+ * @grammar baidu.dom.getStyle(element, key)
+ * @param {HTMLElement|string} element 目标元素或目标元素的id
+ * @param {string} key 要获取的样式名
+ * @remark
+ * 
+ * 为了精简代码，本模块默认不对任何浏览器返回值进行归一化处理（如使用getStyle时，不同浏览器下可能返回rgb颜色或hex颜色），也不会修复浏览器的bug和差异性（如设置IE的float属性叫styleFloat，firefox则是cssFloat）。<br />
+ * baidu.dom._styleFixer和baidu.dom._styleFilter可以为本模块提供支持。<br />
+ * 其中_styleFilter能对颜色和px进行归一化处理，_styleFixer能对display，float，opacity，textOverflow的浏览器兼容性bug进行处理。	
+ * @shortcut getStyle
+ * @meta standard
+ * @see baidu.dom.setStyle,baidu.dom.setStyles, baidu.dom.getComputedStyle
+ *             
+ * @return {string} 目标元素的样式值
+ */
+// TODO
+// 1. 无法解决px/em单位统一的问题（IE）
+// 2. 无法解决样式值为非数字值的情况（medium等 IE）
+baidu.dom.getStyle = function (element, key) {
+    var dom = baidu.dom;
+
+    element = dom.g(element);
+    key = baidu.string.toCamelCase(key);
+    //computed style, then cascaded style, then explicitly set style.
+    var value = element.style[key] ||
+                (element.currentStyle ? element.currentStyle[key] : "") || 
+                dom.getComputedStyle(element, key);
+
+    // 在取不到值的时候，用fixer进行修正
+    if (!value || value == 'auto') {
+        var fixer = dom._styleFixer[key];
+        if(fixer){
+            value = fixer.get ? fixer.get(element, key, value) : baidu.dom.getStyle(element, fixer);
+        }
+    }
+    
+    /* 检查结果过滤器 */
+    if (fixer = dom._styleFilter) {
+        value = fixer.filter(key, value, 'get');
+    }
+
+    return value;
+};
+
+/// support magic - Tangram 1.x Code End
+/// support magic - Tangram 1.x Code Start
+
 /// support magic - Tangram 1.x Code End
 
 /// support magic - Tangram 1.x Code Start
@@ -10694,7 +10041,7 @@ baidu.dom.extend({
  * date: 2009/11/17
  */
 
-///import baidu;
+
 /**
  * @description 对页面层面的封装，包括页面的高宽属性、以及外部css和js的动态添加
  * @namespace
@@ -10715,7 +10062,7 @@ baidu.page = baidu.page || {};
  * date: 2009/11/17
  */
 
-///import baidu.page;
+
 
 /**
  * @description 获取纵向滚动量
@@ -10751,7 +10098,7 @@ baidu.page.getScrollTop = function () {
  * date: 2009/11/17
  */
 
-///import baidu.page;
+
 
 /*
  * @description 获取横向滚动量
@@ -10780,9 +10127,9 @@ baidu.page.getScrollLeft = function () {
  */
 
 
-///import baidu.event.on;
-///import baidu.page.getScrollTop;
-///import baidu.page.getScrollLeft;
+
+
+
 /*
  * 取得当前页面里的目前鼠标所在的坐标（x y）
  * @return  {JSON}  当前鼠标的坐标值({x, y})
@@ -10811,9 +10158,9 @@ baidu.page.getScrollLeft = function () {
  * @fileOverview 对当前 TangramDom 集合解除事件监听
  * @author dron
  */
-///import baidu._util_.eventBase.core;
-///import baidu.event;
-///import baidu.forEach;
+
+
+
 
 /**
  * @description 对当前 TangramDom 集合解除事件监听
@@ -10864,7 +10211,7 @@ baidu.dom.extend({
 });
 
 /// support - magic Tangram 1.x Code Start
-///import baidu.dom.g;
+
 baidu.event.un = baidu.un = function(element, evtName, handler){
     element = baidu.dom.g(element);
     baidu.dom(element).off(evtName.replace(/^\s*on/, ''), handler);
@@ -10882,7 +10229,7 @@ baidu.event.un = baidu.un = function(element, evtName, handler){
  * date: 2009/11/23
  */
 
-///import baidu.event;
+
 
 /**
  * 阻止事件的默认行为
@@ -10937,16 +10284,16 @@ baidu.event.preventDefault = function (event) {
 
  * @see baidu.dom.draggable
  */
-///import baidu.dom.g;
-///import baidu.object.extend;
-///import baidu.dom.getStyle;
-///import baidu.page.getMousePosition;
-///import baidu.dom.on;
-///import baidu.dom.off;
-///import baidu.event.preventDefault;
-///import baidu.type;
-///import baidu.page.getScrollLeft;
-///import baidu.page.getScrollTop;
+
+
+
+
+
+
+
+
+
+
 
 
 (function(){
@@ -11048,7 +10395,7 @@ baidu.event.preventDefault = function (event) {
 
 
 /// support maigc - Tangram 1.x Code Start
-///import baidu.dom.off;
+
 /// support maigc - Tangram 1.x Code End
 
 
@@ -11058,7 +10405,7 @@ baidu.event.preventDefault = function (event) {
 
 
 
-///import baidu.dom;
+
 
 /**
  * @fileoverview
@@ -11082,12 +10429,12 @@ baidu.dom.extend({
     }
 });
 
-///import baidu.dom;
-///import baidu.dom.each;
-///import baidu.query;
-///import baidu.merge;
-///import baidu.forEach;
-///import baidu.type;
+
+
+
+
+
+
 
 /**
  * @fileoverview
@@ -11136,9 +10483,9 @@ baidu.dom.extend({
     }
 });
 
-///import baidu.dom;
-///import baidu.dom.children;
-///import baidu.type;
+
+
+
 
 /**
  * @fileoverview
@@ -11195,9 +10542,9 @@ baidu.dom.first = function(e) {
  * @return {string|null} 目标元素的attribute值，获取不到时返回null
  */
 
-///import baidu;
-///import baidu.dom;
-///import baidu.dom._NAME_ATTRS;
+
+
+
 
 baidu.dom.extend({
     getAttr: function (key) {
@@ -11216,9 +10563,9 @@ baidu.dom.extend({
 
 
 
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.dom.find;
+
+
+
 /**
  * @fileoverview
  * @author meizz
@@ -11284,9 +10631,9 @@ baidu.dom.extend({
 
  */
 
-///import baidu;
-///import baidu.dom;
-///import baidu.forEach;
+
+
+
 
 baidu.dom.extend({
     hasClass: function(value){
@@ -11326,8 +10673,203 @@ baidu.dom.extend({
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.dom;
-///import baidu._util_.showHide;
+///import baidu.support;
+///import baidu.dom.contains;
+///import baidu.dom.getCurrentStyle;
+///import baidu.dom.css;
+///import baidu.dom.data;
+///import baidu.dom.appendTo;
+///import baidu.dom.css;
+
+(function(){
+
+var iframeDoc,
+    iframe,
+    curCSS,
+    rmargin = /^margin/,
+    rnumnonpx = /^-?(?:\d*\.)?\d+(?!px)[^\d\s]+$/i,
+    rposition = /^(top|right|bottom|left)$/,
+    elemdisplay = {};
+
+baidu.extend(baidu._util_,{
+    showHide:function( elements, show){
+        var elem, display,
+            values = [],
+            index = 0,
+            length = elements.length;
+
+        for ( ; index < length; index++ ) {
+            elem = elements[ index ];
+            if ( !elem.style ) {
+                continue;
+            }
+            values[ index ] = baidu.dom(elem).data("olddisplay" );
+            if ( show ) {
+                // Reset the inline display of this element to learn if it is
+                // being hidden by cascaded rules or not
+                if ( !values[ index ] && elem.style.display === "none" ) {
+                    elem.style.display = "";
+                }
+
+                // Set elements which have been overridden with display: none
+                // in a stylesheet to whatever the default browser style is
+                // for such an element
+                if ( (elem.style.display === "" && curCSS( elem, "display" ) === "none") ||
+                    !baidu.dom.contains( elem.ownerDocument.documentElement, elem ) ) {
+                    values[ index ] = baidu.dom(elem).data("olddisplay", css_defaultDisplay(elem.nodeName) );
+                }
+            } else {
+                display = curCSS( elem, "display" );
+
+                if ( !values[ index ] && display !== "none" ) {
+                    baidu.dom(elem).data("olddisplay", display );
+                }
+            }
+        }
+
+        // Set the display of most of the elements in a second loop
+        // to avoid the constant reflow
+        for ( index = 0; index < length; index++ ) {
+            elem = elements[ index ];
+            if ( !elem.style ) {
+                continue;
+            }
+            if ( !show || elem.style.display === "none" || elem.style.display === "" ) {
+                elem.style.display = show ? values[ index ] || "" : "none";
+            }
+        }
+
+        return elements;
+    }
+});
+
+// NOTE: To any future maintainer, we've used both window.getComputedStyle
+// and getComputedStyle here to produce a better gzip size
+if ( window.getComputedStyle ) {
+    curCSS = function( elem, name ) {
+        var ret, width,
+            computed = getComputedStyle( elem, null ),
+            style = elem.style;
+
+        if ( computed ) {
+
+            ret = computed[ name ];
+            if ( ret === "" && !baidu.dom.contains( elem.ownerDocument.documentElement, elem ) ) {
+                ret = baidu.dom(elem).css( name );
+            }
+
+            // A tribute to the "awesome hack by Dean Edwards"
+            // WebKit uses "computed value (percentage if specified)" instead of "used value" for margins
+            // which is against the CSSOM draft spec: http://dev.w3.org/csswg/cssom/#resolved-values
+            if ( !baidu.support.pixelMargin && rmargin.test( name ) && rnumnonpx.test( ret ) ) {
+                width = style.width;
+                style.width = ret;
+                ret = computed.width;
+                style.width = width;
+            }
+        }
+
+        return ret;
+    };
+} else if ( document.documentElement.currentStyle ) {
+    curCSS = function( elem, name ) {
+        var left, rsLeft,
+            ret = elem.currentStyle && elem.currentStyle[ name ],
+            style = elem.style;
+
+        // Avoid setting ret to empty string here
+        // so we don't default to auto
+        if ( ret == null && style && style[ name ] ) {
+            ret = style[ name ];
+        }
+
+        // From the awesome hack by Dean Edwards
+        // http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
+
+        // If we're not dealing with a regular pixel number
+        // but a number that has a weird ending, we need to convert it to pixels
+        // but not position css attributes, as those are proportional to the parent element instead
+        // and we can't measure the parent instead because it might trigger a "stacking dolls" problem
+        if ( rnumnonpx.test( ret ) && !rposition.test( name ) ) {
+
+            // Remember the original values
+            left = style.left;
+            rsLeft = elem.runtimeStyle && elem.runtimeStyle.left;
+
+            // Put in the new values to get a computed value out
+            if ( rsLeft ) {
+                elem.runtimeStyle.left = elem.currentStyle.left;
+            }
+            style.left = name === "fontSize" ? "1em" : ret;
+            ret = style.pixelLeft + "px";
+
+            // Revert the changed values
+            style.left = left;
+            if ( rsLeft ) {
+                elem.runtimeStyle.left = rsLeft;
+            }
+        }
+
+        return ret === "" ? "auto" : ret;
+    };
+}
+
+// Try to determine the default display value of an element
+function css_defaultDisplay( nodeName ) {
+    if ( elemdisplay[ nodeName ] ) {
+        return elemdisplay[ nodeName ];
+    }
+
+    var elem = baidu.dom( "<" + nodeName + ">" ).appendTo( document.body ),
+        display = elem.css("display");
+    elem.remove();
+
+    // If the simple way fails,
+    // get element's real default display by attaching it to a temp iframe
+    if ( display === "none" || display === "" ) {
+        // Use the already-created iframe if possible
+        iframe = document.body.appendChild(
+            iframe || baidu.extend( document.createElement("iframe"), {
+                frameBorder: 0,
+                width: 0,
+                height: 0
+            })
+        );
+
+        // Create a cacheable copy of the iframe document on first call.
+        // IE and Opera will allow us to reuse the iframeDoc without re-writing the fake HTML
+        // document to it; WebKit & Firefox won't allow reusing the iframe document.
+        if ( !iframeDoc || !iframe.createElement ) {
+            iframeDoc = ( iframe.contentWindow || iframe.contentDocument ).document;
+            iframeDoc.write("<!doctype html><html><body>");
+            iframeDoc.close();
+        }
+
+        elem = iframeDoc.body.appendChild( iframeDoc.createElement(nodeName) );
+
+        display = curCSS( elem, "display" );
+        document.body.removeChild( iframe );
+    }
+
+    // Store the correct default display
+    elemdisplay[ nodeName ] = display;
+
+    return display;
+}
+
+
+
+})();
+
+
+
+/**
+ * @author wangxiao
+ * @email  1988wangxiao@gmail.com
+ */
+
+
+
 
 /**
  * @description 隐藏匹配的元素
@@ -11356,9 +10898,9 @@ baidu.dom.extend({
  * @author linlingyu
  */
 
-///import baidu.dom;
-///import baidu._util_.getWindowOrDocumentWidthOrHeight;
-///import baidu._util_.getWidthOrHeight;
+
+
+
 /**
  * @description 取得第一个匹配元素的高度，该高度忽略margin, border的计算，但包含padding的计算
  * @function 
@@ -11381,9 +10923,9 @@ baidu.dom.extend({
 /**
  * @author linlingyu
  */
-///import baidu.dom;
-///import baidu._util_.getWindowOrDocumentWidthOrHeight;
-///import baidu._util_.getWidthOrHeight;
+
+
+
 /**
  * @description 取得第一个匹配元素的宽度，该宽度忽略margin, border的计算，但包含padding的计算
  * @function 
@@ -11405,8 +10947,8 @@ baidu.dom.extend({
  * @author linlingyu
  */
 
-///import baidu.dom;
-///import baidu._util_.smartInsertTo;
+
+
 
 /**
  * @description 将匹配到的DOM元素插入到参数指定的DOM元素的后面
@@ -11464,8 +11006,8 @@ baidu.dom.extend({
  * @author linlingyu
  */
 
-///import baidu.dom;
-///import baidu._util_.smartInsertTo;
+
+
 
 
 /**
@@ -11526,8 +11068,8 @@ baidu.dom.extend({
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.dom;
-///import baidu.browser.opera;
+
+
 
 /**
  * @description 在目标元素的指定位置插入HTML代码
@@ -11589,7 +11131,7 @@ baidu.dom.extend({
         return element;
     }
 });
-///import baidu.dom.match;
+
 /**
  * @fileoverview
  * @author meizz
@@ -11612,7 +11154,7 @@ baidu.dom.extend({
     }
 });
 
-///import baidu.dom;
+
 
 
 /**
@@ -11636,9 +11178,9 @@ baidu.dom.extend({
     }
 });
 
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.dom.filter;
+
+
+
 
 /**
  * @fileoverview
@@ -11668,9 +11210,9 @@ baidu.dom.extend({
     }
 });
 
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.dom.match;
+
+
+
 
 /**
  * @fileoverview
@@ -11701,10 +11243,10 @@ baidu.dom.extend({
     }
 });
 
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.dom.match;
-///import baidu.array.indexOf;
+
+
+
+
 
 /**
  * @fileoverview
@@ -11747,9 +11289,9 @@ baidu.dom.extend({
     }
 });
 
-///import baidu.dom;
-///import baidu.type;
-///import baidu.dom.match;
+
+
+
 
 /**
  * @fileoverview
@@ -11806,8 +11348,8 @@ baidu.dom.extend({
  * @author linlingyu
  */
 
-///import baidu.dom.map;
-///import baidu.dom.getCurrentStyle;
+
+
 
 /**
  * @description 取得元素的父元素
@@ -11834,10 +11376,10 @@ baidu.dom.extend({
  * @author dron
  */
 
-///import baidu.dom.on;
-///import baidu.dom.off;
-///import baidu.forEach;
-///import baidu.id;
+
+
+
+
 
 /**
  * @description 对当前 TangramDom 集合添加一次性事件监听
@@ -11860,9 +11402,9 @@ baidu.dom.extend({
 /**
  * @author linlingyu
  */
-///import baidu.dom;
-///import baidu._util_.getWindowOrDocumentWidthOrHeight;
-///import baidu._util_.getWidthOrHeight;
+
+
+
 /**
  * @description 取得第一个匹配元素的高度，该高度包含border, padding的计算并通过参数来加入对margin的计算
  * @function 
@@ -11884,9 +11426,9 @@ baidu.dom.extend({
 /**
  * @author linlingyu
  */
-///import baidu.dom;
-///import baidu._util_.getWindowOrDocumentWidthOrHeight;
-///import baidu._util_.getWidthOrHeight;
+
+
+
 /**
  * @description 取得第一个匹配元素的宽度，该宽度包含border, padding的计算并通过参数来加入对margin的计算
  * @function 
@@ -11905,9 +11447,9 @@ baidu.dom.extend({
             : baidu._util_.getWidthOrHeight(ele, 'width', 'padding|border' + (margin ? '|margin' : ''));
     }
 });
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.dom.match;
+
+
+
 
 /**
  * @fileoverview
@@ -11937,10 +11479,10 @@ baidu.dom.extend({
     }
 });
 
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.merge;
-///import baidu.dom.match;
+
+
+
+
 
 /**
  * @fileoverview
@@ -11974,10 +11516,10 @@ baidu.dom.extend({
     }
 });
 
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.dom.match;
-///import baidu.array.indexOf;
+
+
+
+
 
 /**
  * @fileoverview
@@ -12024,9 +11566,9 @@ baidu.dom.extend({
  * @author linlingyu
  */
 
-///import baidu.dom.offset;
-///import baidu.dom.offsetParent;
-///import baidu.dom.getCurrentStyle;
+
+
+
 /**
  * @description 取得第一个匹配元素相对于父元素的偏移量
  * @function 
@@ -12055,7 +11597,7 @@ baidu.dom.extend({
 /**
  * @author linlingyu
  */
-///import baidu._util_.smartInsert;
+
 /**
  * @description 在匹配的每个DOM元素内部的前端插入内容
  * @function 
@@ -12113,8 +11655,8 @@ baidu.dom.extend({
 /**
  * @author linlingyu
  */
-///import baidu.dom;
-///import baidu._util_.smartInsertTo;
+
+
 /**
  * @description 将匹配到的DOM元素插入到参数指定的DOM元素内部的开始
  * @function 
@@ -12159,9 +11701,9 @@ baidu.dom.extend({
         return this;
     }
 });
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.dom.match;
+
+
+
 
 /**
  * @fileoverview
@@ -12196,11 +11738,11 @@ baidu.dom.extend({
     }
 });
 
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.merge;
-///import baidu.dom.match;
-///import baidu.array.unique;
+
+
+
+
+
 
 /**
  * @fileoverview
@@ -12233,10 +11775,10 @@ baidu.dom.extend({
     }
 });
 
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.dom.match;
-///import baidu.array.indexOf;
+
+
+
+
 
 /**
  * @fileoverview
@@ -12286,7 +11828,7 @@ baidu.dom.extend({
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.string;
+
 
 /**
  * @description 将目标字符串中可能会影响正则表达式构造的字符串进行转义
@@ -12313,8 +11855,11 @@ baidu.string.extend({
 
 
 
-///import baidu;
-///import baidu.merge;
+
+
+
+
+
 
 /*
  * @fileoverview
@@ -12660,32 +12205,34 @@ var select = function( selector, context, results, seed, contextXML ) {
 	return results;
 };
 
-var isXML = Sizzle.isXML = function( elem ) {
-	// documentElement is verified for cases where it doesn't yet exist
-	// (such as loading iframes in IE - #4833)
-	var documentElement = (elem ? elem.ownerDocument || elem : 0).documentElement;
-	return documentElement ? documentElement.nodeName !== "HTML" : false;
-};
+var isXML = Sizzle.isXML = baidu._util_.isXML;
+//var isXML = Sizzle.isXML = function( elem ) {
+//	// documentElement is verified for cases where it doesn't yet exist
+//	// (such as loading iframes in IE - #4833)
+//	var documentElement = (elem ? elem.ownerDocument || elem : 0).documentElement;
+//	return documentElement ? documentElement.nodeName !== "HTML" : false;
+//};
 
 // Slice is no longer used
 // It is not actually faster
 // Results is expected to be an array or undefined
 // typeof len is checked for if array is a form nodelist containing an element with name "length" (wow)
-var makeArray = function( array, results ) {
-	results = results || [];
-	var i = 0,
-		len = array.length;
-	if ( typeof len === "number" ) {
-		for ( ; i < len; i++ ) {
-			results.push( array[i] );
-		}
-	} else {
-		for ( ; array[i]; i++ ) {
-			results.push( array[i] );
-		}
-	}
-	return results;
-};
+//var makeArray = function( array, results ) {
+//	results = results || [];
+//	var i = 0,
+//		len = array.length;
+//	if ( typeof len === "number" ) {
+//		for ( ; i < len; i++ ) {
+//			results.push( array[i] );
+//		}
+//	} else {
+//		for ( ; array[i]; i++ ) {
+//			results.push( array[i] );
+//		}
+//	}
+//	return results;
+//};
+var makeArray = baidu.makeArray;
 
 var uniqueSort = Sizzle.uniqueSort = function( results ) {
 	if ( sortOrder ) {
@@ -12705,22 +12252,23 @@ var uniqueSort = Sizzle.uniqueSort = function( results ) {
 };
 
 // Element contains another
-var contains = Sizzle.contains = docElem.compareDocumentPosition ?
-	function( a, b ) {
-		return !!(a.compareDocumentPosition( b ) & 16);
-	} :
-	docElem.contains ?
-	function( a, b ) {
-		return a !== b && ( a.contains ? a.contains( b ) : false );
-	} :
-	function( a, b ) {
-		while ( (b = b.parentNode) ) {
-			if ( b === a ) {
-				return true;
-			}
-		}
-		return false;
-	};
+//var contains = Sizzle.contains = docElem.compareDocumentPosition ?
+//	function( a, b ) {
+//		return !!(a.compareDocumentPosition( b ) & 16);
+//	} :
+//	docElem.contains ?
+//	function( a, b ) {
+//		return a !== b && ( a.contains ? a.contains( b ) : false );
+//	} :
+//	function( a, b ) {
+//		while ( (b = b.parentNode) ) {
+//			if ( b === a ) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	};
+var contains = Sizzle.contains = baidu._util_.contains;
 
 Sizzle.matches = function( expr, set ) {
 	return select( expr, document, [], set, isXML( document ) );
@@ -13800,9 +13348,9 @@ window.Sizzle = baidu.sizzle = baidu.query = Sizzle;
 
  */
 
-///import baidu;
-///import baidu.dom;
-///import baidu.forEach;
+
+
+
 
 baidu.dom.extend({
     removeClass: function(value){
@@ -13836,11 +13384,11 @@ baidu.dom.extend({
         return this;
     }
 });
-///import baidu.id;
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.type;
-///import baidu.global;
+
+
+
+
+
 
 /**
  * @fileoverview
@@ -13914,11 +13462,11 @@ baidu.dom.extend({
 
 */
 
-///import baidu;
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.support;
-///import baidu._util_.propHooks;
+
+
+
+
+
 
 baidu.dom.extend({
     removeProp: function(value){
@@ -13957,7 +13505,7 @@ baidu.dom.extend({
  * date: 2010-04-19
  */
 
-///import baidu.object;
+
 
 /**
  * @description 遍历Object中所有元素，1.1.1增加
@@ -13999,11 +13547,46 @@ baidu.object.each = function (source, iterator) {
 
 
 
+
 /**
  * @author linlingyu
  */
-///import baidu.dom;
-///import baidu._util_.smartScroll;
+
+
+
+
+baidu._util_.smartScroll = function(axis){
+    var orie = {scrollLeft: 'pageXOffset', scrollTop: 'pageYOffset'}[axis],
+        is = axis === 'scrollLeft',
+        ret = {};
+    function isDocument(ele){
+        return ele && ele.nodeType === 9;
+    }
+    function getWindow(ele){
+        return baidu.type(ele) == "Window" ? ele
+            : isDocument(ele) ? ele.defaultView || ele.parentWindow : false;
+    }
+    return {
+        get: function(ele){
+            var win = getWindow(ele);
+            return win ? (orie in win) ? win[orie]
+                : baidu.browser.isStrict && win.document.documentElement[axis]
+                    || win.document.body[axis] : ele[axis];
+        },
+        
+        set: function(ele, val){
+            if(!ele){return;}
+            var win = getWindow(ele);
+            win ? win.scrollTo(is ? val : this.get(ele), !is ? val : this.get(ele))
+                : ele[axis] = val;
+        }
+    };
+};
+/**
+ * @author linlingyu
+ */
+
+
 /**
  * @description 取得第一个匹配元素或是设置多个匹配元素的横向滚动条的滚动位置
  * @function 
@@ -14035,8 +13618,8 @@ baidu.dom.extend({
 /**
  * @author linlingyu
  */
-///import baidu.dom;
-///import baidu._util_.smartScroll;
+
+
 
 /**
  * @description 取得第一个匹配元素或是设置多个匹配元素的竖向滚动条的滚动位置
@@ -14077,8 +13660,8 @@ baidu.dom.extend({
  * create: 2011-12-14
  */
 
-///import baidu.dom;
-///import baidu.dom.g;
+
+
 
 /**
  * 给元素样式（比如width）赋值时，如果是数字则添加单位(px)，如果是其它值直接赋
@@ -14100,8 +13683,8 @@ baidu.dom.setPixel = function (el, style, n) {
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.dom;
-///import baidu._util_.showHide;
+
+
 
 /**
  * @description 显示匹配的元素
@@ -14127,9 +13710,9 @@ baidu.dom.extend({
         return this;
     }
 });
-///import baidu.dom;
-///import baidu.forEach;
-///import baidu.dom.match;
+
+
+
 
 /**
  * @fileoverview
@@ -14163,7 +13746,7 @@ baidu.dom.extend({
     }
 });
 
-///import baidu.dom;
+
 
 /**
  * @fileoverview
@@ -14287,9 +13870,9 @@ baidu.dom.extend({
 
  */
 
-///import baidu;
-///import baidu.dom;
-///import baidu.forEach;
+
+
+
 
 baidu.dom.extend({
     toggleClass: function(value,status){
@@ -14349,10 +13932,10 @@ baidu.dom.extend({
  * @author dron
  */
 
-///import baidu.dom;
-///import baidu.event;
-///import baidu._util_.eventBase;
-///import baidu._util_.eventBase.queue;
+
+
+
+
 
 /**
  * @description 对指定的 TangramDom 集合派发指定的事件，并触发事件默认行为
@@ -14435,7 +14018,7 @@ void function( base, be ){
  * @author dron
  */
 
-///import baidu._util_.eventBase;
+
 
 /**
  * @description 对指定的 TangramDom 集合派发指定的事件函数，不触发事件默认行为
@@ -14462,7 +14045,7 @@ baidu.dom.extend({
  * @author dron
  */
 
-///import baidu.dom.off;
+
 
 /**
  * @description 对当前 TangramDom 集合解除自定义事件监听
@@ -14483,8 +14066,8 @@ baidu.dom.extend({
  * @author dron
  */
 
-///import baidu.dom.on;
-///import baidu.dom.off;
+
+
 
 /**
  * @description 卸载事件代理
@@ -14502,8 +14085,8 @@ baidu.dom.extend({
     	return this.off( type, selector, fn );
 	}
 });
-///import baidu.dom;
-///import baidu.array.unique;
+
+
 
 /**
  * @fileoverview
@@ -14527,6 +14110,20 @@ baidu.dom.extend({
     }
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
  * Tangram
  * Copyright 2009 Baidu Inc. All rights reserved.
@@ -14538,8 +14135,8 @@ baidu.dom.extend({
  * modify: 2012/6/29 mz
  */
 
-///import baidu.lang;
-///import baidu.type;
+
+
 
 /**
  * @description 判断目标参数是否Array对象
@@ -14567,8 +14164,8 @@ baidu.lang.isArray = baidu.isArray;
  * date: 2010-07-05
  */
 
-///import baidu.lang.isArray;
-///import baidu.lang.isFunction;
+
+
 
 /**
  * @description 将一个变量转换成array
@@ -14608,7 +14205,7 @@ baidu.lang.toArray = function (source) {
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.fn;
+
 /**
  * @description 包装函数的返回值，使其在能按照index指定的方式返回。如果其值为-1，直接返回返回值；如果其值为0，返回"返回值"的包装结果；如果其值大于0，返回第i个位置的参数的包装结果（从1开始计数）
  * @function 
@@ -14640,7 +14237,7 @@ baidu.fn.extend({
  * author: berg
  */
 
-///import baidu.fn;
+
 
 /**
  * @description 对函数进行集化，使其在第一个参数为array时，结果也返回一个数组
@@ -14698,7 +14295,7 @@ baidu.fn.extend({
  * date: 2009/11/15
  */
 
-///import baidu.object;
+
 
 /**
  * @description 获取目标对象的值列表
@@ -14745,8 +14342,8 @@ baidu.object.values = function (source) {
  * @author wangxiao
  * @email  1988wangxiao@gmail.com
  */
-///import baidu.fn;
-///import baidu.type;
+
+
 /**
  * @description 为对象绑定方法和作用域
  * @function 
@@ -14781,7 +14378,7 @@ baidu.fn.extend({
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu;
+
 /**
  * 提供各种公共的动画功能
  * @namespace baidu.fx
@@ -14800,7 +14397,7 @@ baidu.fx = baidu.fx || {} ;
  * date: 2009/11/24
  */
 
-///import baidu.lang;
+
 
 /**
  * @description 为类型构造器建立继承关系
@@ -14858,11 +14455,11 @@ baidu.lang.inherits = function (subClass, superClass, type) {
  * @version: 2010-07-13
  */
 
-///import baidu.fx;
-///import baidu.lang.Event;
-///import baidu.lang.Class;
-///import baidu.lang.inherits;
-///import baidu.object.extend;
+
+
+
+
+
 
 /**
  * 提供一个按时间进程的时间线类
@@ -15004,8 +14601,8 @@ baidu.lang.inherits(baidu.fx.Timeline, baidu.lang.Class, "baidu.fx.Timeline").ex
  * @version: 2010-01-23
  */
 
-///import baidu.lang.Event;
-///import baidu.fx.Timeline;
+
+
 
 /**
  * 效果基类。
@@ -15152,9 +14749,9 @@ baidu.fx.create = function(element, options, fxName) {
  * @namespace: baidu.fx.current
  */
 
-///import baidu.fx;
-///import baidu.lang.instance;
-///import baidu.dom.g;
+
+
+
 
 /**
  * 获取DOM元素正在运行的效果实例列表
@@ -15200,7 +14797,7 @@ baidu.fx.current = function(element) {
  */
 
 
-///import baidu.string;
+
 
 /**
  * @description 将各种浏览器里的颜色值转换成#RRGGBB的格式
@@ -15283,10 +14880,10 @@ baidu.string.extend({
  */
 
 
-///import baidu.dom.g;
-///import baidu.fx.create;
-///import baidu.object.extend;
-///import baidu.dom.getStyle;
+
+
+
+
 
  
 /**
@@ -15350,10 +14947,10 @@ baidu.fx.move = function(element, options) {
  * @version: 2010-06-07
  */
 
-///import baidu.dom.g;
-///import baidu.fx.move;
-///import baidu.object.extend;
-///import baidu.dom.getStyle;
+
+
+
+
 
  
 /**
@@ -15406,9 +15003,9 @@ baidu.fx.moveTo = function(element, point, options) {
  * @version: 2010-07-14
  */
 
-///import baidu.dom.g;
-///import baidu.fx.create;
-///import baidu.object.extend;
+
+
+
 
  
 /**
@@ -15474,8 +15071,8 @@ baidu.fx.scrollBy = function(element, distance, options) {
  * @version: 2010-07-14
  */
 
-///import baidu.dom.g;
-///import baidu.fx.scrollBy;
+
+
 
  
 /**
@@ -15507,7 +15104,25 @@ baidu.fx.scrollTo = function(element, point, options) {
 /// support magic - Tangram 1.x Code End
 
 
-///import baidu._util_.smartAjax;
+
+
+baidu._util_.smartAjax = baidu._util_.smartAjax || function(method){
+    return function(url, data, callback, type){
+        if(baidu.type(data) === 'function'){
+            type = type || callback;
+            callback = data;
+            data = undefined;
+        }
+        baidu.ajax({
+            type: method,
+            url: url,
+            data: data,
+            success: callback,
+            dataType: type
+        });
+    };
+}
+
 /**
  * @description 通过服务器HTTP GET请求加载数据
  * @function 
@@ -15530,7 +15145,7 @@ baidu.get = baidu.get || baidu._util_.smartAjax('get');
  * date: 2011/07/05
  */
 
-///import baidu.global;
+
 
 /**
  * @namespace baidu.global.get 取得global全局对象里存储的信息。
@@ -15553,7 +15168,7 @@ baidu.global.get = function(key){
  * date: 2011/07/05
  */
 
-///import baidu.global;
+
 
 /**
  * @namespace baidu.global.set 向global全局对象里存储信息。
@@ -15578,9 +15193,9 @@ baidu.global.set = function(key, value, overwrite){
  * date: 2011.12.22
  */
 
-///import baidu.global;
-///import baidu.global.get;
-///import baidu.global.set;
+
+
+
 
 /**
  * @namespace baidu.global.getZIndex 全局统一管理 z-index。
@@ -15603,7 +15218,7 @@ baidu.global.set("zIndex", {popup : 50000, dialog : 1000}, true);
  * Tangram
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
-///import baidu;
+
 /**
  * 提供国际的一些接口
  * @namespace baidu.i18n
@@ -15615,7 +15230,7 @@ baidu.i18n = baidu.i18n || {};
  * Tangram
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
-///import baidu.i18n;
+
 baidu.i18n.cultures = baidu.i18n.cultures || {};
 /// support magic - Tangram 1.x Code End
 
@@ -15625,8 +15240,8 @@ baidu.i18n.cultures = baidu.i18n.cultures || {};
  * Tangram
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
-///import baidu.i18n.cultures;
-///import baidu.object.extend;
+
+
 
 baidu.i18n.cultures['zh-CN'] = baidu.object.extend(baidu.i18n.cultures['zh-CN'] || {}, {
     calendar: {
@@ -15679,7 +15294,7 @@ baidu.i18n.currentLocale = 'zh-CN';
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.i18n;
+
 /**
  * date
  * @name baidu.i18n.date
@@ -15766,6 +15381,56 @@ baidu.i18n.date = baidu.i18n.date || /**@lends baidu.i18n.date.prototype*/{
 };
 /// support magic -  Tangram 1.x Code End
 
+/*
+ * Tangram
+ * Copyright 2009 Baidu Inc. All rights reserved.
+ * 
+ * path: baidu/json.js
+ * author: erik
+ * version: 1.1.0
+ * date: 2009/12/02
+ */
+
+
+/**
+ * @description 操作json对象的方法
+ * @name baidu.json
+ * @namespace
+ */
+baidu.json = baidu.json || {};
+
+
+/*
+ * Tangram
+ * Copyright 2009 Baidu Inc. All rights reserved.
+ * 
+ * path: baidu/json/parse.js
+ * author: erik, berg
+ * version: 1.2
+ * date: 2009/11/23
+ */
+
+
+
+/**
+ * @description 将字符串解析成json对象。注：不会自动祛除空格
+ * @name baidu.json.parse
+ * @function
+ * @grammar baidu.json.parse(data)
+ * @param {string} data 需要解析的字符串
+ * @remark
+ * 该方法的实现与ecma-262第五版中规定的JSON.parse不同，暂时只支持传入一个参数。后续会进行功能丰富。
+ * @meta standard
+ * @see baidu.json.stringify,baidu.json.decode
+ *             
+ * @return {JSON} 解析结果json对象
+ */
+baidu.json.parse = function (data) {
+    //2010/12/09：更新至不使用原生parse，不检测用户输入是否正确
+    return (new Function("return (" + data + ")"))();
+};
+
+
 
 
 /*
@@ -15778,8 +15443,8 @@ baidu.i18n.date = baidu.i18n.date || /**@lends baidu.i18n.date.prototype*/{
  * date: 2010/01/11
  */
 
-///import baidu.json;
-///import baidu.type;
+
+
 
 /**
  * @description 将json对象序列化
@@ -15935,7 +15600,6 @@ baidu.json.stringify = (function () {
 
 
 
-
 /// support magic - Tangram 1.x Code Start
 /*
  * Tangram
@@ -15947,9 +15611,9 @@ baidu.json.stringify = (function () {
  * @modify: 2011.11.24 meizz
  */
 
-///import baidu.lang;
-///import baidu.lang.Class;
-///import baidu.lang.Event;
+
+
+
 
 /**
  * @description 创建一个类，包括创造类的构造器、继承基类Class
@@ -16046,8 +15710,8 @@ baidu.lang.createClass = /**@function*/function(constructor, options) {
  * modify: 2012/6/29 mz
  */
 
-///import baidu.lang;
-///import baidu.type;
+
+
 
 /**
  * @description 判断目标参数是否为Date对象
@@ -16079,8 +15743,8 @@ baidu.lang.isDate = baidu.isDate;
  * modify: 2012/6/29 mz
  */
 
-///import baidu.lang;
-///import baidu.type;
+
+
 
 /**
  * @description 判断目标参数是否为Element对象
@@ -16109,8 +15773,8 @@ baidu.lang.isElement = baidu.isElement;
  * modify: 2012/6/29 mz
  */
 
-///import baidu.lang;
-///import baidu.type;
+
+
 
 /**
  * @description 判断目标参数是否为Object对象
@@ -16142,7 +15806,7 @@ baidu.lang.isObject = baidu.isObject;
  * date: 2011/11/29
  */
 
-///import baidu.lang;
+
 
 /**
  * @description 向某个类注册插件
@@ -16167,12 +15831,13 @@ baidu.lang.register = function (Class, constructorHook, methods) {
 // 20111221 meizz   修改插件函数的存放地，重新放回类构造器静态属性上
 // 20111129	meizz	添加第三个参数，可以直接挂载方法到目标类原型链上
 /// support magic - Tangram 1.x Code End
+
 /**
  * @author wangxiao
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.number;
+
 
 /**
  * @description 为目标数字添加逗号分隔
@@ -16211,7 +15876,7 @@ baidu.number.extend({
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.number;
+
 
 /**
  * @description 生成随机整数，范围是[min, max]
@@ -16232,9 +15897,9 @@ baidu.number.randomInt = function(min, max){
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.object;
-///import baidu.lang.isArray;
-///import baidu.object.isPlain;
+
+
+
 
 /**
  * @description 对一个object进行深度拷贝
@@ -16274,6 +15939,39 @@ baidu.object.clone  = function (source) {
 };
 
 /*
+ * tangram
+ * copyright 2011 baidu inc. all rights reserved.
+ *
+ * path: baidu/object/isEmpty.js
+ * author: leeight
+ * version: 1.1.0
+ * date: 2011/04/30
+ */
+
+
+
+/**
+ * @description 检测一个对象是否是空的，需要注意的是：如果污染了Object.prototype或者Array.prototype，那么baidu.object.isEmpty({})或者baidu.object.isEmpty([])可能返回的就是false.
+ * @name baidu.object.isEmpty
+ * @function
+ * @grammar baidu.object.isEmpty(obj)
+ * @param {Object} obj 需要检测的对象.
+ * @return {boolean} 如果是空的对象就返回true.
+ */
+baidu.object.isEmpty = function(obj) {
+    var ret = true;
+    if('[object Array]' === Object.prototype.toString.call(obj)){
+        ret = !obj.length;
+    }else{
+        obj = new Object(obj);
+        for(var key in obj){
+            return false;
+        }
+    }
+    return ret;
+};
+
+/*
  * Tangram
  * Copyright 2009 Baidu Inc. All rights reserved.
  * 
@@ -16283,7 +15981,7 @@ baidu.object.clone  = function (source) {
  * date: 2009/11/15
  */
 
-///import baidu.object;
+
 
 /**
  * @description 获取目标对象的键名列表
@@ -16316,7 +16014,7 @@ baidu.object.keys = function (source) {
  * date: 2010/12/14
  */
 
-///import baidu.object;
+
 
 /**
  * @description 遍历object中所有元素，将每一个元素应用方法进行转换，返回转换后的新object。
@@ -16343,9 +16041,9 @@ baidu.object.map = function (source, iterator) {
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.object;
-///import baidu.lang.isObject;
-///import baidu.lang.isFunction;
+
+
+
 
 /*
  * 默认情况下，所有在源对象上的属性都会被非递归地合并到目标对象上
@@ -16427,7 +16125,7 @@ baidu.object.merge = function(target, source, opt_options) {
  * date: 2009/12/03
  */
 
-///import baidu.page;
+
 
 /**
  * @description 获取页面高度
@@ -16459,7 +16157,7 @@ baidu.page.getHeight = function () {
  * date: 2009/11/20
  */
 
-///import baidu.page;
+
 
 /**
  * @description 获取页面视觉区域高度
@@ -16488,7 +16186,7 @@ baidu.page.getViewHeight = function () {
  * date: 2009/11/20
  */
 
-///import baidu.page;
+
 
 /**
  * @description 获取页面视觉区域宽度
@@ -16517,7 +16215,7 @@ baidu.page.getViewWidth = function () {
  * date: 2009/12/03
  */
 
-///import baidu.page;
+
 
 /**
  * @description 获取页面宽度
@@ -16546,8 +16244,8 @@ baidu.page.getWidth = function () {
 
 
 
-///import baidu;
-///import baidu.type;
+
+
 /*
  * @fileoverview
  * @author meizz
@@ -16583,8 +16281,8 @@ baidu.param = function(arg) {
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu;
-///import baidu.forEach;
+
+
 
 /**
  * @description 判断平台类型和特性的属性
@@ -16619,7 +16317,7 @@ baidu.platform.isX11 = /x11/i.test(navigator.userAgent);
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.platform;
+
 
 /**
  * @description 判断是否为android平台
@@ -16639,7 +16337,7 @@ baidu.platform.isX11 = /x11/i.test(navigator.userAgent);
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.platform;
+
 
 /**
  * @description 判断是否为ipad平台
@@ -16655,7 +16353,7 @@ baidu.platform.isX11 = /x11/i.test(navigator.userAgent);
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.platform;
+
 
 /**
  * @description 判断是否为iphone平台
@@ -16675,7 +16373,7 @@ baidu.platform.isX11 = /x11/i.test(navigator.userAgent);
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.platform;
+
 
 /**
  * @description 判断是否为macintosh平台
@@ -16695,7 +16393,7 @@ baidu.platform.isX11 = /x11/i.test(navigator.userAgent);
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.platform;
+
 
 /**
  * @description 判断是否为windows平台
@@ -16712,7 +16410,7 @@ baidu.platform.isX11 = /x11/i.test(navigator.userAgent);
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.platform;
+
 
 /**
  * @description 判断是否为x11平台
@@ -16727,7 +16425,7 @@ baidu.platform.isX11 = /x11/i.test(navigator.userAgent);
  */
 //baidu.platform.isX11 = /x11/i.test(navigator.userAgent);
 
-///import baidu._util_.smartAjax;
+
 /**
  * @description 通过服务器HTTP GET请求加载数据
  * @function 
@@ -16741,8 +16439,8 @@ baidu.platform.isX11 = /x11/i.test(navigator.userAgent);
  */
 baidu.post = baidu.post || baidu._util_.smartAjax('post');
 
-///import baidu.type;
-///import baidu.global;
+
+
 
 /*
  * @author meizz
@@ -16789,13 +16487,35 @@ baidu.regexp = baidu.regexp || function(maps){
         return result;
     }
 }( baidu.global("_maps_RegExp") );
+
+
+/*
+ * @description 为当前的新链头对象赋加.getBack()方法
+ * @author meizz
+ * @create 2012-11-19
+ *
+ * @function
+ * @name baidu.setBack
+ * @grammar baidu.setBack(current, oldChain)
+ * @param   {Object}    current     新链头对象
+ * @param   {Object}    oldChain    老链头对象
+ * @return  {Object}                current
+ */
+baidu.setBack = function(current, oldChain) {
+    current._back_ = oldChain;
+    current.getBack = function() {
+        return this._back_;
+    }
+    return current;
+};
+
 /*
  * @author wangxiao
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu;
-///import baidu.createChain;
+
+
 
 /**
  * @description sio对象链式语法的链头，动态加载javascript
@@ -16827,7 +16547,7 @@ function(url){
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.sio;
+
 
 /**
  * 
@@ -16847,7 +16567,7 @@ baidu.sio._createScriptTag = function(scr, url, charset){
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
 
-///import baidu.sio;
+
 
 /**
  * 删除script的属性，再删除script标签，以解决修复内存泄漏的问题
@@ -16875,8 +16595,8 @@ baidu.sio._removeScriptTag = function(scr){
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.sio._createScriptTag;
-///import baidu.sio._removeScriptTag;
+
+
 
 
 /**
@@ -16961,11 +16681,11 @@ baidu.sio.extend({
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.sio;
-///import baidu.lang.isFunction;
-///import baidu.lang.isString;
-///import baidu.sio._createScriptTag;
-///import baidu.sio._removeScriptTag;
+
+
+
+
+
 
 
 /**
@@ -17066,7 +16786,7 @@ baidu.sio.extend({
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.sio;
+
 
 /**
  * @description 通过请求一个图片的方式令服务器存储一条日志
@@ -17124,7 +16844,7 @@ baidu.sio.extend({
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.string;
+
 
 /**
  * @description 对目标字符串进行html解码
@@ -17161,7 +16881,7 @@ baidu.string.extend({
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.string;
+
 
 /**
  * @description 对目标字符串进行html编码
@@ -17204,8 +16924,8 @@ baidu.string.extend({
  */
 
 
-///import baidu.string;
-///import baidu.merge;
+
+
 
 /**
  * @description 对目标字符串进行格式化
@@ -17254,7 +16974,7 @@ baidu.string.extend({
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.string;
+
 
 /**
  * @description 获取目标字符串在gbk编码下的字节长度
@@ -17284,7 +17004,7 @@ baidu.string.extend({
  */
 
 
-///import baidu.string;
+
 
 /**
  * @description 去掉字符串中的html标签
@@ -17313,7 +17033,7 @@ baidu.string.extend({
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.string.getByteLength;
+
 
 /**
  * @description 对目标字符串按gbk编码截取字节长度
@@ -17358,7 +17078,7 @@ baidu.string.extend({
  */
 
 
-///import baidu.string;
+
 
 /**
  * @description 将目标字符串中常见全角字符转换成半角字符
@@ -17489,7 +17209,7 @@ baidu.string.extend({
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.string;
+
 
 /**
  * @description 为目标字符串添加wbr软换行
@@ -17529,7 +17249,7 @@ baidu.string.extend({
  * date: 2009/11/16
  */
 
-///import baidu;
+
 /**
  * @description 操作flash对象的方法，包括创建flash对象、获取flash对象以及判断flash插件的版本号
  * @name baidu.swf
@@ -17547,7 +17267,7 @@ baidu.swf = baidu.swf || {};
  * date: 2009/11/17
  */
 
-///import baidu.swf;
+
 
 /**
  * @description 浏览器支持的flash插件版本
@@ -17589,8 +17309,8 @@ baidu.swf.version = (function () {
  * date: 2009/11/17
  */
 
-///import baidu.swf.version;
-///import baidu.string.encodeHTML;
+
+
 
 /**
  * @description 创建flash对象的html字符串
@@ -17761,8 +17481,8 @@ baidu.swf.createHTML = function (options) {
  * date: 2009/11/17
  */
 
-///import baidu.dom.insertHTML;
-///import baidu.swf.createHTML;
+
+
 
 /**
  * @description 在页面中创建一个flash对象
@@ -17821,10 +17541,10 @@ baidu.swf.create = function (options, target) {
  * date: 2009/11/16
  */
 
-///import baidu.swf;
-///import baidu.browser.ie;
-///import baidu.array.remove;
-///import baidu.lang.toArray;
+
+
+
+
 /**
  * @description 获得flash对象的实例
  * @name baidu.swf.getMovie
@@ -17854,9 +17574,9 @@ baidu.swf.getMovie = function (name) {
  */
 
 
-///import baidu.swf;
-///import baidu.swf.getMovie;
-///import baidu.lang.createClass;
+
+
+
 
 /**
  * @description Js 调用 Flash方法的代理类.

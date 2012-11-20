@@ -1,5 +1,8 @@
-///import baidu;
 ///import baidu.merge;
+///import baidu.makeArray;
+///import baidu._util_.isXML;
+///import baidu._util_.contains;
+
 
 /*
  * @fileoverview
@@ -345,32 +348,34 @@ var select = function( selector, context, results, seed, contextXML ) {
 	return results;
 };
 
-var isXML = Sizzle.isXML = function( elem ) {
-	// documentElement is verified for cases where it doesn't yet exist
-	// (such as loading iframes in IE - #4833)
-	var documentElement = (elem ? elem.ownerDocument || elem : 0).documentElement;
-	return documentElement ? documentElement.nodeName !== "HTML" : false;
-};
+var isXML = Sizzle.isXML = baidu._util_.isXML;
+//var isXML = Sizzle.isXML = function( elem ) {
+//	// documentElement is verified for cases where it doesn't yet exist
+//	// (such as loading iframes in IE - #4833)
+//	var documentElement = (elem ? elem.ownerDocument || elem : 0).documentElement;
+//	return documentElement ? documentElement.nodeName !== "HTML" : false;
+//};
 
 // Slice is no longer used
 // It is not actually faster
 // Results is expected to be an array or undefined
 // typeof len is checked for if array is a form nodelist containing an element with name "length" (wow)
-var makeArray = function( array, results ) {
-	results = results || [];
-	var i = 0,
-		len = array.length;
-	if ( typeof len === "number" ) {
-		for ( ; i < len; i++ ) {
-			results.push( array[i] );
-		}
-	} else {
-		for ( ; array[i]; i++ ) {
-			results.push( array[i] );
-		}
-	}
-	return results;
-};
+//var makeArray = function( array, results ) {
+//	results = results || [];
+//	var i = 0,
+//		len = array.length;
+//	if ( typeof len === "number" ) {
+//		for ( ; i < len; i++ ) {
+//			results.push( array[i] );
+//		}
+//	} else {
+//		for ( ; array[i]; i++ ) {
+//			results.push( array[i] );
+//		}
+//	}
+//	return results;
+//};
+var makeArray = baidu.makeArray;
 
 var uniqueSort = Sizzle.uniqueSort = function( results ) {
 	if ( sortOrder ) {
@@ -390,22 +395,23 @@ var uniqueSort = Sizzle.uniqueSort = function( results ) {
 };
 
 // Element contains another
-var contains = Sizzle.contains = docElem.compareDocumentPosition ?
-	function( a, b ) {
-		return !!(a.compareDocumentPosition( b ) & 16);
-	} :
-	docElem.contains ?
-	function( a, b ) {
-		return a !== b && ( a.contains ? a.contains( b ) : false );
-	} :
-	function( a, b ) {
-		while ( (b = b.parentNode) ) {
-			if ( b === a ) {
-				return true;
-			}
-		}
-		return false;
-	};
+//var contains = Sizzle.contains = docElem.compareDocumentPosition ?
+//	function( a, b ) {
+//		return !!(a.compareDocumentPosition( b ) & 16);
+//	} :
+//	docElem.contains ?
+//	function( a, b ) {
+//		return a !== b && ( a.contains ? a.contains( b ) : false );
+//	} :
+//	function( a, b ) {
+//		while ( (b = b.parentNode) ) {
+//			if ( b === a ) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	};
+var contains = Sizzle.contains = baidu._util_.contains;
 
 Sizzle.matches = function( expr, set ) {
 	return select( expr, document, [], set, isXML( document ) );

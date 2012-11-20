@@ -106,7 +106,7 @@
 ///import baidu.forEach;
 ///import baidu.support;
 
-///import baidu._util_.attrHooks;
+///baidu._util_.attrHooks;
 
 ///import baidu.dom.prop;
 ///import baidu.dom.val;
@@ -150,7 +150,7 @@ baidu.dom.extend({
             };
 
             var ret, 
-                hooks, 
+                hooks,
                 notxml,
                 bd = baidu.dom,
                 bu = baidu._util_,
