@@ -22,9 +22,9 @@
 
  //在用户选择使用 Sizzle 时会被覆盖原有简化版本的baidu.query方法
 
-    // baidu.query = function( selector, context, results ) {
-    //     // return baidu.merge(results || [], baidu.sizzle(selector, context));
-    // };
+    baidu.query = function( selector, context, results ) {
+        return baidu.merge( results || [], baidu.sizzle(selector, context) );
+    };
 
 var document = window.document,
 	docElem = document.documentElement,
@@ -1427,6 +1427,7 @@ var posProcess = function( selector, context, seed, contextXML ) {
 
 // EXPOSE
 
-window.Sizzle = baidu.sizzle = baidu.query = Sizzle;
+window.Sizzle = baidu.sizzle = Sizzle;
+baidu.query.matches = Sizzle.matches;
 
 })( window );
