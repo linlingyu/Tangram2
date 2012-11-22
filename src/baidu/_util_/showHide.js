@@ -3,7 +3,6 @@
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.support;
 ///import baidu.dom.contains;
 ///import baidu.dom.getCurrentStyle;
 ///import baidu.dom.css;
@@ -13,13 +12,21 @@
 
 (function(){
 
-var iframeDoc,
+var div = document.createElement('div'),
+    pixelMargin,
+    iframeDoc,
     iframe,
     curCSS,
     rmargin = /^margin/,
     rnumnonpx = /^-?(?:\d*\.)?\d+(?!px)[^\d\s]+$/i,
     rposition = /^(top|right|bottom|left)$/,
     elemdisplay = {};
+div.innerHTML = '';
+div.style.cssText = 'box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;padding:1px;border:1px;display:block;width:4px;margin-top:1%;position:absolute;top:1%;';
+if(window.getComputedStyle){
+    pixelMargin = (window.getComputedStyle(div, null) || {}).marginTop !== '1%';
+}
+
 
 baidu.extend(baidu._util_,{
     showHide:function( elements, show){
@@ -91,7 +98,7 @@ if ( window.getComputedStyle ) {
             // A tribute to the "awesome hack by Dean Edwards"
             // WebKit uses "computed value (percentage if specified)" instead of "used value" for margins
             // which is against the CSSOM draft spec: http://dev.w3.org/csswg/cssom/#resolved-values
-            if ( !baidu.support.pixelMargin && rmargin.test( name ) && rnumnonpx.test( ret ) ) {
+            if ( !pixelMargin && rmargin.test( name ) && rnumnonpx.test( ret ) ) {
                 width = style.width;
                 style.width = ret;
                 ret = computed.width;

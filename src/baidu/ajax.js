@@ -6,7 +6,7 @@
 ///import baidu.deferred;
 ///import baidu.callbacks;
 ///import baidu.id;
-///import baidu.support;
+///import baidu._util_.support;
 ///import baidu.dom.on;
 
 /**
@@ -769,15 +769,15 @@ void function(){
     } : createStandardXHR;
     
     void function(xhr){
-        baidu.extend(baidu.support, {
+        baidu.extend(baidu._util_.support, {
             ajax: !!xhr,
             cors: !!xhr && ('withCredentials' in xhr)
         });
     }(baidu.ajax.settings.xhr());
     
-    if(baidu.support.ajax){
+    if(baidu._util_.support.ajax){
         baidu.ajax.transport(function(opts){
-            if(!opts.crossDomain || baidu.support.cors){
+            if(!opts.crossDomain || baidu._util_.support.cors){
                 var callback;
                 return {
                     send: function(headers, complete){

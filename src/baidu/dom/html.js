@@ -61,7 +61,7 @@
  */
 
 ///import baidu;
-///import baidu.support;
+///import baidu._util_.support;
 ///import baidu.dom;
 ///import baidu.forEach;
 ///import baidu.dom.empty;
@@ -74,6 +74,8 @@ baidu.dom.extend({
             bt = baidu._util_,
             me = this,
             isSet = false,
+            htmlSerialize = !!bt.support.dom.div.getElementsByTagName('link').length,
+            leadingWhitespace = (bt.support.dom.div.firstChild.nodeType === 3),
             result;
 
         //当dom选择器为空时
@@ -110,7 +112,7 @@ baidu.dom.extend({
 
         // IE6-8 can't serialize link, script, style, or any html5 (NoScope) tags,
         // unless wrapped in a div with non-breaking characters in front of it.
-        if ( !baidu.support.htmlSerialize )
+        if ( !htmlSerialize )
             wrapMap._default = [ 1, "X<div>", "</div>" ];
 
         baidu.forEach( me, function( elem, index ){
@@ -134,8 +136,8 @@ baidu.dom.extend({
 
                     // See if we can take a shortcut and just use innerHTML
                     if ( !rnoInnerhtml.test( value ) &&
-                        ( baidu.support.htmlSerialize || !rnoshimcache.test( value )  ) &&
-                        ( baidu.support.leadingWhitespace || !rleadingWhitespace.test( value ) ) &&
+                        ( htmlSerialize || !rnoshimcache.test( value )  ) &&
+                        ( leadingWhitespace || !rleadingWhitespace.test( value ) ) &&
                         !wrapMap[ ( rtagName.exec( value ) || ["", ""] )[1].toLowerCase() ] ) {
 
                         value = value.replace( rxhtmlTag, "<$1></$2>" );

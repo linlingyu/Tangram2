@@ -29,6 +29,9 @@ baidu._util_.support = baidu._util_.support || function(){
 //        checkOn: only import by baidu.dom.val
 //        noCloneEvent: only import by baidu.dom.clone
 //        noCloneChecked: only import by baidu.dom.clone
+//        cssFloat: only import baidu.dom.styleFixer
+//        htmlSerialize: only import baidu.dom.html
+//        leadingWhitespace: only import baidu.dom.html
     };
     return baseSupport;
 }();
