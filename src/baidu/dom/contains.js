@@ -36,8 +36,6 @@ baidu.dom.extend({
 ///import baidu.dom._g;
 baidu.dom.contains = function (container, contained) {
     var g = baidu.dom._g;
-    container = g(container);
-    contained = g(contained);
-    return baidu._util_.contains(container, contained);
+    return baidu._util_.contains(g(container), g(contained));
 };
 /// Tangram 1.x Code End

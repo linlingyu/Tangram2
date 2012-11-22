@@ -64,7 +64,6 @@
 ///import baidu.dom.empty;
 ///import baidu.forEach;
 ///import baidu.dom.append;
-///import baidu.support;
 
 baidu.dom.extend({
     text: function(value){
