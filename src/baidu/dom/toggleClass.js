@@ -114,16 +114,16 @@ baidu.dom.extend({
                     for(var i = 0;i<arr.length;i++){
 
                         //有这个className
-                        if(((' '+str+' ').indexOf(' '+arr[i]+' ') > -1)&&(typeof status === 'undefined')){
+                        if((~(' '+str+' ').indexOf(' '+arr[i]+' '))&&(typeof status === 'undefined')){
                             str = (' '+str+' ').replace(' '+arr[i]+' ',' ');
                             
-                        }else if(((' '+str+' ').indexOf(' '+arr[i]+' ') === -1)&&(typeof status === 'undefined')){
+                        }else if((!~(' '+str+' ').indexOf(' '+arr[i]+' '))&&(typeof status === 'undefined')){
                             str += ' '+arr[i];
 
-                        }else if(((' '+str+' ').indexOf(' '+arr[i]+' ') === -1)&&(status === true)){
+                        }else if((!~(' '+str+' ').indexOf(' '+arr[i]+' '))&&(status === true)){
                             str += ' '+arr[i];
 
-                        }else if(((' '+str+' ').indexOf(' '+arr[i]+' ') > -1)&&(status === false)){
+                        }else if((~(' '+str+' ').indexOf(' '+arr[i]+' '))&&(status === false)){
                             str = str.replace(arr[i],'');
                         };
                     };

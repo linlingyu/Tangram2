@@ -36,6 +36,12 @@
 
 baidu.dom.extend({
     offset: function(){
+        var fixedPositionSupport = baidu.support.fixedPosition;
+
+        var isFixed = function( cs ){
+            return fixedPositionSupport && cs.position == "fixed";
+        };
+
         var offset = {
             getDefaultOffset: function(ele, doc){
                 var docElement = doc.documentElement,
@@ -48,7 +54,9 @@ baidu.dom.extend({
                     t = ele.offsetTop;
                 //
                 while((ele = ele.parentNode) && ele !== body && ele !== docElement){
-                    if(baidu.support.fixedPosition && computedStyle.position === 'fixed'){break;}
+                    if( isFixed( computedStyle ) )
+                        break;
+                    
                     computedStyle = defaultView ? defaultView.getComputedStyle(ele, null) : ele.currentStyle;
                     l -= ele.scrollLeft;
                     t -= ele.scrollTop;
@@ -68,7 +76,8 @@ baidu.dom.extend({
                     l += body.offsetLeft;
                     t += body.offsetTop;
                 }
-                if(baidu.support.fixedPosition && computedStyle.position === 'fixed'){
+
+                if( isFixed( computedStyle ) ){
                     l += Math.max(docElement.scrollLeft, body.scrollLeft);
                     t += Math.max(docElement.scrollTop, body.scrollTop);
                 }
