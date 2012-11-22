@@ -180,11 +180,11 @@ baidu.ajax.request = function (url, opt_options) {
         
         if (method == 'GET') {
             if (data) {
-                url += (url.indexOf('?') >= 0 ? '&' : '?') + data;
+                url += (~url.indexOf('?') ? '&' : '?') + data;
                 data = null;
             }
             if(options['noCache'])
-                url += (url.indexOf('?') >= 0 ? '&' : '?') + 'b' + (+ new Date) + '=1';
+                url += (~url.indexOf('?') ? '&' : '?') + 'b' + (+ new Date) + '=1';
         }
         
         if (username) {
