@@ -40,7 +40,7 @@ baidu.dom.extend({
 
                         //取得自定义属性
                         var attr = this[0].getAttribute('data-'+key);
-                        return (String(attr).indexOf('{') == -1)?attr:Function("return "+attr)();
+                        return !~String(attr).indexOf('{') ? attr:Function("return "+attr)();
                     }
                 }
 

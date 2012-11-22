@@ -261,19 +261,19 @@ baidu.dom.resizable = /**@function*/function(element,options) {
             left = orgStyles['left'],
             styles;
 
-        if (key.indexOf('e') >= 0) {
+        if (~key.indexOf('e')) {
             width = Math.max(xy.x - orgMousePosition.x + orgStyles['width'], range[0]);
             width = Math.min(width, range[1]);
-        }else if (key.indexOf('w') >= 0) {
+        }else if (~key.indexOf('w')) {
             width = Math.max(orgMousePosition.x - xy.x + orgStyles['width'], range[0]);
             width = Math.min(width, range[1]);
             left -= width - orgStyles['width'];
        }
 
-        if (key.indexOf('s') >= 0) {
+        if (~key.indexOf('s')) {
             height = Math.max(xy.y - orgMousePosition.y + orgStyles['height'], range[2]);
             height = Math.min(height, range[3]);
-        }else if (key.indexOf('n') >= 0) {
+        }else if (~key.indexOf('n')) {
             height = Math.max(orgMousePosition.y - xy.y + orgStyles['height'], range[2]);
             height = Math.min(height, range[3]);
             top -= height - orgStyles['height'];

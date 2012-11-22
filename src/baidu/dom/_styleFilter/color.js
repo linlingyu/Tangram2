@@ -17,7 +17,7 @@
  */
 baidu.dom._styleFilter[baidu.dom._styleFilter.length] = {
     get: function (key, value) {
-        if (/color/i.test(key) && value.indexOf("rgb(") != -1) {
+        if (/color/i.test(key) && ~value.indexOf("rgb(")) {
             var array = value.split(",");
 
             value = "#";

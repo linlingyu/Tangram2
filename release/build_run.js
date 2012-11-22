@@ -1,7 +1,8 @@
 var fs = require("fs"),
     path = require("path"),
     exec = require('child_process').exec,
-    util = require('./build_util').util;
+    util = require('./build_util').util,
+    uglify = require('./tools/UglifyJS/uglify-js');
 
 //tangram源代码目录
 var tangramSrcPath = '../src';
@@ -42,7 +43,12 @@ function getFileContent(file){
 }
 
 function pack( content ){
-    return "void function(){" + content + "}();";
+    // content = content.replace( /\/\/.*?\r?\n/g, "\r\n" ); // 行注释
+    content = content.replace( /\/\*(\s|\S)+?\*\//g, "" ); // 段注释
+    content = content.replace(/\/\/\/import .*?;\n/g, ""); // dron: 去掉源码中的 import 注释
+    content = content.replace( /(\r?\n){2,}/g, "\r\n\r\n" ); // 多空行到一行
+    content = content.replace( /\n/g, "\n\t" );
+    return "void function(){\r\n\t" + content + "\r\n}();";
 }
 
 
@@ -90,11 +96,27 @@ function pack( content ){
     //     fs.closeSync(fd);
     // });
 
+    function uglifyCompress( content, outputFile ){
+        var jsp = uglify.parser;
+        var pro = uglify.uglify;
+        var ast = jsp.parse( content ); // parse code and get the initial AST
+        ast = pro.ast_mangle( ast ); // get a new AST with mangled names
+        ast = pro.ast_squeeze( ast ); // get an AST with compression optimizations
+        content = pro.gen_code(ast); // compressed code here
+
+        fs.open( outputFile, "w", 0666, function( e, fd ){        
+            fs.writeSync( fd, content, 0, 'utf8' );
+            fs.closeSync( fd );
+        } );
+    }
+
+    uglifyCompress( tangramCompatibleContent, "tangram_compatible.js" );
+    uglifyCompress( tangramBaseContent, "tangram_base.js" );
 
 // Task:compress release files
-    exec('java -jar ../test/tools/lib/yuicompressor-2.4.2.jar --type js --charset UTF-8 tangram_compatible_src.js -o tangram_compatible.js', function(error, stdout, stderr){
-        // console.log(stdout);
-    });
-    exec('java -jar ../test/tools/lib/yuicompressor-2.4.2.jar --type js --charset UTF-8 tangram_base_src.js -o tangram_base.js', function(error, stdout, stderr){
-        // console.log(stdout);
-    });
+    // exec('java -jar ../test/tools/lib/yuicompressor-2.4.2.jar --type js --charset UTF-8 tangram_compatible_src.js -o tangram_compatible.js', function(error, stdout, stderr){
+    //     // console.log(stdout);
+    // });
+    // exec('java -jar ../test/tools/lib/yuicompressor-2.4.2.jar --type js --charset UTF-8 tangram_base_src.js -o tangram_base.js', function(error, stdout, stderr){
+    //     // console.log(stdout);
+    // });

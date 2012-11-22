@@ -77,7 +77,7 @@ baidu.dom.extend({
             result;
 
         //当dom选择器为空时
-        if(this.size()<=0){
+        if( !this.size() )
             switch(typeof value){
                 case 'undefined':
                     return undefined;
@@ -85,8 +85,7 @@ baidu.dom.extend({
                 default:
                     return me;
                 break;
-            }            
-        }
+            }
         
         var nodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figcaption|figure|footer|" +
         "header|hgroup|mark|meter|nav|output|progress|section|summary|time|video",
@@ -111,30 +110,26 @@ baidu.dom.extend({
 
         // IE6-8 can't serialize link, script, style, or any html5 (NoScope) tags,
         // unless wrapped in a div with non-breaking characters in front of it.
-        if ( !baidu.support.htmlSerialize ) {
+        if ( !baidu.support.htmlSerialize )
             wrapMap._default = [ 1, "X<div>", "</div>" ];
-        }
 
-        baidu.forEach(me,function(elem, index){
+        baidu.forEach( me, function( elem, index ){
             
-            if(result){
+            if( result )
                 return;
-            };
-            var tangramDom = bd(elem);
-            switch(typeof value){
-                case 'undefined':
-        
-                    //get first
-                    result = ( elem.nodeType === 1 ? elem.innerHTML : undefined );
-                    return result;
 
+            var tangramDom = bd(elem);
+
+            switch( typeof value ){
+                case 'undefined':
+                    result = ( elem.nodeType === 1 ? elem.innerHTML : undefined );
+                    return ;
                 break;
 
                 case 'number':
                     value = String(value);
-                case 'string':
 
-                    //set all
+                case 'string':
                     isSet = true;
 
                     // See if we can take a shortcut and just use innerHTML
@@ -166,14 +161,12 @@ baidu.dom.extend({
                 break;
 
                 case 'function':
-
-                    //set all
                     isSet = true;
                     tangramDom.html(value.call(elem, index, tangramDom.html()));
                 break;
             };
         });
         
-        return isSet?me:result;
+        return isSet ? me : result;
     }
 });

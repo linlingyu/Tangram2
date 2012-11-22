@@ -662,7 +662,7 @@ void function(){
             hasCallback = opts.jsonp !== false,
             replaceInUrl = hasCallback && rjsonp.test(url),
             replaceInData = hasCallback && !replaceInUrl && baidu.type(data) === 'string'
-                && !(opts.contentType || '').indexOf('application/x-www-form-urlencoded')
+                && !~(opts.contentType || '').indexOf('application/x-www-form-urlencoded')
                 && rjsonp.test(data);
         if(opts.dataTypes[0] === 'jsonp' || replaceInUrl || replaceInData){
             callbackName = opts.jsonpCallback = baidu.type(opts.jsonpCallback) === 'function' ?

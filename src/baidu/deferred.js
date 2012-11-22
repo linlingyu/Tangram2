@@ -160,7 +160,7 @@ baidu.createChain("Deferred",
 
 // 执行方法
 function( func ) {
-	var core_slice = Array.prototype.slice;
+	var slice = Array.prototype.slice;
 	var tuples = [
 			// action, add listener, listener list, final state
 			[ "resolve", "done", baidu.Callbacks("once memory"), "resolved" ],
@@ -247,7 +247,7 @@ function( func ) {
 		// Deferred helper
 		when: function( subordinate /* , ..., subordinateN */ ) {
 			var i = 0,
-				resolveValues = core_slice.call( arguments ),
+				resolveValues = slice.call( arguments ),
 				length = resolveValues.length,
 
 				// the count of uncompleted subordinates
@@ -260,7 +260,7 @@ function( func ) {
 				updateFunc = function( i, contexts, values ) {
 					return function( value ) {
 						contexts[ i ] = this;
-						values[ i ] = arguments.length > 1 ? core_slice.call( arguments ) : value;
+						values[ i ] = arguments.length > 1 ? slice.call( arguments ) : value;
 						if( values === progressValues ) {
 							deferred.notifyWith( contexts, values );
 						} else if ( !( --remaining ) ) {
@@ -300,6 +300,7 @@ function( func ) {
 	// All done!
 	return deferred;
 },
+
 // constructor
 function(){});
 
