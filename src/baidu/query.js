@@ -23,15 +23,14 @@
  * @param   {Array}     results     返回的结果对象（数组）
  * @return  {Array}                 筛选后的对象组
  */
-baidu.query = baidu.query || (function(){
+baidu.query = baidu.query || function(){
     var rId = /^(\w*)#([\w\-\$]+)$/,
-        rId0= /^#([\w\-\$]+)$/
+        rId0= /^#([\w\-\$]+)$/,
         rTag = /^\w+$/,
         rClass = /^(\w*)\.([\w\-\$]+)$/,
         rComboClass = /^(\.[\w\-\$]+)+$/,
         rDivider = /\s*,\s*/,
-        rSpace = /\s+/g,
-        slice = Array.prototype.slice;
+        rSpace = /\s+/g;
 
     // selector: #id, .className, tagName, *
     function query(selector, context) {
@@ -42,7 +41,6 @@ baidu.query = baidu.query || (function(){
             id = RegExp.$2;
             tagName = RegExp.$1 || "*";
 
-            // 本段代码效率很差，不过极少流程会走到这段
             baidu.forEach(context.getElementsByTagName(tagName), function(dom) {
                 dom.id == id && array.push(dom);
             });
@@ -63,7 +61,7 @@ baidu.query = baidu.query || (function(){
                 arr = context.getElementsByClassName(className);
             } else {
                 baidu.forEach(context.getElementsByTagName("*"), function(dom) {
-                    dom.className && (" " + dom.className + " ").indexOf(t) > -1 && (arr.push(dom));
+                    dom.className && ~(" " + dom.className + " ").indexOf(t) && (arr.push(dom));
                 });
             }
 
@@ -85,7 +83,7 @@ baidu.query = baidu.query || (function(){
                     x = true;
 
                     baidu.forEach(list, function(item){
-                        t.indexOf(" "+ item +" ") == -1 && (x = false);
+                        ~t.indexOf(" "+ item +" ") || (x = false);
                     });
 
                     x && array.push(dom);
@@ -120,7 +118,7 @@ baidu.query = baidu.query || (function(){
             }
             return a;
         } else {
-            if (s.indexOf(" ") == -1) {
+            if (!~s.indexOf(" ")) {
                 return query(s, context);
             }
 
@@ -147,4 +145,4 @@ baidu.query = baidu.query || (function(){
 
         return baidu.merge(results || [], baidu.array(arr).unique());
     };
-})();
+}();
