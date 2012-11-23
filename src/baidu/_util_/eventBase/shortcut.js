@@ -2,11 +2,11 @@
  * @author dron
  */
 
-///import baidu.dom;
+///import baidu._util_.eventBase.core;
 
 void function(){
     var arr = ("blur focus focusin focusout load resize scroll unload click dblclick " +
-	"mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
+	"mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave mousewheel " +
 	"change select submit keydown keypress keyup error contextmenu").split(" ");
 
     var conf = {};
@@ -473,6 +473,16 @@ void function(){
  * @function
  * @name baidu.dom().contextmenu()
  * @grammar baidu.dom(args).contextmenu([data,]fn)
+ * @param {Object} data 触发事件函数时，携带event.data 上的数据
+ * @param {Function} fn 事件函数
+ * @return {TangramDom} 返回之前匹配元素的TangramDom对象
+ */
+
+/**
+ * @description TangramDom集合添加 mousewheel 事件监听
+ * @function
+ * @name baidu.dom().mousewheel()
+ * @grammar baidu.dom(args).mousewheel([data,]fn)
  * @param {Object} data 触发事件函数时，携带event.data 上的数据
  * @param {Function} fn 事件函数
  * @return {TangramDom} 返回之前匹配元素的TangramDom对象
