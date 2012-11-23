@@ -58,6 +58,3 @@ void function( base, be ){
     };
 
 }( baidu._util_.eventBase, baidu.event );
-
-///import baidu._util_.eventBase.simulate;
-///import baidu._util_.eventBase.shortcut;

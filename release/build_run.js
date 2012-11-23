@@ -64,6 +64,9 @@ function pack( content ){
 
 // Task:build release files
     var tangramSrcFiles = util.listFiles(path.join(tangramSrcPath, 'baidu'));
+
+    // console.log( tangramSrcFiles );
+
     var tangramCompatibleContent = '';
     var tangramBaseContent = '';
 
