@@ -3514,177 +3514,41 @@ void function(){
 	/// Tangram 1.x Code Start
 	
 	 
-	baidu.ajax.request = function (url, opt_options) {
-	    var options     = opt_options || {},
-	        data        = options.data || "",
-	        async       = !(options.async === false),
-	        username    = options.username || "",
-	        password    = options.password || "",
-	        method      = (options.method || "GET").toUpperCase(),
-	        headers     = options.headers || {},
-	        // 基本的逻辑来自lili同学提供的patch
-	        timeout     = options.timeout || 0,
-	        eventHandlers = {},
-	        tick, key, xhr;
+	baidu.ajax.request = function( url, opt ) {
+	    var bf = true, sc = {};
 	
-	    
-	    function stateChangeHandler() {
-	        if (xhr.readyState == 4) {
-	            try {
-	                var stat = xhr.status;
-	            } catch (ex) {
-	                // 在请求时，如果网络中断，Firefox会无法取得status
-	                fire('failure');
-	                return;
-	            }
-	            
-	            fire(stat);
-	            
-	            // http://www.never-online.net/blog/article.asp?id=261
-	            // case 12002: // Server timeout      
-	            // case 12029: // dropped connections
-	            // case 12030: // dropped connections
-	            // case 12031: // dropped connections
-	            // case 12152: // closed by server
-	            // case 13030: // status and statusText are unavailable
-	            
-	            // IE error sometimes returns 1223 when it 
-	            // should be 204, so treat it as success
-	            if ((stat >= 200 && stat < 300)
-	                || stat == 304
-	                || stat == 1223) {
-	                fire('success');
-	            } else {
-	                fire('failure');
-	            }
-	            
-	            
-	            window.setTimeout(
-	                function() {
-	                    // 避免内存泄露.
-	                    // 由new Function改成不含此作用域链的 baidu.fn.blank 函数,
-	                    // 以避免作用域链带来的隐性循环引用导致的IE下内存泄露. By rocy 2011-01-05 .
-	                    xhr.onreadystatechange = baidu.fn.blank;
-	                    if (async) {
-	                        xhr = null;
-	                    }
-	                }, 0);
-	        }
-	    }
-	    
-	    
-	    function getXHR() {
-	        if (window.ActiveXObject) {
-	            try {
-	                return new ActiveXObject("Msxml2.XMLHTTP");
-	            } catch (e) {
-	                try {
-	                    return new ActiveXObject("Microsoft.XMLHTTP");
-	                } catch (e) {}
-	            }
-	        }
-	        if (window.XMLHttpRequest) {
-	            return new XMLHttpRequest();
-	        }
-	    }
-	    
-	    
-	    function fire(type) {
-	        type = 'on' + type;
-	        var handler = eventHandlers[type],
-	            globelHandler = baidu.ajax[type];
-	        
-	        // 不对事件类型进行验证
-	        if (handler) {
-	            if (tick) {
-	              clearTimeout(tick);
-	            }
+	    opt.onbeforerequest = opt.onbeforerequest || baidu.ajax.onbeforerequest;
+	    opt.onfailure = opt.onfailure || baidu.ajax.onfailure;
 	
-	            if (type != 'onsuccess') {
-	                handler(xhr);
-	            } else {
-	                //处理获取xhr.responseText导致出错的情况,比如请求图片地址.
-	                try {
-	                    xhr.responseText;
-	                } catch(error) {
-	                    return handler(xhr);
-	                }
-	                handler(xhr, xhr.responseText);
-	            }
-	        } else if (globelHandler) {
-	            //onsuccess不支持全局事件
-	            if (type == 'onsuccess') {
-	                return;
-	            }
-	            globelHandler(xhr);
-	        }
-	    }
+	    if( opt.onbeforerequest )
+	        bf = opt.onbeforerequest();
 	    
-	    
-	    for (key in options) {
-	        // 将options参数中的事件参数复制到eventHandlers对象中
-	        // 这里复制所有options的成员，eventHandlers有冗余
-	        // 但是不会产生任何影响，并且代码紧凑
-	        eventHandlers[key] = options[key];
-	    }
-	    
-	    headers['X-Requested-With'] = 'XMLHttpRequest';
-	    
-	    
-	    try {
-	        xhr = getXHR();
-	        
-	        if (method == 'GET') {
-	            if (data) {
-	                url += (~url.indexOf('?') ? '&' : '?') + data;
-	                data = null;
-	            }
-	            if(options['noCache'])
-	                url += (~url.indexOf('?') ? '&' : '?') + 'b' + (+ new Date) + '=1';
-	        }
-	        
-	        if (username) {
-	            xhr.open(method, url, async, username, password);
-	        } else {
-	            xhr.open(method, url, async);
-	        }
-	        
-	        if (async) {
-	            xhr.onreadystatechange = stateChangeHandler;
-	        }
-	        
-	        // 在open之后再进行http请求头设定
-	        // FIXME 是否需要添加; charset=UTF-8呢
-	        if (method == 'POST') {
-	            xhr.setRequestHeader("Content-Type",
-	                (headers['Content-Type'] || "application/x-www-form-urlencoded"));
-	        }
-	        
-	        for (key in headers) {
-	            if (headers.hasOwnProperty(key)) {
-	                xhr.setRequestHeader(key, headers[key]);
-	            }
-	        }
-	        
-	        fire('beforerequest');
+	    for(var name in opt)
+	        if( /^on(\d{3})$/.test( name ) )
+	            sc[ RegExp.$1 ] = opt[ name ];
 	
-	        if (timeout) {
-	          tick = setTimeout(function(){
-	            xhr.onreadystatechange = baidu.fn.blank;
-	            xhr.abort();
-	            fire("timeout");
-	          }, timeout);
-	        }
-	        xhr.send(data);
-	        
-	        if (!async) {
-	            stateChangeHandler();
-	        }
-	    } catch (ex) {
-	        fire('failure');
-	    }
-	    
-	    return xhr;
+	    if( bf !== false )
+	        return baidu.ajax(url, {
+	            async: opt.async,
+	            type: opt.method,
+	            data: opt.data,
+	            headers: opt.headers,
+	            timeout: opt.timeout,
+	            username: opt.username,
+	            password: opt.password,
+	            success: function( text, status, xhr ){
+	                if( opt.onsuccess )
+	                    opt.onsuccess( xhr, text );
+	            },
+	            error: function( text, status, xhr ){
+	                if( opt.onfailure )
+	                    opt.onfailure( xhr, text );
+	                if( status == "timeout" && opt.ontimeout )
+	                    opt.ontimeout();
+	            },
+	            cache: typeof opt.noCache == "boolean" ? !opt.noCache : true,
+	            statusCode: sc
+	        });
 	};
 	/// Tangram 1.x Code End
 	/// Tangram 1.x Code Start
@@ -5078,9 +4942,6 @@ void function(){
 	
 	/// support magic - Tangram 1.x Code End
 	/// support magic - Tangram 1.x Code Start
-	/// support magic - Tangram 1.x Code End
-	
-	/// support magic - Tangram 1.x Code Start
 	
 	baidu.page = baidu.page || {};
 	
@@ -5159,12 +5020,7 @@ void function(){
 	/// support magic - Tangram 1.x Code Start
 	
 	baidu.event.preventDefault = function (event) {
-	    event.originalEvent && (event = event.originalEvent);
-	    if (event.preventDefault) {
-	        event.preventDefault();
-	    } else {
-	        event.returnValue = false;
-	    }
+	    return new baidu.event(event).preventDefault();
 	};
 	/// support magic - Tangram 1.x Code End
 	
@@ -5290,9 +5146,6 @@ void function(){
 	});
 	
 	/// Tangram 1.x Code End
-	
-	/// support maigc - Tangram 1.x Code Start
-	/// support maigc - Tangram 1.x Code End
 	
 	/// support magic - Tangram 1.x Code Start
 	
@@ -8367,68 +8220,10 @@ void function(){
 	});
 	/// Tangram 1.x Code Start
 	
-	baidu.event.EventArg = function (event, win) {
-	    win = win || window;
-	    event = event || win.event;
-	    var doc = win.document;
-	    
-	    this.target =  (event.target) || event.srcElement;
-	    this.keyCode = event.which || event.keyCode;
-	    for (var k in event) {
-	        var item = event[k];
-	        // 避免拷贝preventDefault等事件对象方法
-	        if ('function' != typeof item) {
-	            this[k] = item;
-	        }
-	    }
-	    
-	    if (!this.pageX && this.pageX !== 0) {
-	        this.pageX = (event.clientX || 0) 
-	                        + (doc.documentElement.scrollLeft 
-	                            || doc.body.scrollLeft);
-	        this.pageY = (event.clientY || 0) 
-	                        + (doc.documentElement.scrollTop 
-	                            || doc.body.scrollTop);
-	    }
-	    this._event = event;
-	};
-	
-	baidu.event.EventArg.prototype.preventDefault = function () {
-	    if (this._event.preventDefault) {
-	        this._event.preventDefault();
-	    } else {
-	        this._event.returnValue = false;
-	    }
-	    return this;
-	};
-	
-	baidu.event.EventArg.prototype.stopPropagation = function () {
-	    if (this._event.stopPropagation) {
-	        this._event.stopPropagation();
-	    } else {
-	        this._event.cancelBubble = true;
-	    }
-	    return this;
-	};
-	
-	baidu.event.EventArg.prototype.stop = function () {
-	    return this.stopPropagation().preventDefault();
-	};
-	/// Tangram 1.x Code End
-	
-	/// Tangram 1.x Code Start
-	
 	baidu.event.fire = function( element, type, options ){
 	    element = baidu.dom( baidu.dom._g( element ) );
 	    element.trigger( type.replace( /^on/, "" ), null, options );
 	};
-	/// Tangram 1.x Code Start
-	
-	baidu.event.get = function (event, win) {
-	    return new baidu.event.EventArg(event, win);
-	};
-	/// Tangram 1.x Code End
-	
 	/// Tangram 1.x Code Start
 	
 	baidu.event.getEvent = function(event) {
@@ -8487,15 +8282,6 @@ void function(){
 	
 	/// Tangram 1.x Code Start
 	
-	 
-	baidu.event.getTarget = function (event) {
-	    event.originalEvent && (event = event.originalEvent);
-	    return event.target || event.srcElement;
-	};
-	/// Tangram 1.x Code End
-	
-	/// Tangram 1.x Code Start
-	
 	baidu.event.once = function(element, type, listener){
 	    return baidu.dom(baidu.dom._g(element)).one(type, listener)[0];
 	};
@@ -8504,21 +8290,7 @@ void function(){
 	/// Tangram 1.x Code Start
 	
 	baidu.event.stopPropagation = function (event) {
-	    event.originalEvent && (event = event.originalEvent);
-	    if (event.stopPropagation) {
-	        event.stopPropagation();
-	    } else {
-	        event.cancelBubble = true;
-	    }
-	};
-	/// Tangram 1.x Code End
-	
-	/// Tangram 1.x Code Start
-	
-	baidu.event.stop = function (event) {
-	    event.originalEvent && (event = event.originalEvent);
-	    baidu.event.stopPropagation(event);
-	    baidu.event.preventDefault(event);
+	    return new baidu.event(event).stopPropagation();
 	};
 	/// Tangram 1.x Code End
 	
