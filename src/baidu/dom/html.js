@@ -60,9 +60,7 @@
  * @example baidu.dom(args).html(function(index, html))
  */
 
-///import baidu;
 ///import baidu._util_.support;
-///import baidu.dom;
 ///import baidu.forEach;
 ///import baidu.dom.empty;
 ///import baidu.dom.append;

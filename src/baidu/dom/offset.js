@@ -1,11 +1,12 @@
 /**
  * @author linlingyu
  */
-///import baidu.dom;
+
 ///import baidu.type;
 ///import baidu.dom.getWindow;
 ///import baidu.dom.getDocument;
 ///import baidu.dom.getCurrentStyle;
+///import baidu.dom.position;
 
 /**
  * @description 取得第一个匹配元素或是设置多个匹配元素相对于文档的偏移量
@@ -37,23 +38,19 @@ baidu.dom.extend({
     offset: function(){
         var offset = {
             setOffset: function(ele, options, index){
-                var tang = baidu.dom(ele),
-                    type = baidu.type(options),
-                    currOffset = tang.offset(),
+                var tang = tang = baidu.dom(ele),
+                    position = tang.getCurrentStyle('position');
+                position === 'static' && (ele.style.position = 'relative');
+                var currOffset = tang.offset(),
                     currLeft = tang.getCurrentStyle('left'),
-                    currTop = tang.getCurrentStyle('top');
-                type === 'function' && (options = options.call(ele, index, currOffset));
-                // TODO
-                if(!options || options.left === undefined
-                    && options.top === undefined){
-                        return;
-                }
-                currLeft = parseFloat(currLeft) || 0;
-                currTop = parseFloat(currTop) || 0;
+                    currTop = tang.getCurrentStyle('top'),
+                    calculatePosition = (~'absolute|fixed'.indexOf(position)) && ~('' + currLeft + currTop).indexOf('auto'),
+                    curPosition = calculatePosition && tang.position();
+                currLeft = curPosition && curPosition.left || parseFloat(currLeft) || 0;
+                currTop = curPosition && curPosition.top || parseFloat(currTop) || 0;
+                baidu.type('options') === 'function' && (options = options.call(ele, index, currOffset));
                 options.left != undefined && (ele.style.left = options.left - currOffset.left + currLeft + 'px');
                 options.top != undefined && (ele.style.top = options.top - currOffset.top + currTop + 'px');
-                tang.getCurrentStyle('position') === 'static'
-                    && (ele.style.position = 'relative');
             },
             //
             bodyOffset: function(body){

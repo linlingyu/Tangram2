@@ -14,6 +14,9 @@ baidu._util_.attr = function(){
         hrefNormalized = supportDom.a.getAttribute('href') === '/a',
         style = /top/.test(supportDom.a.getAttribute('style')),
         nodeHook = util.nodeHook,
+        attrFixer = {
+            className: 'class'
+        },
         boolHook = {//处理对属性值是布尔值的情况
             get: function(ele, key){
                 var val = util.prop(ele, key), attrNode;
@@ -110,7 +113,7 @@ baidu._util_.attr = function(){
         }
         //if getAttribute is undefined, use prop interface
         if(notxml){
-            key = key.toLowerCase();
+            key = attrFixer[key] || key.toLowerCase();
             hooks = attrHooks[key] || (util.propFixer.rboolean.test(key) ? boolHook : nodeHook);
         }
         if(val!== undefined){

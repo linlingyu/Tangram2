@@ -4,6 +4,7 @@ baidu._util_.propFixer = {
     readonly: 'readOnly',
     'for': 'htmlFor',
     'class': 'className',
+    'classname': 'className',
     maxlength: 'maxLength',
     cellspacing: 'cellSpacing',
     cellpadding: 'cellPadding',
