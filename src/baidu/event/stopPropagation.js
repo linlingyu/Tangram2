@@ -20,11 +20,6 @@
  * @see baidu.event.stop,baidu.event.preventDefault
  */
 baidu.event.stopPropagation = function (event) {
-    event.originalEvent && (event = event.originalEvent);
-    if (event.stopPropagation) {
-        event.stopPropagation();
-    } else {
-        event.cancelBubble = true;
-    }
+    return new baidu.event(event).stopPropagation();
 };
 /// Tangram 1.x Code End
