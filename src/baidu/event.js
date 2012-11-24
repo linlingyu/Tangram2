@@ -29,7 +29,8 @@ baidu.createChain("event",
             switch( baidu.type( event ) ){
                 // event
                 case "object":
-                    return lastEvt.originalEvent === event ? lastEvt : ( lastEvt = new baidu.event.$Event( event ) );
+                    return lastEvt.originalEvent === event ? 
+                        lastEvt : lastEvt = new baidu.event.$Event( event );
 
                 case "$Event":
                     return event;
@@ -37,7 +38,8 @@ baidu.createChain("event",
                 // event type
                 case "string" :
                     var e = new baidu.event.$Event( event );
-                    typeof json == "object" && baidu.forEach( e, json );
+                    if( typeof json == "object" ) 
+                        baidu.forEach( e, json );
                     return e;
             }
         }
@@ -57,8 +59,13 @@ baidu.createChain("event",
                 me[ item ] = e[ item ];
             });
 
-            me.target = me.srcElement = e.srcElement || (( t = e.target ) && ( t.nodeType == 3 ? t.parentNode : t ));
-            me.relatedTarget = e.relatedTarget || (( t = e.fromElement ) && (t === me.target ? e.toElement : t ));
+            me.target = me.srcElement = e.srcElement || (
+                ( t = e.target ) && ( t.nodeType == 3 ? t.parentNode : t )
+            );
+
+            me.relatedTarget = e.relatedTarget || (
+                ( t = e.fromElement ) && ( t === me.target ? e.toElement : t )
+            );
 
             me.keyCode = me.which = e.keyCode || e.which;
 
@@ -68,14 +75,20 @@ baidu.createChain("event",
 
             var doc = document.documentElement, body = document.body;
 
-            me.pageX = e.pageX || (e.clientX + (doc && doc.scrollLeft || body && body.scrollLeft || 0) - (doc && doc.clientLeft || body && body.clientLeft || 0));
-            me.pageY = e.pageY || (e.clientY + (doc && doc.scrollTop  || body && body.scrollTop  || 0) - (doc && doc.clientTop  || body && body.clientTop  || 0));
+            me.pageX = e.pageX || (
+                e.clientX + (doc && doc.scrollLeft || body && body.scrollLeft || 0) - (doc && doc.clientLeft || body && body.clientLeft || 0)
+            );
+
+            me.pageY = e.pageY || (
+                e.clientY + (doc && doc.scrollTop  || body && body.scrollTop  || 0) - (doc && doc.clientTop  || body && body.clientTop  || 0)
+            );
 
             me.data;
         }
 
         // event.type
-        typeof event == "string" && ( this.type = event );
+        if( typeof event == "string" )
+            this.type = event;
 
         // event.timeStamp
         this.timeStamp = new Date().getTime();
@@ -84,13 +97,11 @@ baidu.createChain("event",
 ).extend({
     stopPropagation : function() {
         var e = this.originalEvent;
-
-        e && (e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true);
+        e && ( e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true );
     },
 
     preventDefault : function() {
         var e = this.originalEvent;
-
-        e && (e.preventDefault ? e.preventDefault() : e.returnValue = false);
+        e && ( e.preventDefault ? e.preventDefault() : e.returnValue = false );
     }
 });
