@@ -5,7 +5,6 @@
  */
 
 ///import baidu.ajax;
-///import baidu.fn.blank;
 
 /**
  * @description 发送一个ajax请求

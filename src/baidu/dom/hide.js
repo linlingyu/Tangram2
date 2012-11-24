@@ -4,7 +4,6 @@
  */
 
 ///import baidu.dom;
-///import baidu._util_.showHide;
 
 /**
  * @description 隐藏匹配的元素
@@ -22,10 +21,11 @@
  //隐藏一个元素
  baidu("div").hide();
  */
-
 baidu.dom.extend({
-    hide: function() {
-        baidu._util_.showHide( this );
-        return this;
+    hide: function(){
+        return this.each(function(index, ele){
+            if(!ele.style){return;}
+            ele.style.display = 'none';
+        });
     }
 });
