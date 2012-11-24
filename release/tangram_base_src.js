@@ -571,6 +571,7 @@ void function(){
 	    readonly: 'readOnly',
 	    'for': 'htmlFor',
 	    'class': 'className',
+	    'classname': 'className',
 	    maxlength: 'maxLength',
 	    cellspacing: 'cellSpacing',
 	    cellpadding: 'cellPadding',
@@ -725,6 +726,9 @@ void function(){
 	        hrefNormalized = supportDom.a.getAttribute('href') === '/a',
 	        style = /top/.test(supportDom.a.getAttribute('style')),
 	        nodeHook = util.nodeHook,
+	        attrFixer = {
+	            className: 'class'
+	        },
 	        boolHook = {//处理对属性值是布尔值的情况
 	            get: function(ele, key){
 	                var val = util.prop(ele, key), attrNode;
@@ -821,7 +825,7 @@ void function(){
 	        }
 	        //if getAttribute is undefined, use prop interface
 	        if(notxml){
-	            key = key.toLowerCase();
+	            key = attrFixer[key] || key.toLowerCase();
 	            hooks = attrHooks[key] || (util.propFixer.rboolean.test(key) ? boolHook : nodeHook);
 	        }
 	        if(val!== undefined){
@@ -995,7 +999,8 @@ void function(){
 	            switch( baidu.type( event ) ){
 	                // event
 	                case "object":
-	                    return lastEvt.originalEvent === event ? lastEvt : ( lastEvt = new baidu.event.$Event( event ) );
+	                    return lastEvt.originalEvent === event ? 
+	                        lastEvt : lastEvt = new baidu.event.$Event( event );
 	
 	                case "$Event":
 	                    return event;
@@ -1003,7 +1008,8 @@ void function(){
 	                // event type
 	                case "string" :
 	                    var e = new baidu.event.$Event( event );
-	                    typeof json == "object" && baidu.forEach( e, json );
+	                    if( typeof json == "object" ) 
+	                        baidu.forEach( e, json );
 	                    return e;
 	            }
 	        }
@@ -1023,8 +1029,13 @@ void function(){
 	                me[ item ] = e[ item ];
 	            });
 	
-	            me.target = me.srcElement = e.srcElement || (( t = e.target ) && ( t.nodeType == 3 ? t.parentNode : t ));
-	            me.relatedTarget = e.relatedTarget || (( t = e.fromElement ) && (t === me.target ? e.toElement : t ));
+	            me.target = me.srcElement = e.srcElement || (
+	                ( t = e.target ) && ( t.nodeType == 3 ? t.parentNode : t )
+	            );
+	
+	            me.relatedTarget = e.relatedTarget || (
+	                ( t = e.fromElement ) && ( t === me.target ? e.toElement : t )
+	            );
 	
 	            me.keyCode = me.which = e.keyCode || e.which;
 	
@@ -1034,14 +1045,20 @@ void function(){
 	
 	            var doc = document.documentElement, body = document.body;
 	
-	            me.pageX = e.pageX || (e.clientX + (doc && doc.scrollLeft || body && body.scrollLeft || 0) - (doc && doc.clientLeft || body && body.clientLeft || 0));
-	            me.pageY = e.pageY || (e.clientY + (doc && doc.scrollTop  || body && body.scrollTop  || 0) - (doc && doc.clientTop  || body && body.clientTop  || 0));
+	            me.pageX = e.pageX || (
+	                e.clientX + (doc && doc.scrollLeft || body && body.scrollLeft || 0) - (doc && doc.clientLeft || body && body.clientLeft || 0)
+	            );
+	
+	            me.pageY = e.pageY || (
+	                e.clientY + (doc && doc.scrollTop  || body && body.scrollTop  || 0) - (doc && doc.clientTop  || body && body.clientTop  || 0)
+	            );
 	
 	            me.data;
 	        }
 	
 	        // event.type
-	        typeof event == "string" && ( this.type = event );
+	        if( typeof event == "string" )
+	            this.type = event;
 	
 	        // event.timeStamp
 	        this.timeStamp = new Date().getTime();
@@ -1050,14 +1067,12 @@ void function(){
 	).extend({
 	    stopPropagation : function() {
 	        var e = this.originalEvent;
-	
-	        e && (e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true);
+	        e && ( e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true );
 	    },
 	
 	    preventDefault : function() {
 	        var e = this.originalEvent;
-	
-	        e && (e.preventDefault ? e.preventDefault() : e.returnValue = false);
+	        e && ( e.preventDefault ? e.preventDefault() : e.returnValue = false );
 	    }
 	});
 	
@@ -4129,31 +4144,6 @@ void function(){
 	
 	/// support magic - Tangram 1.x Code Start
 	
-	baidu.dom._NAME_ATTRS = (function () {
-	    var result = {
-	        'cellpadding': 'cellPadding',
-	        'cellspacing': 'cellSpacing',
-	        'colspan': 'colSpan',
-	        'rowspan': 'rowSpan',
-	        'valign': 'vAlign',
-	        'usemap': 'useMap',
-	        'frameborder': 'frameBorder'
-	    };
-	    
-	    if (baidu.browser.ie < 8) {
-	        result['for'] = 'htmlFor';
-	        result['class'] = 'className';
-	    } else {
-	        result['htmlFor'] = 'for';
-	        result['className'] = 'class';
-	    }
-	    
-	    return result;
-	})();
-	/// support magic - Tangram 1.x Code End
-	
-	/// support magic - Tangram 1.x Code Start
-	
 	baidu.dom._styleFilter = baidu.dom._styleFilter || [];
 	/// support magic - Tangram 1.x Code End
 	
@@ -4417,161 +4407,6 @@ void function(){
 	        return baidu.merge(this, ret);
 	    }
 	});
-	
-	/// support magic - Tangram 1.x Code Start
-	
-	baidu.lang.Class = function() {
-	    this.guid = baidu.id( this );
-	};
-	
-	baidu.lang.Class.prototype.dispose = function(){
-	    baidu.id( this.guid, "delete" );
-	
-	    // this.__listeners && (for (var i in this.__listeners) delete this.__listeners[i]);
-	
-	    for(var property in this){
-	        typeof this[property] != "function" && delete this[property];
-	    }
-	    this.disposed = true;   // 20100716
-	};
-	
-	baidu.lang.Class.prototype.toString = function(){
-	    return "[object " + (this._type_ || this.__type || this._className || "Object") + "]";
-	};
-	
-	 window["baiduInstance"] = function(guid) {
-	     return baidu.id( guid );
-	 }
-	
-	//  2011.11.23  meizz   添加 baiduInstance 这个全局方法，可以快速地通过guid得到实例对象
-	//  2011.11.22  meizz   废除创建类时指定guid的模式，guid只作为只读属性
-	//  2011.11.22  meizz   废除 baidu.lang._instances 模块，由统一的global机制完成；
-	
-	/// support magic - Tangram 1.x Code End
-	/// support magic - Tangram 1.x Code Start
-	
-	 
-	
-	baidu.lang.Class.prototype.un =
-	baidu.lang.Class.prototype.removeEventListener = function (type, handler) {
-	    var i,
-	        t = this.__listeners;
-	    if (!t) return;
-	
-	    // remove all event listener
-	    if (typeof type == "undefined") {
-	        for (i in t) {
-	            delete t[i];
-	        }
-	        return;
-	    }
-	
-	    type.indexOf("on") && (type = "on" + type);
-	
-	    // 移除某类事件监听
-	    if (typeof handler == "undefined") {
-	        delete t[type];
-	    } else if (t[type]) {
-	        // [TODO delete 2013] 支持按 key 删除注册的函数
-	        typeof handler=="string" && (handler=t[type][handler]) && delete t[type][handler];
-	
-	        for (i = t[type].length - 1; i >= 0; i--) {
-	            if (t[type][i] === handler) {
-	                t[type].splice(i, 1);
-	            }
-	        }
-	    }
-	};
-	
-	// 2011.12.19 meizz 为兼容老版本的按 key 删除，添加了一行代码
-	/// support magic - Tangram 1.x Code End
-	/// support magic - Tangram 1.x Code Start
-	
-	baidu.lang.guid = function() {
-	    return baidu.id();
-	};
-	
-	//不直接使用window，可以提高3倍左右性能
-	//baidu.$$._counter = baidu.$$._counter || 1;
-	
-	// 20111129	meizz	去除 _counter.toString(36) 这步运算，节约计算量
-	/// support magic - Tangram 1.x Code End
-	
-	//baidu.lang.isString = function (source) {
-	//    return '[object String]' == Object.prototype.toString.call(source);
-	//};
-	baidu.lang.isString = baidu.isString;
-	/// support magic - Tangram 1.x Code Start
-	
-	baidu.lang.Event = function (type, target) {
-	    this.type = type;
-	    this.returnValue = true;
-	    this.target = target || null;
-	    this.currentTarget = null;
-	};
-	 
-	
-	baidu.lang.Class.prototype.fire =
-	baidu.lang.Class.prototype.dispatchEvent = function (event, options) {
-	    baidu.lang.isString(event) && (event = new baidu.lang.Event(event));
-	
-	    !this.__listeners && (this.__listeners = {});
-	
-	    // 20100603 添加本方法的第二个参数，将 options extend到event中去传递
-	    options = options || {};
-	    for (var i in options) {
-	        event[i] = options[i];
-	    }
-	
-	    var i, n, me = this, t = me.__listeners, p = event.type;
-	    event.target = event.target || (event.currentTarget = me);
-	
-	    // 支持非 on 开头的事件名
-	    p.indexOf("on") && (p = "on" + p);
-	
-	    typeof me[p] == "function" && me[p].apply(me, arguments);
-	
-	    if (typeof t[p] == "object") {
-	        for (i=0, n=t[p].length; i<n; i++) {
-	            t[p][i] && t[p][i].apply(me, arguments);
-	        }
-	    }
-	    return event.returnValue;
-	};
-	
-	baidu.lang.Class.prototype.on =
-	baidu.lang.Class.prototype.addEventListener = function (type, handler, key) {
-	    if (typeof handler != "function") {
-	        return;
-	    }
-	
-	    !this.__listeners && (this.__listeners = {});
-	
-	    var i, t = this.__listeners;
-	
-	    type.indexOf("on") && (type = "on" + type);
-	
-	    typeof t[type] != "object" && (t[type] = []);
-	
-	    // 避免函数重复注册
-	    for (i = t[type].length - 1; i >= 0; i--) {
-	        if (t[type][i] === handler) return handler;
-	    };
-	
-	    t[type].push(handler);
-	
-	    // [TODO delete 2013] 2011.12.19 兼容老版本，2013删除此行
-	    key && typeof key == "string" && (t[type][key] = handler);
-	
-	    return handler;
-	};
-	
-	//  2011.12.19  meizz   很悲剧，第三个参数 key 还需要支持一段时间，以兼容老版本脚本
-	//  2011.11.24  meizz   事件添加监听方法 addEventListener 移除第三个参数 key，添加返回值 handler
-	//  2011.11.23  meizz   事件handler的存储对象由json改成array，以保证注册函数的执行顺序
-	//  2011.11.22  meizz   将 removeEventListener 方法分拆到 baidu.lang.Class.removeEventListener 中，以节约主程序代码
-	
-	/// support magic - Tangram 1.x Code End
 	
 	baidu.dom.extend({
 		delegate: function( selector, type, data, fn ){
@@ -4837,6 +4672,37 @@ void function(){
 	/// support maigc - Tangram 1.x Code Start
 	/// support maigc - Tangram 1.x Code End
 	
+	/// support magic - Tangram 1.x Code Start
+	
+	baidu.lang.Class = function() {
+	    this.guid = baidu.id( this );
+	};
+	
+	baidu.lang.Class.prototype.dispose = function(){
+	    baidu.id( this.guid, "delete" );
+	
+	    // this.__listeners && (for (var i in this.__listeners) delete this.__listeners[i]);
+	
+	    for(var property in this){
+	        typeof this[property] != "function" && delete this[property];
+	    }
+	    this.disposed = true;   // 20100716
+	};
+	
+	baidu.lang.Class.prototype.toString = function(){
+	    return "[object " + (this._type_ || this.__type || this._className || "Object") + "]";
+	};
+	
+	 window["baiduInstance"] = function(guid) {
+	     return baidu.id( guid );
+	 }
+	
+	//  2011.11.23  meizz   添加 baiduInstance 这个全局方法，可以快速地通过guid得到实例对象
+	//  2011.11.22  meizz   废除创建类时指定guid的模式，guid只作为只读属性
+	//  2011.11.22  meizz   废除 baidu.lang._instances 模块，由统一的global机制完成；
+	
+	/// support magic - Tangram 1.x Code End
+	
 	baidu.dom.extend({
 	    eq : function (index) {
 	        baidu.check("number","baidu.dom.eq");
@@ -4892,17 +4758,9 @@ void function(){
 	
 	 
 	
-	baidu.dom.extend({
-	    getAttr: function (key) {
-	        element = this[0];
-	        if ('style' == key){
-	            return element.style.cssText;
-	        };
-	        key = baidu.dom._NAME_ATTRS[key] || key;
-	        return element.getAttribute(key);
-	    }
-	});
-	
+	baidu.dom.getAttr = function(element, key){
+	    return baidu.dom(baidu.dom.g(element)).attr(key);
+	}
 	/// support magic - Tangram 1.x Code End
 	
 	baidu.dom.extend({
@@ -4910,6 +4768,95 @@ void function(){
 	        var doc = this.getDocument();
 	        return (this.size()<=0)? undefined :(doc.parentWindow || doc.defaultView);
 	    }
+	});
+	
+	baidu.dom.extend({
+	    offsetParent: function(){
+	        return this.map(function(){
+	            var offsetParent = this.offsetParent || document.body,
+	                exclude = /^(?:body|html)$/i;
+	            while(offsetParent && baidu.dom(offsetParent).getCurrentStyle('position') === 'static'
+	                && !exclude.test(offsetParent.nodeName)){
+	                    offsetParent = offsetParent.offsetParent;
+	            }
+	            return offsetParent;
+	        });
+	    }
+	});
+	
+	baidu.dom.extend({
+	    position: function(){
+	        if(this.size()<=0){return 0;}        
+	        var patrn = /^(?:body|html)$/i,
+	            coordinate = this.offset(),
+	            offsetParent = this.offsetParent(),
+	            parentCoor = patrn.test(offsetParent[0].nodeName) ? {left: 0, top: 0}
+	                : offsetParent.offset();
+	        coordinate.left -= parseFloat(this.getCurrentStyle('marginLeft')) || 0;
+	        coordinate.top -= parseFloat(this.getCurrentStyle('marginTop')) || 0;
+	        parentCoor.left += parseFloat(offsetParent.getCurrentStyle('borderLeftWidth')) || 0;
+	        parentCoor.top += parseFloat(offsetParent.getCurrentStyle('borderTopWidth')) || 0;
+	        return {
+	            left: coordinate.left - parentCoor.left,
+	            top: coordinate.top - parentCoor.top
+	        }
+	    }
+	});
+	
+	baidu.dom.extend({
+	    offset: function(){
+	        var offset = {
+	            setOffset: function(ele, options, index){
+	                var tang = tang = baidu.dom(ele),
+	                    position = tang.getCurrentStyle('position');
+	                position === 'static' && (ele.style.position = 'relative');
+	                var currOffset = tang.offset(),
+	                    currLeft = tang.getCurrentStyle('left'),
+	                    currTop = tang.getCurrentStyle('top'),
+	                    calculatePosition = (~'absolute|fixed'.indexOf(position)) && ~('' + currLeft + currTop).indexOf('auto'),
+	                    curPosition = calculatePosition && tang.position();
+	                currLeft = curPosition && curPosition.left || parseFloat(currLeft) || 0;
+	                currTop = curPosition && curPosition.top || parseFloat(currTop) || 0;
+	                baidu.type('options') === 'function' && (options = options.call(ele, index, currOffset));
+	                options.left != undefined && (ele.style.left = options.left - currOffset.left + currLeft + 'px');
+	                options.top != undefined && (ele.style.top = options.top - currOffset.top + currTop + 'px');
+	            },
+	            //
+	            bodyOffset: function(body){
+	                var tang = baidu.dom(body);
+	                return {
+	                    left: body.offsetLeft + parseFloat(tang.getCurrentStyle('marginLeft')) || 0,
+	                    top: body.offsetTop + parseFloat(tang.getCurrentStyle('marginTop')) || 0
+	                }
+	            }
+	        };
+	        
+	        return function(options){
+	            if(!options){
+	                var ele = this[0],
+	                    doc = this.getDocument(),
+	                    box = {left: 0, top: 0},
+	                    win, docElement, body;
+	                if(ele === doc.body){return offset.bodyOffset(ele, doc);}
+	                if (typeof ele.getBoundingClientRect !== 'undefined'){
+	                    box = ele.getBoundingClientRect();
+	                }
+	                win = this.getWindow();
+	                docElement = doc.documentElement;
+	                body = doc.body;
+	                return {
+	                    left: box.left + (win.pageXOffset || Math.max(docElement.scrollLeft, body.scrollLeft)) - (docElement.clientLeft || body.clientLeft),
+	                    top: box.top + (win.pageYOffset || Math.max(docElement.scrollTop, body.scrollTop)) - (docElement.clientTop || body.clientTop)
+	                };
+	            }else{
+	                baidu.check('^(?:object|function)$', 'baidu.dom.offset');
+	                for(var i = 0, item; item = this[i]; i++){
+	                    offset.setOffset(item, options, i);
+	                }
+	                return this;
+	           }
+	        }
+	    }()
 	});
 	
 	baidu.dom.extend({
@@ -5141,80 +5088,6 @@ void function(){
 	});
 	
 	baidu.dom.extend({
-	    offset: function(){
-	        var offset = {
-	            setOffset: function(ele, options, index){
-	                var tang = baidu.dom(ele),
-	                    type = baidu.type(options),
-	                    currOffset = tang.offset(),
-	                    currLeft = tang.getCurrentStyle('left'),
-	                    currTop = tang.getCurrentStyle('top');
-	                type === 'function' && (options = options.call(ele, index, currOffset));
-	                // TODO
-	                if(!options || options.left === undefined
-	                    && options.top === undefined){
-	                        return;
-	                }
-	                currLeft = parseFloat(currLeft) || 0;
-	                currTop = parseFloat(currTop) || 0;
-	                options.left != undefined && (ele.style.left = options.left - currOffset.left + currLeft + 'px');
-	                options.top != undefined && (ele.style.top = options.top - currOffset.top + currTop + 'px');
-	                tang.getCurrentStyle('position') === 'static'
-	                    && (ele.style.position = 'relative');
-	            },
-	            //
-	            bodyOffset: function(body){
-	                var tang = baidu.dom(body);
-	                return {
-	                    left: body.offsetLeft + parseFloat(tang.getCurrentStyle('marginLeft')) || 0,
-	                    top: body.offsetTop + parseFloat(tang.getCurrentStyle('marginTop')) || 0
-	                }
-	            }
-	        };
-	        
-	        return function(options){
-	            if(!options){
-	                var ele = this[0],
-	                    doc = this.getDocument(),
-	                    box = {left: 0, top: 0},
-	                    win, docElement, body;
-	                if(ele === doc.body){return offset.bodyOffset(ele, doc);}
-	                if (typeof ele.getBoundingClientRect !== 'undefined'){
-	                    box = ele.getBoundingClientRect();
-	                }
-	                win = this.getWindow();
-	                docElement = doc.documentElement;
-	                body = doc.body;
-	                return {
-	                    left: box.left + (win.pageXOffset || Math.max(docElement.scrollLeft, body.scrollLeft)) - (docElement.clientLeft || body.clientLeft),
-	                    top: box.top + (win.pageYOffset || Math.max(docElement.scrollTop, body.scrollTop)) - (docElement.clientTop || body.clientTop)
-	                };
-	            }else{
-	                baidu.check('^(?:object|function)$', 'baidu.dom.offset');
-	                for(var i = 0, item; item = this[i]; i++){
-	                    offset.setOffset(item, options, i);
-	                }
-	                return this;
-	           }
-	        }
-	    }()
-	});
-	
-	baidu.dom.extend({
-	    offsetParent: function(){
-	        return this.map(function(){
-	            var offsetParent = this.offsetParent || document.body,
-	                exclude = /^(?:body|html)$/i;
-	            while(offsetParent && baidu.dom(offsetParent).getCurrentStyle('position') === 'static'
-	                && !exclude.test(offsetParent.nodeName)){
-	                    offsetParent = offsetParent.offsetParent;
-	            }
-	            return offsetParent;
-	        });
-	    }
-	});
-	
-	baidu.dom.extend({
 	    one: function( types, selector, data, fn  ){
 	        return this.on( types, selector, data, fn, 1 );
 	    }
@@ -5291,25 +5164,6 @@ void function(){
 	        });
 	
 	        return baidu.dom( baidu.dom.match(array, filter) );
-	    }
-	});
-	
-	baidu.dom.extend({
-	    position: function(){
-	        if(this.size()<=0){return 0;}        
-	        var patrn = /^(?:body|html)$/i,
-	            coordinate = this.offset(),
-	            offsetParent = this.offsetParent(),
-	            parentCoor = patrn.test(offsetParent[0].nodeName) ? {left: 0, top: 0}
-	                : offsetParent.offset();
-	        coordinate.left -= parseFloat(this.getCurrentStyle('marginLeft')) || 0;
-	        coordinate.top -= parseFloat(this.getCurrentStyle('marginTop')) || 0;
-	        parentCoor.left += parseFloat(offsetParent.getCurrentStyle('borderLeftWidth')) || 0;
-	        parentCoor.top += parseFloat(offsetParent.getCurrentStyle('borderTopWidth')) || 0;
-	        return {
-	            left: coordinate.left - parentCoor.left,
-	            top: coordinate.top - parentCoor.top
-	        }
 	    }
 	});
 	
@@ -7037,23 +6891,6 @@ void function(){
 	    }
 	});
 	
-	baidu.object.each = function (source, iterator) {
-	    var returnValue, key, item; 
-	    if ('function' == typeof iterator) {
-	        for (key in source) {
-	            if (source.hasOwnProperty(key)) {
-	                item = source[key];
-	                returnValue = iterator.call(source, item, key);
-	        
-	                if (returnValue === false) {
-	                    break;
-	                }
-	            }
-	        }
-	    }
-	    return source;
-	};
-	
 	baidu.dom.extend({
 	    scrollLeft: function(){
 	        var ret = baidu._util_.smartScroll('scrollLeft');
@@ -7279,13 +7116,18 @@ void function(){
 	
 		var triggerEvents = { submit: 1 };
 	
-		var createEvent = function( type ){
+		var createEvent = function( type, opts ){
 		    var evnt;
 		    if( document.createEvent )
 		        evnt = document.createEvent( "HTMLEvents" ),
 		        evnt.initEvent( type, true, true );
 		    else if( document.createEventObject )
-		    	evnt = document.createEventObject();
+		    	evnt = document.createEventObject(),
+		    	evnt.type = type;
+	
+		   	if( opts )for( var name in opts )
+		   		evnt[ name ] = opts[ name ];
+	
 		    return evnt;
 		};
 	
@@ -7302,10 +7144,10 @@ void function(){
 		    } );
 		};
 	
-		var fire = function( element, type, triggerData, special ){
+		var fire = function( element, type, triggerData, _eventOptions, special ){
 			var evnt, eventReturn;
 	
-			if( evnt = createEvent( type ) ){
+			if( evnt = createEvent( type, _eventOptions ) ){
 			    if( triggerData )
 			        evnt.triggerData = triggerData;
 			    
@@ -7327,15 +7169,16 @@ void function(){
 		};
 	
 	    baidu.dom.extend({
-			trigger: function( type, triggerData ){
+			trigger: function( type, triggerData, _eventOptions ){
 				var sp;
 	
 				if( type in special )
 				    sp = special[type];
 	
 				this.each(function(){
-					fire( this, type, triggerData, sp );
+					fire( this, type, triggerData, _eventOptions, sp );
 				});
+	
 				return this;
 			}
 		});
@@ -7481,16 +7324,6 @@ void function(){
 	    }
 	});
 	
-	baidu.object.values = function (source) {
-	    var result = [], resultLen = 0, k;
-	    for (k in source) {
-	        if (source.hasOwnProperty(k)) {
-	            result[resultLen++] = source[k];
-	        }
-	    }
-	    return result;
-	};
-	
 	baidu.fn.extend({
 	    bind: function(scope){
 	        var func = this.fn,
@@ -7503,51 +7336,93 @@ void function(){
 	    }
 	});
 	
-	baidu.fn.extend({
-	    multize: function(recursive, joinArray){
-	        var func = this.fn;
-	        function newFunc(){
-	            var list = arguments[0],
-	                fn = recursive ? newFunc : func,
-	                ret = [],
-	                moreArgs = Array.prototype.slice.call(arguments, 0),
-	                result;
-	            
-	            if(list instanceof Array){
-	                for(var i = 0, item; item = list[i]; i++){
-	                    moreArgs[0] = item;
-	                    result = fn.apply(this, moreArgs);
-	                    if(joinArray){
-	                        //TODO: 需要去重吗？
-	                        result && (ret = ret.concat(result));
-	                    }else{
-	                        ret.push(result);
-	                    }
-	                }
-	                return ret;
-	            }else{
-	                return func.apply(this, arguments);
-	            }
-	        }
-	        return newFunc;
-	    }
-	});
+	/// support magic - Tangram 1.x Code Start
 	
-	baidu.fn.extend({
-	    wrapReturnValue: function(wrapper, mode){
-	        var func = this.fn;
-	        mode = mode | 0;
-	        return function(){
-	            var ret = func.apply(this, arguments);
-	            if(!mode){return new wrapper(ret);}
-	            if(mode > 0){
-	                return new wrapper(arguments[mode - 1]);
-	            }
-	            return ret;
+	baidu.lang.guid = function() {
+	    return baidu.id();
+	};
+	
+	//不直接使用window，可以提高3倍左右性能
+	//baidu.$$._counter = baidu.$$._counter || 1;
+	
+	// 20111129	meizz	去除 _counter.toString(36) 这步运算，节约计算量
+	/// support magic - Tangram 1.x Code End
+	
+	//baidu.lang.isString = function (source) {
+	//    return '[object String]' == Object.prototype.toString.call(source);
+	//};
+	baidu.lang.isString = baidu.isString;
+	/// support magic - Tangram 1.x Code Start
+	
+	baidu.lang.Event = function (type, target) {
+	    this.type = type;
+	    this.returnValue = true;
+	    this.target = target || null;
+	    this.currentTarget = null;
+	};
+	 
+	
+	baidu.lang.Class.prototype.fire =
+	baidu.lang.Class.prototype.dispatchEvent = function (event, options) {
+	    baidu.lang.isString(event) && (event = new baidu.lang.Event(event));
+	
+	    !this.__listeners && (this.__listeners = {});
+	
+	    // 20100603 添加本方法的第二个参数，将 options extend到event中去传递
+	    options = options || {};
+	    for (var i in options) {
+	        event[i] = options[i];
+	    }
+	
+	    var i, n, me = this, t = me.__listeners, p = event.type;
+	    event.target = event.target || (event.currentTarget = me);
+	
+	    // 支持非 on 开头的事件名
+	    p.indexOf("on") && (p = "on" + p);
+	
+	    typeof me[p] == "function" && me[p].apply(me, arguments);
+	
+	    if (typeof t[p] == "object") {
+	        for (i=0, n=t[p].length; i<n; i++) {
+	            t[p][i] && t[p][i].apply(me, arguments);
 	        }
 	    }
-	});
+	    return event.returnValue;
+	};
 	
+	baidu.lang.Class.prototype.on =
+	baidu.lang.Class.prototype.addEventListener = function (type, handler, key) {
+	    if (typeof handler != "function") {
+	        return;
+	    }
+	
+	    !this.__listeners && (this.__listeners = {});
+	
+	    var i, t = this.__listeners;
+	
+	    type.indexOf("on") && (type = "on" + type);
+	
+	    typeof t[type] != "object" && (t[type] = []);
+	
+	    // 避免函数重复注册
+	    for (i = t[type].length - 1; i >= 0; i--) {
+	        if (t[type][i] === handler) return handler;
+	    };
+	
+	    t[type].push(handler);
+	
+	    // [TODO delete 2013] 2011.12.19 兼容老版本，2013删除此行
+	    key && typeof key == "string" && (t[type][key] = handler);
+	
+	    return handler;
+	};
+	
+	//  2011.12.19  meizz   很悲剧，第三个参数 key 还需要支持一段时间，以兼容老版本脚本
+	//  2011.11.24  meizz   事件添加监听方法 addEventListener 移除第三个参数 key，添加返回值 handler
+	//  2011.11.23  meizz   事件handler的存储对象由json改成array，以保证注册函数的执行顺序
+	//  2011.11.22  meizz   将 removeEventListener 方法分拆到 baidu.lang.Class.removeEventListener 中，以节约主程序代码
+	
+	/// support magic - Tangram 1.x Code End
 	/// support magic - Tangram 1.x Code Start
 	
 	baidu.fx = baidu.fx || {} ;
@@ -8198,6 +8073,43 @@ void function(){
 	
 	/// support magic - Tangram 1.x Code Start
 	
+	 
+	
+	baidu.lang.Class.prototype.un =
+	baidu.lang.Class.prototype.removeEventListener = function (type, handler) {
+	    var i,
+	        t = this.__listeners;
+	    if (!t) return;
+	
+	    // remove all event listener
+	    if (typeof type == "undefined") {
+	        for (i in t) {
+	            delete t[i];
+	        }
+	        return;
+	    }
+	
+	    type.indexOf("on") && (type = "on" + type);
+	
+	    // 移除某类事件监听
+	    if (typeof handler == "undefined") {
+	        delete t[type];
+	    } else if (t[type]) {
+	        // [TODO delete 2013] 支持按 key 删除注册的函数
+	        typeof handler=="string" && (handler=t[type][handler]) && delete t[type][handler];
+	
+	        for (i = t[type].length - 1; i >= 0; i--) {
+	            if (t[type][i] === handler) {
+	                t[type].splice(i, 1);
+	            }
+	        }
+	    }
+	};
+	
+	// 2011.12.19 meizz 为兼容老版本的按 key 删除，添加了一行代码
+	/// support magic - Tangram 1.x Code End
+	/// support magic - Tangram 1.x Code Start
+	
 	baidu.lang.createClass = function(constructor, options) {
 	    options = options || {};
 	    var superClass = options.superClass || baidu.lang.Class;
@@ -8362,6 +8274,23 @@ void function(){
 	    return result;
 	};
 	
+	baidu.object.each = function (source, iterator) {
+	    var returnValue, key, item; 
+	    if ('function' == typeof iterator) {
+	        for (key in source) {
+	            if (source.hasOwnProperty(key)) {
+	                item = source[key];
+	                returnValue = iterator.call(source, item, key);
+	        
+	                if (returnValue === false) {
+	                    break;
+	                }
+	            }
+	        }
+	    }
+	    return source;
+	};
+	
 	baidu.object.isEmpty = function(obj) {
 	    var ret = true;
 	    if('[object Array]' === Object.prototype.toString.call(obj)){
@@ -8442,6 +8371,16 @@ void function(){
 	    return target;
 	};
 	})();
+	
+	baidu.object.values = function (source) {
+	    var result = [], resultLen = 0, k;
+	    for (k in source) {
+	        if (source.hasOwnProperty(k)) {
+	            result[resultLen++] = source[k];
+	        }
+	    }
+	    return result;
+	};
 	
 	/// support magic - Tangram 1.x Code Start
 	

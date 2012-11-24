@@ -3,9 +3,11 @@
  */
 
 ///import baidu.dom;
+///import baidu.dom.each;
 ///import baidu.event;
 ///import baidu._util_.eventBase;
 ///import baidu._util_.eventBase.queue;
+///import baidu._util_.eventBase.simulate;
 
 /**
  * @description 对指定的 TangramDom 集合派发指定的事件，并触发事件默认行为
@@ -23,13 +25,18 @@ void function( base, be ){
 
 	var triggerEvents = { submit: 1 };
 
-	var createEvent = function( type ){
+	var createEvent = function( type, opts ){
 	    var evnt;
 	    if( document.createEvent )
 	        evnt = document.createEvent( "HTMLEvents" ),
 	        evnt.initEvent( type, true, true );
 	    else if( document.createEventObject )
-	    	evnt = document.createEventObject();
+	    	evnt = document.createEventObject(),
+	    	evnt.type = type;
+
+	   	if( opts )for( var name in opts )
+	   		evnt[ name ] = opts[ name ];
+
 	    return evnt;
 	};
 
@@ -46,10 +53,10 @@ void function( base, be ){
 	    } );
 	};
 
-	var fire = function( element, type, triggerData, special ){
+	var fire = function( element, type, triggerData, _eventOptions, special ){
 		var evnt, eventReturn;
 
-		if( evnt = createEvent( type ) ){
+		if( evnt = createEvent( type, _eventOptions ) ){
 		    if( triggerData )
 		        evnt.triggerData = triggerData;
 		    
@@ -71,15 +78,16 @@ void function( base, be ){
 	};
 
     baidu.dom.extend({
-		trigger: function( type, triggerData ){
+		trigger: function( type, triggerData, _eventOptions ){
 			var sp;
 
 			if( type in special )
 			    sp = special[type];
 
 			this.each(function(){
-				fire( this, type, triggerData, sp );
+				fire( this, type, triggerData, _eventOptions, sp );
 			});
+
 			return this;
 		}
 	});

@@ -571,6 +571,7 @@ void function(){
 	    readonly: 'readOnly',
 	    'for': 'htmlFor',
 	    'class': 'className',
+	    'classname': 'className',
 	    maxlength: 'maxLength',
 	    cellspacing: 'cellSpacing',
 	    cellpadding: 'cellPadding',
@@ -725,6 +726,9 @@ void function(){
 	        hrefNormalized = supportDom.a.getAttribute('href') === '/a',
 	        style = /top/.test(supportDom.a.getAttribute('style')),
 	        nodeHook = util.nodeHook,
+	        attrFixer = {
+	            className: 'class'
+	        },
 	        boolHook = {//处理对属性值是布尔值的情况
 	            get: function(ele, key){
 	                var val = util.prop(ele, key), attrNode;
@@ -821,7 +825,7 @@ void function(){
 	        }
 	        //if getAttribute is undefined, use prop interface
 	        if(notxml){
-	            key = key.toLowerCase();
+	            key = attrFixer[key] || key.toLowerCase();
 	            hooks = attrHooks[key] || (util.propFixer.rboolean.test(key) ? boolHook : nodeHook);
 	        }
 	        if(val!== undefined){
@@ -995,7 +999,8 @@ void function(){
 	            switch( baidu.type( event ) ){
 	                // event
 	                case "object":
-	                    return lastEvt.originalEvent === event ? lastEvt : ( lastEvt = new baidu.event.$Event( event ) );
+	                    return lastEvt.originalEvent === event ? 
+	                        lastEvt : lastEvt = new baidu.event.$Event( event );
 	
 	                case "$Event":
 	                    return event;
@@ -1003,7 +1008,8 @@ void function(){
 	                // event type
 	                case "string" :
 	                    var e = new baidu.event.$Event( event );
-	                    typeof json == "object" && baidu.forEach( e, json );
+	                    if( typeof json == "object" ) 
+	                        baidu.forEach( e, json );
 	                    return e;
 	            }
 	        }
@@ -1023,8 +1029,13 @@ void function(){
 	                me[ item ] = e[ item ];
 	            });
 	
-	            me.target = me.srcElement = e.srcElement || (( t = e.target ) && ( t.nodeType == 3 ? t.parentNode : t ));
-	            me.relatedTarget = e.relatedTarget || (( t = e.fromElement ) && (t === me.target ? e.toElement : t ));
+	            me.target = me.srcElement = e.srcElement || (
+	                ( t = e.target ) && ( t.nodeType == 3 ? t.parentNode : t )
+	            );
+	
+	            me.relatedTarget = e.relatedTarget || (
+	                ( t = e.fromElement ) && ( t === me.target ? e.toElement : t )
+	            );
 	
 	            me.keyCode = me.which = e.keyCode || e.which;
 	
@@ -1034,14 +1045,20 @@ void function(){
 	
 	            var doc = document.documentElement, body = document.body;
 	
-	            me.pageX = e.pageX || (e.clientX + (doc && doc.scrollLeft || body && body.scrollLeft || 0) - (doc && doc.clientLeft || body && body.clientLeft || 0));
-	            me.pageY = e.pageY || (e.clientY + (doc && doc.scrollTop  || body && body.scrollTop  || 0) - (doc && doc.clientTop  || body && body.clientTop  || 0));
+	            me.pageX = e.pageX || (
+	                e.clientX + (doc && doc.scrollLeft || body && body.scrollLeft || 0) - (doc && doc.clientLeft || body && body.clientLeft || 0)
+	            );
+	
+	            me.pageY = e.pageY || (
+	                e.clientY + (doc && doc.scrollTop  || body && body.scrollTop  || 0) - (doc && doc.clientTop  || body && body.clientTop  || 0)
+	            );
 	
 	            me.data;
 	        }
 	
 	        // event.type
-	        typeof event == "string" && ( this.type = event );
+	        if( typeof event == "string" )
+	            this.type = event;
 	
 	        // event.timeStamp
 	        this.timeStamp = new Date().getTime();
@@ -1050,14 +1067,12 @@ void function(){
 	).extend({
 	    stopPropagation : function() {
 	        var e = this.originalEvent;
-	
-	        e && (e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true);
+	        e && ( e.stopPropagation ? e.stopPropagation() : e.cancelBubble = true );
 	    },
 	
 	    preventDefault : function() {
 	        var e = this.originalEvent;
-	
-	        e && (e.preventDefault ? e.preventDefault() : e.returnValue = false);
+	        e && ( e.preventDefault ? e.preventDefault() : e.returnValue = false );
 	    }
 	});
 	
@@ -4665,31 +4680,6 @@ void function(){
 	
 	/// support magic - Tangram 1.x Code Start
 	
-	baidu.dom._NAME_ATTRS = (function () {
-	    var result = {
-	        'cellpadding': 'cellPadding',
-	        'cellspacing': 'cellSpacing',
-	        'colspan': 'colSpan',
-	        'rowspan': 'rowSpan',
-	        'valign': 'vAlign',
-	        'usemap': 'useMap',
-	        'frameborder': 'frameBorder'
-	    };
-	    
-	    if (baidu.browser.ie < 8) {
-	        result['for'] = 'htmlFor';
-	        result['class'] = 'className';
-	    } else {
-	        result['htmlFor'] = 'for';
-	        result['className'] = 'class';
-	    }
-	    
-	    return result;
-	})();
-	/// support magic - Tangram 1.x Code End
-	
-	/// support magic - Tangram 1.x Code Start
-	
 	baidu.dom._styleFilter = baidu.dom._styleFilter || [];
 	/// support magic - Tangram 1.x Code End
 	
@@ -4999,22 +4989,9 @@ void function(){
 	/// Tangram 1.x Code Start
 	
 	 
-	
-	 
-	baidu.dom.extend({
-	    setAttr : function (key, value) {
-	        var element = this[0];
-	        if ('style' == key){
-	            element.style.cssText = value;
-	        } else {
-	            key = baidu.dom._NAME_ATTRS[key] || key;
-	            element.setAttribute(key, value);
-	        }
-	    
-	        return element;
-	    }
-	});
-	
+	baidu.dom.setAttr = function (element, key, value) {
+	    return baidu.dom(baidu.dom.g(element)).attr(key, value).get(0);
+	};
 	/// Tangram 1.x Code End
 	
 	/// Tangram 1.x Code Start
@@ -5027,180 +5004,6 @@ void function(){
 	    }
 	    return el;
 	};
-	/// Tangram 1.x Code End
-	
-	/// support magic - Tangram 1.x Code Start
-	
-	baidu.lang.Class = function() {
-	    this.guid = baidu.id( this );
-	};
-	
-	baidu.lang.Class.prototype.dispose = function(){
-	    baidu.id( this.guid, "delete" );
-	
-	    // this.__listeners && (for (var i in this.__listeners) delete this.__listeners[i]);
-	
-	    for(var property in this){
-	        typeof this[property] != "function" && delete this[property];
-	    }
-	    this.disposed = true;   // 20100716
-	};
-	
-	baidu.lang.Class.prototype.toString = function(){
-	    return "[object " + (this._type_ || this.__type || this._className || "Object") + "]";
-	};
-	
-	 window["baiduInstance"] = function(guid) {
-	     return baidu.id( guid );
-	 }
-	
-	//  2011.11.23  meizz   添加 baiduInstance 这个全局方法，可以快速地通过guid得到实例对象
-	//  2011.11.22  meizz   废除创建类时指定guid的模式，guid只作为只读属性
-	//  2011.11.22  meizz   废除 baidu.lang._instances 模块，由统一的global机制完成；
-	
-	/// support magic - Tangram 1.x Code End
-	/// support magic - Tangram 1.x Code Start
-	
-	 
-	
-	baidu.lang.Class.prototype.un =
-	baidu.lang.Class.prototype.removeEventListener = function (type, handler) {
-	    var i,
-	        t = this.__listeners;
-	    if (!t) return;
-	
-	    // remove all event listener
-	    if (typeof type == "undefined") {
-	        for (i in t) {
-	            delete t[i];
-	        }
-	        return;
-	    }
-	
-	    type.indexOf("on") && (type = "on" + type);
-	
-	    // 移除某类事件监听
-	    if (typeof handler == "undefined") {
-	        delete t[type];
-	    } else if (t[type]) {
-	        // [TODO delete 2013] 支持按 key 删除注册的函数
-	        typeof handler=="string" && (handler=t[type][handler]) && delete t[type][handler];
-	
-	        for (i = t[type].length - 1; i >= 0; i--) {
-	            if (t[type][i] === handler) {
-	                t[type].splice(i, 1);
-	            }
-	        }
-	    }
-	};
-	
-	// 2011.12.19 meizz 为兼容老版本的按 key 删除，添加了一行代码
-	/// support magic - Tangram 1.x Code End
-	/// support magic - Tangram 1.x Code Start
-	
-	baidu.lang.guid = function() {
-	    return baidu.id();
-	};
-	
-	//不直接使用window，可以提高3倍左右性能
-	//baidu.$$._counter = baidu.$$._counter || 1;
-	
-	// 20111129	meizz	去除 _counter.toString(36) 这步运算，节约计算量
-	/// support magic - Tangram 1.x Code End
-	
-	//baidu.lang.isString = function (source) {
-	//    return '[object String]' == Object.prototype.toString.call(source);
-	//};
-	baidu.lang.isString = baidu.isString;
-	/// support magic - Tangram 1.x Code Start
-	
-	baidu.lang.Event = function (type, target) {
-	    this.type = type;
-	    this.returnValue = true;
-	    this.target = target || null;
-	    this.currentTarget = null;
-	};
-	 
-	
-	baidu.lang.Class.prototype.fire =
-	baidu.lang.Class.prototype.dispatchEvent = function (event, options) {
-	    baidu.lang.isString(event) && (event = new baidu.lang.Event(event));
-	
-	    !this.__listeners && (this.__listeners = {});
-	
-	    // 20100603 添加本方法的第二个参数，将 options extend到event中去传递
-	    options = options || {};
-	    for (var i in options) {
-	        event[i] = options[i];
-	    }
-	
-	    var i, n, me = this, t = me.__listeners, p = event.type;
-	    event.target = event.target || (event.currentTarget = me);
-	
-	    // 支持非 on 开头的事件名
-	    p.indexOf("on") && (p = "on" + p);
-	
-	    typeof me[p] == "function" && me[p].apply(me, arguments);
-	
-	    if (typeof t[p] == "object") {
-	        for (i=0, n=t[p].length; i<n; i++) {
-	            t[p][i] && t[p][i].apply(me, arguments);
-	        }
-	    }
-	    return event.returnValue;
-	};
-	
-	baidu.lang.Class.prototype.on =
-	baidu.lang.Class.prototype.addEventListener = function (type, handler, key) {
-	    if (typeof handler != "function") {
-	        return;
-	    }
-	
-	    !this.__listeners && (this.__listeners = {});
-	
-	    var i, t = this.__listeners;
-	
-	    type.indexOf("on") && (type = "on" + type);
-	
-	    typeof t[type] != "object" && (t[type] = []);
-	
-	    // 避免函数重复注册
-	    for (i = t[type].length - 1; i >= 0; i--) {
-	        if (t[type][i] === handler) return handler;
-	    };
-	
-	    t[type].push(handler);
-	
-	    // [TODO delete 2013] 2011.12.19 兼容老版本，2013删除此行
-	    key && typeof key == "string" && (t[type][key] = handler);
-	
-	    return handler;
-	};
-	
-	//  2011.12.19  meizz   很悲剧，第三个参数 key 还需要支持一段时间，以兼容老版本脚本
-	//  2011.11.24  meizz   事件添加监听方法 addEventListener 移除第三个参数 key，添加返回值 handler
-	//  2011.11.23  meizz   事件handler的存储对象由json改成array，以保证注册函数的执行顺序
-	//  2011.11.22  meizz   将 removeEventListener 方法分拆到 baidu.lang.Class.removeEventListener 中，以节约主程序代码
-	
-	/// support magic - Tangram 1.x Code End
-	/// Tangram 1.x Code Start
-	
-	baidu.lang.createSingle = function (json) {
-	    var c = new baidu.lang.Class();
-	
-	    for (var key in json) {
-	        c[key] = json[key];
-	    }
-	    return c;
-	};
-	
-	/// Tangram 1.x Code End
-	/// Tangram 1.x Code Start
-	//为兼容Tangram1.x的magic增加的接口
-	
-	baidu.dom.ddManager = baidu.lang.createSingle({
-		_targetsDroppingOver:{}
-	});
 	/// Tangram 1.x Code End
 	
 	baidu.dom.extend({
@@ -5491,6 +5294,36 @@ void function(){
 	/// support maigc - Tangram 1.x Code Start
 	/// support maigc - Tangram 1.x Code End
 	
+	/// support magic - Tangram 1.x Code Start
+	
+	baidu.lang.Class = function() {
+	    this.guid = baidu.id( this );
+	};
+	
+	baidu.lang.Class.prototype.dispose = function(){
+	    baidu.id( this.guid, "delete" );
+	
+	    // this.__listeners && (for (var i in this.__listeners) delete this.__listeners[i]);
+	
+	    for(var property in this){
+	        typeof this[property] != "function" && delete this[property];
+	    }
+	    this.disposed = true;   // 20100716
+	};
+	
+	baidu.lang.Class.prototype.toString = function(){
+	    return "[object " + (this._type_ || this.__type || this._className || "Object") + "]";
+	};
+	
+	 window["baiduInstance"] = function(guid) {
+	     return baidu.id( guid );
+	 }
+	
+	//  2011.11.23  meizz   添加 baiduInstance 这个全局方法，可以快速地通过guid得到实例对象
+	//  2011.11.22  meizz   废除创建类时指定guid的模式，guid只作为只读属性
+	//  2011.11.22  meizz   废除 baidu.lang._instances 模块，由统一的global机制完成；
+	
+	/// support magic - Tangram 1.x Code End
 	/// Tangram 1.x Code Start
 	//为兼容Tangram1.x的magic增加的接口
 	
@@ -5557,166 +5390,6 @@ void function(){
 	            draggableSingle.dispose();
 	        }
 	    };
-	};
-	/// Tangram 1.x Code End
-	
-	/// Tangram 1.x Code Start
-	
-	baidu.dom.getPosition = function (element) {
-	    element = baidu.dom.g(element);
-	    var doc = baidu.dom.getDocument(element), 
-	        browser = baidu.browser,
-	        getStyle = baidu.dom.getStyle,
-	    // Gecko 1.9版本以下用getBoxObjectFor计算位置
-	    // 但是某些情况下是有bug的
-	    // 对于这些有bug的情况
-	    // 使用递归查找的方式
-	        BUGGY_GECKO_BOX_OBJECT = browser.isGecko > 0 && 
-	                                 doc.getBoxObjectFor &&
-	                                 getStyle(element, 'position') == 'absolute' &&
-	                                 (element.style.top === '' || element.style.left === ''),
-	        pos = {"left":0,"top":0},
-	        viewport = (browser.ie && !browser.isStrict) ? doc.body : doc.documentElement,
-	        parent,
-	        box;
-	    
-	    if(element == viewport){
-	        return pos;
-	    }
-	
-	    if(element.getBoundingClientRect){ // IE and Gecko 1.9+
-	        
-	    	//当HTML或者BODY有border width时, 原生的getBoundingClientRect返回值是不符合预期的
-	    	//考虑到通常情况下 HTML和BODY的border只会设成0px,所以忽略该问题.
-	        box = element.getBoundingClientRect();
-	
-	        pos.left = Math.floor(box.left) + Math.max(doc.documentElement.scrollLeft, doc.body.scrollLeft);
-	        pos.top  = Math.floor(box.top)  + Math.max(doc.documentElement.scrollTop,  doc.body.scrollTop);
-		    
-	        // IE会给HTML元素添加一个border，默认是medium（2px）
-	        // 但是在IE 6 7 的怪异模式下，可以被html { border: 0; } 这条css规则覆盖
-	        // 在IE7的标准模式下，border永远是2px，这个值通过clientLeft 和 clientTop取得
-	        // 但是。。。在IE 6 7的怪异模式，如果用户使用css覆盖了默认的medium
-	        // clientTop和clientLeft不会更新
-	        pos.left -= doc.documentElement.clientLeft;
-	        pos.top  -= doc.documentElement.clientTop;
-	        
-	        var htmlDom = doc.body,
-	            // 在这里，不使用element.style.borderLeftWidth，只有computedStyle是可信的
-	            htmlBorderLeftWidth = parseInt(getStyle(htmlDom, 'borderLeftWidth')),
-	            htmlBorderTopWidth = parseInt(getStyle(htmlDom, 'borderTopWidth'));
-	        if(browser.ie && !browser.isStrict){
-	            pos.left -= isNaN(htmlBorderLeftWidth) ? 2 : htmlBorderLeftWidth;
-	            pos.top  -= isNaN(htmlBorderTopWidth) ? 2 : htmlBorderTopWidth;
-	        }
-	    
-	    } else { // safari/opera/firefox
-	        parent = element;
-	
-	        do {
-	            pos.left += parent.offsetLeft;
-	            pos.top  += parent.offsetTop;
-	      
-	            // safari里面，如果遍历到了一个fixed的元素，后面的offset都不准了
-	            if (browser.isWebkit > 0 && getStyle(parent, 'position') == 'fixed') {
-	                pos.left += doc.body.scrollLeft;
-	                pos.top  += doc.body.scrollTop;
-	                break;
-	            }
-	            
-	            parent = parent.offsetParent;
-	        } while (parent && parent != element);
-	
-	        // 对body offsetTop的修正
-	        if(browser.opera > 0 || (browser.isWebkit > 0 && getStyle(element, 'position') == 'absolute')){
-	            pos.top  -= doc.body.offsetTop;
-	        }
-	
-	        // 计算除了body的scroll
-	        parent = element.offsetParent;
-	        while (parent && parent != doc.body) {
-	            pos.left -= parent.scrollLeft;
-	            // see https://bugs.opera.com/show_bug.cgi?id=249965
-	//            if (!b.opera || parent.tagName != 'TR') {
-	            if (!browser.opera || parent.tagName != 'TR') {
-	                pos.top -= parent.scrollTop;
-	            }
-	            parent = parent.offsetParent;
-	        }
-	    }
-	
-	    return pos;
-	};
-	/// Tangram 1.x Code End
-	
-	/// Tangram 1.x Code Start
-	
-	baidu.dom.intersect = function (element1, element2) {
-	    var g = baidu.dom.g, 
-	        getPosition = baidu.dom.getPosition, 
-	        max = Math.max, 
-	        min = Math.min;
-	
-	    element1 = g(element1);
-	    element2 = g(element2);
-	
-	    var pos1 = getPosition(element1),
-	        pos2 = getPosition(element2);
-	
-	    return max(pos1.left, pos2.left) <= min(pos1.left + element1.offsetWidth, pos2.left + element2.offsetWidth)
-	        && max(pos1.top, pos2.top) <= min(pos1.top + element1.offsetHeight, pos2.top + element2.offsetHeight);
-	};
-	/// Tangram 1.x Code End
-	/// Tangram 1.x Code Start
-	//为兼容Tangram1.x的magic增加的接口
-	
-	//TODO: 添加对 accept, hoverclass 等参数的支持.
-	
-	baidu.dom.droppable = function(element, options){
-		options = options || {};
-		var manager = baidu.dom.ddManager,
-			target = baidu.dom.g(element),
-		    guid = baidu.lang.guid(),
-			//拖拽进行时判断
-			_dragging = function(event){
-				var _targetsDroppingOver = manager._targetsDroppingOver,
-				    eventData = {trigger:event.DOM,reciever: target};
-				//判断被拖拽元素和容器是否相撞
-				if(baidu.dom.intersect(target, event.DOM)){
-					//进入容器区域
-					if(! _targetsDroppingOver[guid]){
-						//初次进入
-						(typeof options.ondropover == 'function') && options.ondropover.call(target,eventData);
-						manager.dispatchEvent("ondropover", eventData);
-						_targetsDroppingOver[guid] = true;
-					}
-				} else {
-					//出了容器区域
-					if(_targetsDroppingOver[guid]){
-						(typeof options.ondropout == 'function') && options.ondropout.call(target,eventData);
-						manager.dispatchEvent("ondropout", eventData);
-					}
-					delete _targetsDroppingOver[guid];
-				}
-			},
-			//拖拽结束时判断
-			_dragend = function(event){
-				var eventData = {trigger:event.DOM,reciever: target};
-				if(baidu.dom.intersect(target, event.DOM)){
-					typeof options.ondrop == 'function' && options.ondrop.call(target, eventData);
-					manager.dispatchEvent("ondrop", eventData);
-				}
-				delete manager._targetsDroppingOver[guid];
-			};
-		//事件注册,return object提供事件解除
-		manager.addEventListener("ondrag", _dragging);
-		manager.addEventListener("ondragend", _dragend);
-		return {
-			cancel : function(){
-				manager.removeEventListener("ondrag", _dragging);
-				manager.removeEventListener("ondragend",_dragend);
-			}
-		};
 	};
 	/// Tangram 1.x Code End
 	
@@ -5821,17 +5494,9 @@ void function(){
 	
 	 
 	
-	baidu.dom.extend({
-	    getAttr: function (key) {
-	        element = this[0];
-	        if ('style' == key){
-	            return element.style.cssText;
-	        };
-	        key = baidu.dom._NAME_ATTRS[key] || key;
-	        return element.getAttribute(key);
-	    }
-	});
-	
+	baidu.dom.getAttr = function(element, key){
+	    return baidu.dom(baidu.dom.g(element)).attr(key);
+	}
 	/// support magic - Tangram 1.x Code End
 	
 	/// Tangram 1.x Code Start
@@ -5843,6 +5508,107 @@ void function(){
 	};
 	/// Tangram 1.x Code End
 	
+	baidu.dom.extend({
+	    getWindow: function(){
+	        var doc = this.getDocument();
+	        return (this.size()<=0)? undefined :(doc.parentWindow || doc.defaultView);
+	    }
+	});
+	
+	baidu.dom.extend({
+	    offsetParent: function(){
+	        return this.map(function(){
+	            var offsetParent = this.offsetParent || document.body,
+	                exclude = /^(?:body|html)$/i;
+	            while(offsetParent && baidu.dom(offsetParent).getCurrentStyle('position') === 'static'
+	                && !exclude.test(offsetParent.nodeName)){
+	                    offsetParent = offsetParent.offsetParent;
+	            }
+	            return offsetParent;
+	        });
+	    }
+	});
+	
+	baidu.dom.extend({
+	    position: function(){
+	        if(this.size()<=0){return 0;}        
+	        var patrn = /^(?:body|html)$/i,
+	            coordinate = this.offset(),
+	            offsetParent = this.offsetParent(),
+	            parentCoor = patrn.test(offsetParent[0].nodeName) ? {left: 0, top: 0}
+	                : offsetParent.offset();
+	        coordinate.left -= parseFloat(this.getCurrentStyle('marginLeft')) || 0;
+	        coordinate.top -= parseFloat(this.getCurrentStyle('marginTop')) || 0;
+	        parentCoor.left += parseFloat(offsetParent.getCurrentStyle('borderLeftWidth')) || 0;
+	        parentCoor.top += parseFloat(offsetParent.getCurrentStyle('borderTopWidth')) || 0;
+	        return {
+	            left: coordinate.left - parentCoor.left,
+	            top: coordinate.top - parentCoor.top
+	        }
+	    }
+	});
+	
+	baidu.dom.extend({
+	    offset: function(){
+	        var offset = {
+	            setOffset: function(ele, options, index){
+	                var tang = tang = baidu.dom(ele),
+	                    position = tang.getCurrentStyle('position');
+	                position === 'static' && (ele.style.position = 'relative');
+	                var currOffset = tang.offset(),
+	                    currLeft = tang.getCurrentStyle('left'),
+	                    currTop = tang.getCurrentStyle('top'),
+	                    calculatePosition = (~'absolute|fixed'.indexOf(position)) && ~('' + currLeft + currTop).indexOf('auto'),
+	                    curPosition = calculatePosition && tang.position();
+	                currLeft = curPosition && curPosition.left || parseFloat(currLeft) || 0;
+	                currTop = curPosition && curPosition.top || parseFloat(currTop) || 0;
+	                baidu.type('options') === 'function' && (options = options.call(ele, index, currOffset));
+	                options.left != undefined && (ele.style.left = options.left - currOffset.left + currLeft + 'px');
+	                options.top != undefined && (ele.style.top = options.top - currOffset.top + currTop + 'px');
+	            },
+	            //
+	            bodyOffset: function(body){
+	                var tang = baidu.dom(body);
+	                return {
+	                    left: body.offsetLeft + parseFloat(tang.getCurrentStyle('marginLeft')) || 0,
+	                    top: body.offsetTop + parseFloat(tang.getCurrentStyle('marginTop')) || 0
+	                }
+	            }
+	        };
+	        
+	        return function(options){
+	            if(!options){
+	                var ele = this[0],
+	                    doc = this.getDocument(),
+	                    box = {left: 0, top: 0},
+	                    win, docElement, body;
+	                if(ele === doc.body){return offset.bodyOffset(ele, doc);}
+	                if (typeof ele.getBoundingClientRect !== 'undefined'){
+	                    box = ele.getBoundingClientRect();
+	                }
+	                win = this.getWindow();
+	                docElement = doc.documentElement;
+	                body = doc.body;
+	                return {
+	                    left: box.left + (win.pageXOffset || Math.max(docElement.scrollLeft, body.scrollLeft)) - (docElement.clientLeft || body.clientLeft),
+	                    top: box.top + (win.pageYOffset || Math.max(docElement.scrollTop, body.scrollTop)) - (docElement.clientTop || body.clientTop)
+	                };
+	            }else{
+	                baidu.check('^(?:object|function)$', 'baidu.dom.offset');
+	                for(var i = 0, item; item = this[i]; i++){
+	                    offset.setOffset(item, options, i);
+	                }
+	                return this;
+	           }
+	        }
+	    }()
+	});
+	/// Tangram 1.x Code Start
+	
+	baidu.dom.getPosition = function(element){
+	    return baidu.dom(baidu.dom.g(element)).offset();
+	}
+	/// Tangram 1.x Code End
 	/// Tangram 1.x Code Start
 	
 	baidu.dom.extend({
@@ -5862,13 +5628,6 @@ void function(){
 	    }
 	}); 
 	/// Tangram 1.x Code End
-	
-	baidu.dom.extend({
-	    getWindow: function(){
-	        var doc = this.getDocument();
-	        return (this.size()<=0)? undefined :(doc.parentWindow || doc.defaultView);
-	    }
-	});
 	
 	baidu.dom.extend({
 	    has: function (selector) {
@@ -6043,6 +5802,24 @@ void function(){
 	        return element;
 	    }
 	});
+	/// Tangram 1.x Code Start
+	
+	baidu.dom.intersect = function (element1, element2) {
+	    var g = baidu.dom.g, 
+	        getPosition = baidu.dom.getPosition, 
+	        max = Math.max, 
+	        min = Math.min;
+	
+	    element1 = g(element1);
+	    element2 = g(element2);
+	
+	    var pos1 = getPosition(element1),
+	        pos2 = getPosition(element2);
+	
+	    return max(pos1.left, pos2.left) <= min(pos1.left + element1.offsetWidth, pos2.left + element2.offsetWidth)
+	        && max(pos1.top, pos2.top) <= min(pos1.top + element1.offsetHeight, pos2.top + element2.offsetHeight);
+	};
+	/// Tangram 1.x Code End
 	
 	baidu.dom.extend({
 	    is : function (selector) {
@@ -6139,80 +5916,6 @@ void function(){
 	});
 	
 	baidu.dom.extend({
-	    offset: function(){
-	        var offset = {
-	            setOffset: function(ele, options, index){
-	                var tang = baidu.dom(ele),
-	                    type = baidu.type(options),
-	                    currOffset = tang.offset(),
-	                    currLeft = tang.getCurrentStyle('left'),
-	                    currTop = tang.getCurrentStyle('top');
-	                type === 'function' && (options = options.call(ele, index, currOffset));
-	                // TODO
-	                if(!options || options.left === undefined
-	                    && options.top === undefined){
-	                        return;
-	                }
-	                currLeft = parseFloat(currLeft) || 0;
-	                currTop = parseFloat(currTop) || 0;
-	                options.left != undefined && (ele.style.left = options.left - currOffset.left + currLeft + 'px');
-	                options.top != undefined && (ele.style.top = options.top - currOffset.top + currTop + 'px');
-	                tang.getCurrentStyle('position') === 'static'
-	                    && (ele.style.position = 'relative');
-	            },
-	            //
-	            bodyOffset: function(body){
-	                var tang = baidu.dom(body);
-	                return {
-	                    left: body.offsetLeft + parseFloat(tang.getCurrentStyle('marginLeft')) || 0,
-	                    top: body.offsetTop + parseFloat(tang.getCurrentStyle('marginTop')) || 0
-	                }
-	            }
-	        };
-	        
-	        return function(options){
-	            if(!options){
-	                var ele = this[0],
-	                    doc = this.getDocument(),
-	                    box = {left: 0, top: 0},
-	                    win, docElement, body;
-	                if(ele === doc.body){return offset.bodyOffset(ele, doc);}
-	                if (typeof ele.getBoundingClientRect !== 'undefined'){
-	                    box = ele.getBoundingClientRect();
-	                }
-	                win = this.getWindow();
-	                docElement = doc.documentElement;
-	                body = doc.body;
-	                return {
-	                    left: box.left + (win.pageXOffset || Math.max(docElement.scrollLeft, body.scrollLeft)) - (docElement.clientLeft || body.clientLeft),
-	                    top: box.top + (win.pageYOffset || Math.max(docElement.scrollTop, body.scrollTop)) - (docElement.clientTop || body.clientTop)
-	                };
-	            }else{
-	                baidu.check('^(?:object|function)$', 'baidu.dom.offset');
-	                for(var i = 0, item; item = this[i]; i++){
-	                    offset.setOffset(item, options, i);
-	                }
-	                return this;
-	           }
-	        }
-	    }()
-	});
-	
-	baidu.dom.extend({
-	    offsetParent: function(){
-	        return this.map(function(){
-	            var offsetParent = this.offsetParent || document.body,
-	                exclude = /^(?:body|html)$/i;
-	            while(offsetParent && baidu.dom(offsetParent).getCurrentStyle('position') === 'static'
-	                && !exclude.test(offsetParent.nodeName)){
-	                    offsetParent = offsetParent.offsetParent;
-	            }
-	            return offsetParent;
-	        });
-	    }
-	});
-	
-	baidu.dom.extend({
 	    one: function( types, selector, data, fn  ){
 	        return this.on( types, selector, data, fn, 1 );
 	    }
@@ -6303,25 +6006,6 @@ void function(){
 	        });
 	
 	        return baidu.dom( baidu.dom.match(array, filter) );
-	    }
-	});
-	
-	baidu.dom.extend({
-	    position: function(){
-	        if(this.size()<=0){return 0;}        
-	        var patrn = /^(?:body|html)$/i,
-	            coordinate = this.offset(),
-	            offsetParent = this.offsetParent(),
-	            parentCoor = patrn.test(offsetParent[0].nodeName) ? {left: 0, top: 0}
-	                : offsetParent.offset();
-	        coordinate.left -= parseFloat(this.getCurrentStyle('marginLeft')) || 0;
-	        coordinate.top -= parseFloat(this.getCurrentStyle('marginTop')) || 0;
-	        parentCoor.left += parseFloat(offsetParent.getCurrentStyle('borderLeftWidth')) || 0;
-	        parentCoor.top += parseFloat(offsetParent.getCurrentStyle('borderTopWidth')) || 0;
-	        return {
-	            left: coordinate.left - parentCoor.left,
-	            top: coordinate.top - parentCoor.top
-	        }
 	    }
 	});
 	
@@ -8139,22 +7823,48 @@ void function(){
 	}();
 	/// Tangram 1.x Code End
 	
-	baidu.object.each = function (source, iterator) {
-	    var returnValue, key, item; 
-	    if ('function' == typeof iterator) {
-	        for (key in source) {
-	            if (source.hasOwnProperty(key)) {
-	                item = source[key];
-	                returnValue = iterator.call(source, item, key);
-	        
-	                if (returnValue === false) {
-	                    break;
-	                }
-	            }
+	baidu.dom.extend({
+	    scrollLeft: function(){
+	        var ret = baidu._util_.smartScroll('scrollLeft');
+	        return function(value){
+	            value && baidu.check('^(?:number|string)$', 'baidu.dom.scrollLeft');
+	            if(this.size()<=0){
+	            	return value === undefined ? 0 : this;
+	            };
+	            return value === undefined ? ret.get(this[0])
+	                : ret.set(this[0], value) || this;
 	        }
+	    }()
+	});
+	
+	baidu.dom.extend({
+	    scrollTop: function(){
+	        var ret = baidu._util_.smartScroll('scrollTop');
+	        return function(value){
+	            value && baidu.check('^(?:number|string)$', 'baidu.dom.scrollTop');
+	            if(this.size()<=0){
+	            	return value === undefined ? 0 : this;
+	            };
+	            return value === undefined ? ret.get(this[0])
+	                : ret.set(this[0], value) || this;
+	        }
+	    }()
+	});
+	/// Tangram 1.x Code Start
+	
+	baidu.dom.extend({
+	    setAttrs : function (attributes) {
+	        element = this[0];
+	    
+	        for (var key in attributes) {
+	            baidu.dom.setAttr(element, key, attributes[key]);
+	        }
+	    
+	        return element;
 	    }
-	    return source;
-	};
+	});
+	
+	/// Tangram 1.x Code End
 	
 	/// Tangram 1.x Code Start
 	
@@ -8169,15 +7879,6 @@ void function(){
 	    return element;
 	}	
 	});
-	/// Tangram 1.x Code End
-	
-	/// Tangram 1.x Code Start
-	
-	 
-	baidu.event.getTarget = function (event) {
-	    event.originalEvent && (event = event.originalEvent);
-	    return event.target || event.srcElement;
-	};
 	/// Tangram 1.x Code End
 	
 	/// Tangram 1.x Code Start
@@ -8229,286 +7930,6 @@ void function(){
 	};
 	/// Tangram 1.x Code End
 	
-	/// Tangram 1.x Code Start
-	
-	baidu.dom.resizable = function(element,options) {
-	    var target,
-	        op,
-	        resizeHandle = {},
-	        directionHandlePosition,
-	        orgStyles = {},
-	        range, mozUserSelect,
-	        orgCursor,
-	        offsetParent,
-	        currentEle,
-	        handlePosition,
-	        timer,
-	        isCancel = false,
-	        isResizabled = false,
-	        defaultOptions = {
-	            direction: ['e', 's', 'se'],
-	            minWidth: 16,
-	            minHeight: 16,
-	            classPrefix: 'tangram',
-	            directionHandlePosition: {}
-	        };
-	
-	        
-	    if (!(target = baidu.dom.g(element)) && baidu.dom.getStyle(target, 'position') == 'static') {
-	        return false;
-	    }
-	    offsetParent = target.offsetParent;
-	    var orgPosition = baidu.dom.getStyle(target,'position');
-	
-	    
-	    op = baidu.extend(defaultOptions, options);
-	
-	    
-	    baidu.forEach(['minHeight', 'minWidth', 'maxHeight', 'maxWidth'], function(style) {
-	        op[style] && (op[style] = parseFloat(op[style]));
-	    });
-	
-	    
-	    range = [
-	        op.minWidth || 0,
-	        op.maxWidth || Number.MAX_VALUE,
-	        op.minHeight || 0,
-	        op.maxHeight || Number.MAX_VALUE
-	    ];
-	
-	    render(); 
-	
-	    
-	    function render(){
-	      
-	        //位置属性
-	        handlePosition = baidu.extend({
-	            'e' : {'right': '-5px', 'top': '0px', 'width': '7px', 'height': target.offsetHeight},
-	            's' : {'left': '0px', 'bottom': '-5px', 'height': '7px', 'width': target.offsetWidth},
-	            'n' : {'left': '0px', 'top': '-5px', 'height': '7px', 'width': target.offsetWidth},
-	            'w' : {'left': '-5px', 'top': '0px', 'height':target.offsetHeight , 'width': '7px'},
-	            'se': {'right': '1px', 'bottom': '1px', 'height': '16px', 'width': '16px'},
-	            'sw': {'left': '1px', 'bottom': '1px', 'height': '16px', 'width': '16px'},
-	            'ne': {'right': '1px', 'top': '1px', 'height': '16px', 'width': '16px'},
-	            'nw': {'left': '1px', 'top': '1px', 'height': '16px', 'width': '16px'}
-	        },op.directionHandlePosition);
-	        
-	        //创建resizeHandle
-	        baidu.forEach(op.direction, function(key) {
-	            var className = op.classPrefix.split(' ');
-	            className[0] = className[0] + '-resizable-' + key;
-	
-	            var ele = baidu.dom.create('div', {
-	                className: className.join(' ')
-	            }),
-	                styles = handlePosition[key];
-	
-	            styles['cursor'] = key + '-resize';
-	            styles['position'] = 'absolute';
-	            baidu.dom.setStyles(ele, styles);
-	            
-	            ele.key = key;
-	            ele.style.MozUserSelect = 'none';
-	
-	            target.appendChild(ele);
-	            resizeHandle[key] = ele;
-	
-	            baidu.dom(ele).on('mousedown',start);
-	        });
-	
-	        isCancel = false;
-	    }
-	
-	    
-	    function cancel(){
-	        currentEle && stop();
-	        baidu.object.each(resizeHandle,function(item){
-	            baidu.dom(item).off("mousedown",start);
-	            baidu.dom.remove(item);
-	        });
-	        isCancel = true;    
-	    }
-	
-	    
-	    function update(options){
-	        if(!isCancel){
-	            op = baidu.extend(op,options || {});
-	            cancel();
-	            render();
-	        }
-	    }
-	
-	    
-	    function start(e){
-			isResizabled && stop();
-	        var ele = baidu.event.getTarget(e),
-	            key = ele.key;
-	        currentEle = ele;
-			isResizabled = true;
-			
-	        if (ele.setCapture) {
-	            ele.setCapture();
-	        } else if (window.captureEvents) {
-	            window.captureEvents(Event.MOUSEMOVE | Event.MOUSEUP);
-	        }
-	
-	        
-	        orgCursor = baidu.dom.getStyle(document.body, 'cursor');
-	        baidu.dom.setStyle(document.body, 'cursor', key + '-resize');
-	        var tangramDom = baidu.dom(document.body);
-	        tangramDom.on('mouseup',stop);
-	        tangramDom.on('selectstart', unselect);
-	        mozUserSelect = document.body.style.MozUserSelect;
-	        document.body.style.MozUserSelect = 'none';
-	
-	        
-	        var orgMousePosition = baidu.page.getMousePosition();
-	        orgStyles = _getOrgStyle();
-	        timer = setInterval(function(){
-	            resize(key,orgMousePosition);
-	        }, 20);
-	
-	        baidu.isFunction(op.onresizestart) && op.onresizestart();
-	        baidu.event.preventDefault(e);
-	    }
-	
-	    
-	    function stop() {
-	        if (currentEle && currentEle.releaseCapture) {
-	            currentEle.releaseCapture();
-	        } else if (window.releaseEvents) {
-	            window.releaseEvents(Event.MOUSEMOVE | Event.MOUSEUP);
-	        }
-	
-	        
-	        baidu.dom(document.body).off('mouseup',stop);
-	        baidu.dom(document).off('selectstart', unselect);
-	        document.body.style.MozUserSelect = mozUserSelect;
-	        baidu.dom(document.body).off('selectstart', unselect);
-	
-	        clearInterval(timer);
-	        baidu.dom.setStyle(document.body, 'cursor',orgCursor);
-	        currentEle = null;
-			isResizabled = false;
-	        baidu.isFunction(op.onresizeend) && op.onresizeend();
-	    }
-	
-	    
-	    function resize(key,orgMousePosition) {
-	        var xy = baidu.page.getMousePosition(),
-	            width = orgStyles['width'],
-	            height = orgStyles['height'],
-	            top = orgStyles['top'],
-	            left = orgStyles['left'],
-	            styles;
-	
-	        if (~key.indexOf('e')) {
-	            width = Math.max(xy.x - orgMousePosition.x + orgStyles['width'], range[0]);
-	            width = Math.min(width, range[1]);
-	        }else if (~key.indexOf('w')) {
-	            width = Math.max(orgMousePosition.x - xy.x + orgStyles['width'], range[0]);
-	            width = Math.min(width, range[1]);
-	            left -= width - orgStyles['width'];
-	       }
-	
-	        if (~key.indexOf('s')) {
-	            height = Math.max(xy.y - orgMousePosition.y + orgStyles['height'], range[2]);
-	            height = Math.min(height, range[3]);
-	        }else if (~key.indexOf('n')) {
-	            height = Math.max(orgMousePosition.y - xy.y + orgStyles['height'], range[2]);
-	            height = Math.min(height, range[3]);
-	            top -= height - orgStyles['height'];
-	        }
-	         
-	        styles = {'width': width, 'height': height, 'top': top, 'left': left};
-	        baidu.dom.setOuterHeight(target,height);
-	        baidu.dom.setOuterWidth(target,width);
-	        baidu.dom.setStyles(target,{"top":top,"left":left});
-	
-	        resizeHandle['n'] && baidu.dom.setStyle(resizeHandle['n'], 'width', width);
-	        resizeHandle['s'] && baidu.dom.setStyle(resizeHandle['s'], 'width', width);
-	        resizeHandle['e'] && baidu.dom.setStyle(resizeHandle['e'], 'height', height);
-	        resizeHandle['w'] && baidu.dom.setStyle(resizeHandle['w'], 'height', height);
-	
-	        baidu.isFunction(op.onresize) && op.onresize({current:styles,original:orgStyles});
-	    }
-	
-	    
-	    function unselect(e) {
-	        return baidu.event.preventDefault(e, false);
-	    }
-	
-	    
-	    function _getOrgStyle() {
-	        var offset_parent = baidu.dom.getPosition(target.offsetParent),
-	            offset_target = baidu.dom.getPosition(target),
-	            top,
-	            left;
-	       
-	        if(orgPosition == "absolute"){
-	            top =  offset_target.top - (target.offsetParent == document.body ? 0 : offset_parent.top);
-	            left = offset_target.left - (target.offsetParent == document.body ? 0 :offset_parent.left);
-	        }else{
-	            top = parseFloat(baidu.dom.getStyle(target,"top")) || -parseFloat(baidu.dom.getStyle(target,"bottom")) || 0;
-	            left = parseFloat(baidu.dom.getStyle(target,"left")) || -parseFloat(baidu.dom.getStyle(target,"right")) || 0; 
-	        }
-	        baidu.dom.setStyles(target,{top:top,left:left});
-	
-	        return {
-	            width:target.offsetWidth,
-	            height:target.offsetHeight,
-	            top:top,
-	            left:left
-	        };
-	    }
-	    
-	    return {cancel:cancel,update:update,enable:render};
-	};
-	/// Tangram 1.x Code End
-	
-	baidu.dom.extend({
-	    scrollLeft: function(){
-	        var ret = baidu._util_.smartScroll('scrollLeft');
-	        return function(value){
-	            value && baidu.check('^(?:number|string)$', 'baidu.dom.scrollLeft');
-	            if(this.size()<=0){
-	            	return value === undefined ? 0 : this;
-	            };
-	            return value === undefined ? ret.get(this[0])
-	                : ret.set(this[0], value) || this;
-	        }
-	    }()
-	});
-	
-	baidu.dom.extend({
-	    scrollTop: function(){
-	        var ret = baidu._util_.smartScroll('scrollTop');
-	        return function(value){
-	            value && baidu.check('^(?:number|string)$', 'baidu.dom.scrollTop');
-	            if(this.size()<=0){
-	            	return value === undefined ? 0 : this;
-	            };
-	            return value === undefined ? ret.get(this[0])
-	                : ret.set(this[0], value) || this;
-	        }
-	    }()
-	});
-	/// Tangram 1.x Code Start
-	
-	baidu.dom.extend({
-	    setAttrs : function (attributes) {
-	        element = this[0];
-	    
-	        for (var key in attributes) {
-	            baidu.dom.setAttr(element, key, attributes[key]);
-	        }
-	    
-	        return element;
-	    }
-	});
-	
-	/// Tangram 1.x Code End
-	
 	/// support magic - Tangram 1.x Code Start
 	
 	baidu.dom.setPixel = function (el, style, n) {
@@ -8519,17 +7940,11 @@ void function(){
 	
 	/// Tangram 1.x Code Start
 	
-	baidu.dom.setPosition = function (element, position) {
-	    var coor = {
-	            left : position.left - (parseFloat(baidu.dom.getStyle(element, "margin-left")) || 0),
-	            top  : position.top -  (parseFloat(baidu.dom.getStyle(element,  "margin-top")) || 0)
-	        };
+	baidu.dom.setPosition = function(element, coordinate){
 	    element = baidu.dom.g(element);
-	    for(var i in coor){
-	        baidu.dom.setStyle(element, i, coor[i]);
-	    }
+	    baidu.dom(element).offset(coordinate);
 	    return element;
-	};
+	}
 	/// Tangram 1.x Code End
 	
 	baidu.dom.extend({
@@ -8743,13 +8158,18 @@ void function(){
 	
 		var triggerEvents = { submit: 1 };
 	
-		var createEvent = function( type ){
+		var createEvent = function( type, opts ){
 		    var evnt;
 		    if( document.createEvent )
 		        evnt = document.createEvent( "HTMLEvents" ),
 		        evnt.initEvent( type, true, true );
 		    else if( document.createEventObject )
-		    	evnt = document.createEventObject();
+		    	evnt = document.createEventObject(),
+		    	evnt.type = type;
+	
+		   	if( opts )for( var name in opts )
+		   		evnt[ name ] = opts[ name ];
+	
 		    return evnt;
 		};
 	
@@ -8766,10 +8186,10 @@ void function(){
 		    } );
 		};
 	
-		var fire = function( element, type, triggerData, special ){
+		var fire = function( element, type, triggerData, _eventOptions, special ){
 			var evnt, eventReturn;
 	
-			if( evnt = createEvent( type ) ){
+			if( evnt = createEvent( type, _eventOptions ) ){
 			    if( triggerData )
 			        evnt.triggerData = triggerData;
 			    
@@ -8791,15 +8211,16 @@ void function(){
 		};
 	
 	    baidu.dom.extend({
-			trigger: function( type, triggerData ){
+			trigger: function( type, triggerData, _eventOptions ){
 				var sp;
 	
 				if( type in special )
 				    sp = special[type];
 	
 				this.each(function(){
-					fire( this, type, triggerData, sp );
+					fire( this, type, triggerData, _eventOptions, sp );
 				});
+	
 				return this;
 			}
 		});
@@ -8995,208 +8416,12 @@ void function(){
 	};
 	/// Tangram 1.x Code End
 	
-	baidu.object.values = function (source) {
-	    var result = [], resultLen = 0, k;
-	    for (k in source) {
-	        if (source.hasOwnProperty(k)) {
-	            result[resultLen++] = source[k];
-	        }
-	    }
-	    return result;
+	/// Tangram 1.x Code Start
+	
+	baidu.event.fire = function( element, type, options ){
+	    element = baidu.dom( baidu.dom._g( element ) );
+	    element.trigger( type.replace( /^on/, "" ), null, options );
 	};
-	
-	/// Tangram 1.x Code Start
-	
-	//baidu.lang.isNumber = function (source) {
-	//    return '[object Number]' == Object.prototype.toString.call(source) && isFinite(source);
-	//};
-	baidu.lang.isNumber = baidu.isNumber;
-	/// Tangram 1.x Code End
-	/// Tangram 1.x Code Start
-	
-	baidu.event.fire = function(){
-	    var browser = baidu.browser,
-	        keys = {
-	            keydown : 1,
-	            keyup : 1,
-	            keypress : 1
-	        },
-	        mouses = {
-	            click : 1,
-	            dblclick : 1,
-	            mousedown : 1,
-	            mousemove : 1,
-	            mouseup : 1,
-	            mouseover : 1,
-	            mouseout : 1
-	        },
-	        htmls = {
-	            abort : 1,
-	            blur : 1,
-	            change : 1,
-	            error : 1,
-	            focus : 1,
-	            load : browser.ie ? 0 : 1,
-	            reset : 1,
-	            resize : 1,
-	            scroll : 1,
-	            select : 1,
-	            submit : 1,
-	            unload : browser.ie ? 0 : 1
-	        },
-	        bubblesEvents = {
-	            scroll : 1,
-	            resize : 1,
-	            reset : 1,
-	            submit : 1,
-	            change : 1,
-	            select : 1,
-	            error : 1,
-	            abort : 1
-	        },
-	        parameters = {
-	            "KeyEvents" : ["bubbles", "cancelable", "view", "ctrlKey", "altKey", "shiftKey", "metaKey", "keyCode", "charCode"],
-	            "MouseEvents" : ["bubbles", "cancelable", "view", "detail", "screenX", "screenY", "clientX", "clientY", "ctrlKey", "altKey", "shiftKey", "metaKey", "button", "relatedTarget"],
-	            "HTMLEvents" : ["bubbles", "cancelable"],
-	            "UIEvents" : ["bubbles", "cancelable", "view", "detail"],
-	            "Events" : ["bubbles", "cancelable"]
-	        };
-	    baidu.object.extend(bubblesEvents, keys);
-	    baidu.object.extend(bubblesEvents, mouses);
-	    function parse(array, source){//按照array的项在source中找到值生成新的obj并把source中对应的array的项删除
-	        var i = 0, size = array.length, obj = {};
-	        for(; i < size; i++){
-	            obj[array[i]] = source[array[i]];
-	            delete source[array[i]];
-	        }
-	        return obj;
-	    };
-	    function eventsHelper(type, eventType, options){//非IE内核的事件辅助
-	        options = baidu.object.extend({}, options);
-	        var param = baidu.object.values(parse(parameters[eventType], options)),
-	            evnt = document.createEvent(eventType);
-	        param.unshift(type);
-	        if("KeyEvents" == eventType){
-	            evnt.initKeyEvent.apply(evnt, param);
-	        }else if("MouseEvents" == eventType){
-	            evnt.initMouseEvent.apply(evnt, param);
-	        }else if("UIEvents" == eventType){
-	            evnt.initUIEvent.apply(evnt, param);
-	        }else{//HTMMLEvents, Events
-	            evnt.initEvent.apply(evnt, param);
-	        }
-	        baidu.object.extend(evnt, options);//把多出来的options再附加上去,这是为解决当创建一个其它event时，当用Events代替后需要把参数附加到对象上
-	        return evnt;
-	    };
-	    function eventObject(options){//ie内核的构建方式
-	        var evnt;
-	        if(document.createEventObject){
-	            evnt = document.createEventObject();
-	            baidu.object.extend(evnt, options);
-	        }
-	        return evnt;
-	    };
-	    function keyEvents(type, options){//keyEvents
-	        options = parse(parameters["KeyEvents"], options);
-	        var evnt;
-	        if(document.createEvent){
-	            try{//opera对keyEvents的支持极差
-	                evnt = eventsHelper(type, "KeyEvents", options);
-	            }catch(keyError){
-	                try{
-	                    evnt = eventsHelper(type, "Events", options);
-	                }catch(evtError){
-	                    evnt = eventsHelper(type, "UIEvents", options);
-	                }
-	            }
-	        }else{
-	            options.keyCode = options.charCode > 0 ? options.charCode : options.keyCode;
-	            evnt = eventObject(options);
-	        }
-	        return evnt;
-	    };
-	    function mouseEvents(type, options){//mouseEvents
-	        options = parse(parameters["MouseEvents"], options);
-	        var evnt;
-	        if(document.createEvent){
-	            evnt = eventsHelper(type, "MouseEvents", options);//mouseEvents基本浏览器都支持
-	            if(options.relatedTarget && !evnt.relatedTarget){
-	                if("mouseout" == type.toLowerCase()){
-	                    evnt.toElement = options.relatedTarget;
-	                }else if("mouseover" == type.toLowerCase()){
-	                    evnt.fromElement = options.relatedTarget;
-	                }
-	            }
-	        }else{
-	            options.button = options.button == 0 ? 1
-	                                : options.button == 1 ? 4
-	                                    : baidu.lang.isNumber(options.button) ? options.button : 0;
-	            evnt = eventObject(options);
-	        }
-	        return evnt;
-	    };
-	    function htmlEvents(type, options){//htmlEvents
-	        options.bubbles = bubblesEvents.hasOwnProperty(type);
-	        options = parse(parameters["HTMLEvents"], options);
-	        var evnt;
-	        if(document.createEvent){
-	            try{
-	                evnt = eventsHelper(type, "HTMLEvents", options);
-	            }catch(htmlError){
-	                try{
-	                    evnt = eventsHelper(type, "UIEvents", options);
-	                }catch(uiError){
-	                    evnt = eventsHelper(type, "Events", options);
-	                }
-	            }
-	        }else{
-	            evnt = eventObject(options);
-	        }
-	        return evnt;
-	    };
-	    
-	    return function(element, type, options){
-	        var evnt;
-	        type = type.replace(/^on/i, "");
-	        element = baidu.dom._g(element);
-	        options = baidu.object.extend({
-	            bubbles : true,
-	            cancelable : true,
-	            view : window,
-	            detail : 1,
-	            screenX : 0,
-	            screenY : 0,
-	            clientX : 0,
-	            clientY : 0,
-	            ctrlKey : false,
-	            altKey  : false,
-	            shiftKey: false,
-	            metaKey : false,
-	            keyCode : 0,
-	            charCode: 0,
-	            button  : 0,
-	            relatedTarget : null
-	        }, options);
-	        if(keys[type]){
-	            evnt = keyEvents(type, options);
-	        }else if(mouses[type]){
-	            evnt = mouseEvents(type, options);
-	        }else if(htmls[type]){
-	            evnt = htmlEvents(type, options);
-	        }else{
-	            throw(new Error(type + " is not support!"));
-	        }
-	        if(evnt){//tigger event
-	            if(element.dispatchEvent){
-	                element.dispatchEvent(evnt);
-	            }else if(element.fireEvent){
-	                element.fireEvent("on" + type, evnt);
-	            }
-	        }
-	    }
-	}();
-	/// Tangram 1.x Code End
-	
 	/// Tangram 1.x Code Start
 	
 	baidu.event.get = function (event, win) {
@@ -9262,6 +8487,15 @@ void function(){
 	
 	/// Tangram 1.x Code Start
 	
+	 
+	baidu.event.getTarget = function (event) {
+	    event.originalEvent && (event = event.originalEvent);
+	    return event.target || event.srcElement;
+	};
+	/// Tangram 1.x Code End
+	
+	/// Tangram 1.x Code Start
+	
 	baidu.event.once = function(element, type, listener){
 	    return baidu.dom(baidu.dom._g(element)).one(type, listener)[0];
 	};
@@ -9288,13 +8522,6 @@ void function(){
 	};
 	/// Tangram 1.x Code End
 	
-	/// Tangram 1.x Code Start
-	
-	baidu.fn.abstractMethod = function() {
-	    throw Error('unimplemented abstract method');
-	};
-	/// Tangram 1.x Code End
-	
 	baidu.fn.extend({
 	    bind: function(scope){
 	        var func = this.fn,
@@ -9311,75 +8538,6 @@ void function(){
 	baidu.fn.bind = function(func, scope) {
 	    var fn = baidu.fn(func);
 	    return fn.bind.apply(fn, Array.prototype.slice.call(arguments, 1));
-	};
-	/// Tangram 1.x Code End
-	
-	/// Tangram 1.x Code Start
-	
-	baidu.fn.extend({
-	    methodize : function (attr) {
-	    	var fn = this.fn ;
-	        return function(){
-	            return fn.apply(this, [(attr ? this[attr] : this)].concat([].slice.call(arguments)));
-	        };
-	    }
-	});
-	/// Tangram 1.x Code End
-	
-	baidu.fn.extend({
-	    multize: function(recursive, joinArray){
-	        var func = this.fn;
-	        function newFunc(){
-	            var list = arguments[0],
-	                fn = recursive ? newFunc : func,
-	                ret = [],
-	                moreArgs = Array.prototype.slice.call(arguments, 0),
-	                result;
-	            
-	            if(list instanceof Array){
-	                for(var i = 0, item; item = list[i]; i++){
-	                    moreArgs[0] = item;
-	                    result = fn.apply(this, moreArgs);
-	                    if(joinArray){
-	                        //TODO: 需要去重吗？
-	                        result && (ret = ret.concat(result));
-	                    }else{
-	                        ret.push(result);
-	                    }
-	                }
-	                return ret;
-	            }else{
-	                return func.apply(this, arguments);
-	            }
-	        }
-	        return newFunc;
-	    }
-	});
-	/// Tangram 1.x Code Start
-	
-	baidu.fn.multize = function (func, recursive, joinArray) {
-	    return baidu.fn(func).multize(recursive, joinArray);
-	};
-	/// Tangram 1.x Code End
-	
-	baidu.fn.extend({
-	    wrapReturnValue: function(wrapper, mode){
-	        var func = this.fn;
-	        mode = mode | 0;
-	        return function(){
-	            var ret = func.apply(this, arguments);
-	            if(!mode){return new wrapper(ret);}
-	            if(mode > 0){
-	                return new wrapper(arguments[mode - 1]);
-	            }
-	            return ret;
-	        }
-	    }
-	});
-	/// Tangram 1.x Code Start
-	
-	baidu.fn.wrapReturnValue = function (func, wrapper, mode) {
-	    return baidu.fn(func).wrapReturnValue(wrapper, mode);
 	};
 	/// Tangram 1.x Code End
 	
@@ -9533,6 +8691,93 @@ void function(){
 	});
 	/// Tangram 1.x Code End
 	
+	/// support magic - Tangram 1.x Code Start
+	
+	baidu.lang.guid = function() {
+	    return baidu.id();
+	};
+	
+	//不直接使用window，可以提高3倍左右性能
+	//baidu.$$._counter = baidu.$$._counter || 1;
+	
+	// 20111129	meizz	去除 _counter.toString(36) 这步运算，节约计算量
+	/// support magic - Tangram 1.x Code End
+	
+	//baidu.lang.isString = function (source) {
+	//    return '[object String]' == Object.prototype.toString.call(source);
+	//};
+	baidu.lang.isString = baidu.isString;
+	/// support magic - Tangram 1.x Code Start
+	
+	baidu.lang.Event = function (type, target) {
+	    this.type = type;
+	    this.returnValue = true;
+	    this.target = target || null;
+	    this.currentTarget = null;
+	};
+	 
+	
+	baidu.lang.Class.prototype.fire =
+	baidu.lang.Class.prototype.dispatchEvent = function (event, options) {
+	    baidu.lang.isString(event) && (event = new baidu.lang.Event(event));
+	
+	    !this.__listeners && (this.__listeners = {});
+	
+	    // 20100603 添加本方法的第二个参数，将 options extend到event中去传递
+	    options = options || {};
+	    for (var i in options) {
+	        event[i] = options[i];
+	    }
+	
+	    var i, n, me = this, t = me.__listeners, p = event.type;
+	    event.target = event.target || (event.currentTarget = me);
+	
+	    // 支持非 on 开头的事件名
+	    p.indexOf("on") && (p = "on" + p);
+	
+	    typeof me[p] == "function" && me[p].apply(me, arguments);
+	
+	    if (typeof t[p] == "object") {
+	        for (i=0, n=t[p].length; i<n; i++) {
+	            t[p][i] && t[p][i].apply(me, arguments);
+	        }
+	    }
+	    return event.returnValue;
+	};
+	
+	baidu.lang.Class.prototype.on =
+	baidu.lang.Class.prototype.addEventListener = function (type, handler, key) {
+	    if (typeof handler != "function") {
+	        return;
+	    }
+	
+	    !this.__listeners && (this.__listeners = {});
+	
+	    var i, t = this.__listeners;
+	
+	    type.indexOf("on") && (type = "on" + type);
+	
+	    typeof t[type] != "object" && (t[type] = []);
+	
+	    // 避免函数重复注册
+	    for (i = t[type].length - 1; i >= 0; i--) {
+	        if (t[type][i] === handler) return handler;
+	    };
+	
+	    t[type].push(handler);
+	
+	    // [TODO delete 2013] 2011.12.19 兼容老版本，2013删除此行
+	    key && typeof key == "string" && (t[type][key] = handler);
+	
+	    return handler;
+	};
+	
+	//  2011.12.19  meizz   很悲剧，第三个参数 key 还需要支持一段时间，以兼容老版本脚本
+	//  2011.11.24  meizz   事件添加监听方法 addEventListener 移除第三个参数 key，添加返回值 handler
+	//  2011.11.23  meizz   事件handler的存储对象由json改成array，以保证注册函数的执行顺序
+	//  2011.11.22  meizz   将 removeEventListener 方法分拆到 baidu.lang.Class.removeEventListener 中，以节约主程序代码
+	
+	/// support magic - Tangram 1.x Code End
 	/// support magic - Tangram 1.x Code Start
 	
 	baidu.fx = baidu.fx || {} ;
@@ -9815,6 +9060,13 @@ void function(){
 	};
 	
 	/// support magic - Tangram 1.x Code End
+	/// Tangram 1.x Code Start
+	
+	//baidu.lang.isNumber = function (source) {
+	//    return '[object Number]' == Object.prototype.toString.call(source) && isFinite(source);
+	//};
+	baidu.lang.isNumber = baidu.isNumber;
+	/// Tangram 1.x Code End
 	/// Tangram 1.x Code Start
 	
 	 
@@ -11016,6 +10268,43 @@ void function(){
 	/// Tangram 1.x Code End
 	/// support magic - Tangram 1.x Code Start
 	
+	 
+	
+	baidu.lang.Class.prototype.un =
+	baidu.lang.Class.prototype.removeEventListener = function (type, handler) {
+	    var i,
+	        t = this.__listeners;
+	    if (!t) return;
+	
+	    // remove all event listener
+	    if (typeof type == "undefined") {
+	        for (i in t) {
+	            delete t[i];
+	        }
+	        return;
+	    }
+	
+	    type.indexOf("on") && (type = "on" + type);
+	
+	    // 移除某类事件监听
+	    if (typeof handler == "undefined") {
+	        delete t[type];
+	    } else if (t[type]) {
+	        // [TODO delete 2013] 支持按 key 删除注册的函数
+	        typeof handler=="string" && (handler=t[type][handler]) && delete t[type][handler];
+	
+	        for (i = t[type].length - 1; i >= 0; i--) {
+	            if (t[type][i] === handler) {
+	                t[type].splice(i, 1);
+	            }
+	        }
+	    }
+	};
+	
+	// 2011.12.19 meizz 为兼容老版本的按 key 删除，添加了一行代码
+	/// support magic - Tangram 1.x Code End
+	/// support magic - Tangram 1.x Code Start
+	
 	baidu.lang.createClass = function(constructor, options) {
 	    options = options || {};
 	    var superClass = options.superClass || baidu.lang.Class;
@@ -11074,6 +10363,18 @@ void function(){
 	// 20111221 meizz   修改插件函数的存放地，重新放回类构造器静态属性上
 	
 	/// support magic - Tangram 1.x Code End
+	/// Tangram 1.x Code Start
+	
+	baidu.lang.createSingle = function (json) {
+	    var c = new baidu.lang.Class();
+	
+	    for (var key in json) {
+	        c[key] = json[key];
+	    }
+	    return c;
+	};
+	
+	/// Tangram 1.x Code End
 	/// Tangram 1.x Code Start
 	
 	baidu.lang.decontrol = function(){
@@ -11264,6 +10565,23 @@ void function(){
 	    return result;
 	};
 	
+	baidu.object.each = function (source, iterator) {
+	    var returnValue, key, item; 
+	    if ('function' == typeof iterator) {
+	        for (key in source) {
+	            if (source.hasOwnProperty(key)) {
+	                item = source[key];
+	                returnValue = iterator.call(source, item, key);
+	        
+	                if (returnValue === false) {
+	                    break;
+	                }
+	            }
+	        }
+	    }
+	    return source;
+	};
+	
 	baidu.object.isEmpty = function(obj) {
 	    var ret = true;
 	    if('[object Array]' === Object.prototype.toString.call(obj)){
@@ -11344,6 +10662,16 @@ void function(){
 	    return target;
 	};
 	})();
+	
+	baidu.object.values = function (source) {
+	    var result = [], resultLen = 0, k;
+	    for (k in source) {
+	        if (source.hasOwnProperty(k)) {
+	            result[resultLen++] = source[k];
+	        }
+	    }
+	    return result;
+	};
 	
 	/// Tangram 1.x Code Start
 	
@@ -11494,140 +10822,6 @@ void function(){
 	        baidu.dom(window).on('scroll', loadNeeded);
 	    });
 	};
-	/// Tangram 1.x Code End
-	
-	/// Tangram 1.x Code Start
-	
-	baidu.page.load = function(resources, options, ignoreAllLoaded) {
-	    //TODO failure, 整体onload能不能每个都调用; resources.charset
-	    options = options || {};
-	    var self = baidu.page.load,
-	        cache = self._cache = self._cache || {},
-	        loadingCache = self._loadingCache = self._loadingCache || {},
-	        parallel = options.parallel;
-	
-	    function allLoadedChecker() {
-	        for (var i = 0, len = resources.length; i < len; ++i) {
-	            if (! cache[resources[i].url]) {
-	                setTimeout(arguments.callee, 10);
-	                return;
-	            }
-	        }
-	        options.onload();
-	    };
-	
-	    function loadByDom(res, callback) {
-	        var node, loaded, onready;      
-	        switch (res.type.toLowerCase()) {
-	            case 'css' :
-	                node = document.createElement('link');
-	                node.setAttribute('rel', 'stylesheet');
-	                node.setAttribute('type', 'text/css');
-	                break;
-	            case 'js' :
-	                node = document.createElement('script');
-	                node.setAttribute('type', 'text/javascript');
-	                node.setAttribute('charset', res.charset || self.charset);
-	                break;
-	            case 'html' :
-	                node = document.createElement('iframe');
-	                node.frameBorder = 'none';
-	                break;
-	            default :
-	                return;
-	        }
-	
-	        var elem = baidu.dom(node);
-	
-	        // HTML,JS works on all browsers, CSS works only on IE.
-	        onready = function() {
-	            if (!loaded && (!this.readyState ||
-	                    this.readyState === 'loaded' ||
-	                    this.readyState === 'complete')) {
-	                loaded = true;
-	                // 防止内存泄露
-	                elem.off('load', onready);
-	                elem.off('readystatechange', onready);
-	                //node.onload = node.onreadystatechange = null;
-	                callback.call(window, node);
-	            }
-	        };
-	        elem.on('load', onready);
-	        elem.on('readystatechange', onready);
-	        //CSS has no onload event on firefox and webkit platform, so hack it.
-	        if (res.type == 'css') {
-	            (function() {
-	                //避免重复加载
-	                if (loaded) return;
-	                try {
-	                    node.sheet.cssRule;
-	                } catch (e) {
-	                    setTimeout(arguments.callee, 20);
-	                    return;
-	                }
-	                loaded = true;
-	                callback.call(window, node);
-	            })();
-	        }
-	
-	        node.href = node.src = res.url;
-	        document.getElementsByTagName('head')[0].appendChild(node);
-	    }
-	
-	    //兼容第一个参数直接是资源地址.
-	    baidu.lang.isString(resources) && (resources = [{url: resources}]);
-	
-	    //避免递归出错,添加容错.
-	    if (! (resources && resources.length)) return;
-	
-	    function loadResources(res) {
-	        var url = res.url,
-	            shouldContinue = !!parallel,
-	            cacheData,
-	            callback = function(textOrNode) {
-	                //ajax存入responseText,dom存入节点,用于保证onload的正确执行.
-	                cache[res.url] = textOrNode;
-	                delete loadingCache[res.url];
-	
-	                if (baidu.lang.isFunction(res.onload)) {
-	                    //若返回false, 则停止接下来的加载.
-	                    if (false === res.onload.call(window, textOrNode)) {
-	                        return;
-	                    }
-	                }
-	                //串行时递归执行
-	                !parallel && self(resources.slice(1), options, true);
-	                if ((! ignoreAllLoaded) && baidu.lang.isFunction(options.onload)) {
-	                    allLoadedChecker();
-	                }
-	            };
-	        //默认用后缀名, 并防止后缀名大写
-	        res.type = res.type || url.replace(/^[^\?#]+\.(css|js|html)(\?|#| |$)[^\?#]*/i, '$1'); //[bugfix]修改xxx.js?v这种情况下取不到js的问题。 
-	        //默认html格式用ajax请求,其他都使用dom标签方式请求.
-	        res.requestType = res.requestType || (res.type == 'html' ? 'ajax' : 'dom');
-	
-	        if (cacheData = cache[res.url]) {
-	            callback(cacheData);
-	            return shouldContinue;
-	        }
-	        if (!options.refresh && loadingCache[res.url]) {
-	            setTimeout(function() {loadResources(res);}, 10);
-	            return shouldContinue;
-	        }
-	        loadingCache[res.url] = true;
-	        if (res.requestType.toLowerCase() == 'dom') {
-	            loadByDom(res, callback);
-	        }else {//ajax
-	            baidu.ajax.get(res.url, function(xhr, responseText) {callback(responseText);});
-	        }
-	        //串行模式,通过callback方法执行后续
-	        return shouldContinue;
-	    };
-	
-	    baidu.forEach(resources, loadResources);
-	};
-	//默认编码设置为UTF8
-	baidu.page.load.charset = 'UTF8';
 	/// Tangram 1.x Code End
 	
 	/// Tangram 1.x Code Start
