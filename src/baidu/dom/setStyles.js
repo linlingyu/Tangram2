@@ -1,11 +1,10 @@
+///import baidu.dom.setStyle;
+
 /// Tangram 1.x Code Start
 /**
  * @author wangxiao
  * @email  1988wangxiao@gmail.com
  */
-
-///import baidu.dom.setStyle;
-
 /**
  * 批量设置目标元素的style样式值
  * @name baidu.dom.setStyles

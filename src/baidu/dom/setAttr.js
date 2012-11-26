@@ -1,3 +1,6 @@
+///import baidu.dom.g;
+///import baidu.dom.attr;
+
 /// Tangram 1.x Code Start
 /**
  * @description 设置目标元素的attribute值
@@ -18,8 +21,6 @@
  * @param {String} value 要设置的attribute值
  * @return {TangramDom} 返回之前匹配元素的TangramDom对象
  */
-///import baidu.dom.g;
-///import baidu.dom.attr;
 baidu.dom.setAttr = function (element, key, value) {
     return baidu.dom(baidu.dom.g(element)).attr(key, value).get(0);
 };

@@ -1,14 +1,11 @@
+///import baidu.dom.g;
+///import baidu.dom.css;
+
 /// Tangram 1.x Code Start
 /**
  * @author wangxiao
  * @email  1988wangxiao@gmail.com
  */
-
-///import baidu.dom;
-///import baidu.dom._styleFixer;
-///import baidu.dom._styleFilter.filter;
-///import baidu.string.toCamelCase;
-
 /**
  * 设置目标元素的style样式值
  * @name baidu.dom.setStyle
@@ -29,26 +26,7 @@ baidu.dom._styleFixer和baidu.dom._styleFilter可以为本模块提供支持。<
  *             
  * @return {HTMLElement} 目标元素
  */
-
-baidu.dom.extend({
-    setStyle : function ( key, value) {
-        var dom = baidu.dom, 
-            fixer;
-        
-        // 放弃了对firefox 0.9的opacity的支持
-        element = this[0];
-        key = baidu.string.toCamelCase(key);
-    
-        if (fixer = dom._styleFilter) {
-            value = fixer.filter(key, value, 'set');
-        }
-    
-        fixer = dom._styleFixer[key];
-        (fixer && fixer.set) ? fixer.set(element, value, key) : (element.style[fixer || key] = value);
-    
-        return element;
-    }
-
-});
-
+baidu.dom.setStyle = function(element, key, val){
+    return baidu.dom(baidu.dom.g(element)).css(key, val).get(0);
+}
 /// Tangram 1.x Code End

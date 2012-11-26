@@ -1,3 +1,6 @@
+///import baidu.dom.offset;
+///import baidu.dom.g;
+
 /// Tangram 1.x Code Start
 /**
  * 获取目标元素相对于整个文档左上角的位置
@@ -9,9 +12,6 @@
  *             
  * @return {Object} 目标元素的位置，键值为top和left的Object。
  */
-
-///import baidu.dom.offset;
-///import baidu.dom.g;
 baidu.dom.getPosition = function(element){
     return baidu.dom(baidu.dom.g(element)).offset();
 }

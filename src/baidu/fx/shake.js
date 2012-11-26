@@ -1,3 +1,8 @@
+///import baidu.dom;
+///import baidu.object.extend;
+///import baidu.dom.getStyle;
+///import baidu.fx.create;
+
 /// Tangram 1.x Code Start
 /*
  * Tangram
@@ -7,14 +12,6 @@
  * @namespace: baidu.fx.shake
  * @version: 2010-01-23
  */
-
-///import baidu.dom;
-///import baidu.object.extend;
-///import baidu.dom.getStyle;
-
-///import baidu.fx.create;
-
- 
 /**
  * 颤动的效果。
  * 说明：在效果执行过程中会修改DOM元素的position属性，可能会对包含的DOM元素带来影响

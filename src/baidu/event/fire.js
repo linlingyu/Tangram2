@@ -1,10 +1,8 @@
-/// Tangram 1.x Code Start
-
-///import baidu.dom;
 ///import baidu.dom._g;
 ///import baidu.dom.trigger;
 ///import baidu.event;
 
+/// Tangram 1.x Code Start
 /**
  * 触发已经注册的事件。注：在ie下不支持load和unload事件
  * @name baidu.event.fire

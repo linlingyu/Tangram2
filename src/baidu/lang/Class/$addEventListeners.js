@@ -1,3 +1,6 @@
+///import baidu.lang.Event;
+///import baidu.string.trim;
+
 /// Tangram 1.x Code Start
 /*
  * Tangram
@@ -8,10 +11,6 @@
  * version: 1.0
  * date: 2010-07-05
  */
-
-///import baidu.lang.Event;
-///import baidu.string.trim;
-
 /**
  * 添加多个自定义事件。
  * @grammar obj.addEventListeners(events, fn)

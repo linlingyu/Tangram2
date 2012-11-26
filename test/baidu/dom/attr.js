@@ -2,15 +2,15 @@ module("baidu.dom.attr",{});
 
 var bareObj = function(value) { return value; };
 var functionReturningObj = function(value) { return (function() { return value; }); };
-
+//
 test('prepareTest',function(){
     expect(1);
     stop();
-    ua.importsrc("baidu.dom.append,baidu.dom.each,baidu.dom.trigger,baidu.dom.find,baidu.dom.appendTo,baidu.dom.prop,baidu.dom.removeAttr,baidu.dom.text,baidu.dom.css,baidu.dom.width,baidu.dom.height,baidu.dom.insertAfter,baidu.dom.html,baidu.dom.eq,baidu.browser.safari,baidu.dom.remove,baidu.dom.contents", function(){
+    ua.importsrc('baidu.dom.appendTo,baidu.dom.removeAttr,baidu.dom.remove,baidu.dom.insertAfter,baidu.dom.prop,baidu.dom.contents,baidu.dom.text,baidu.dom.css,baidu.dom.height,baidu.dom.width,baidu.dom.html', function(){
         start();
         prepareTest();
         ok(true,'ok');
-    }, "baidu.dom.contents", "baidu.dom.attr");
+    }, "baidu.dom.appendTo");
 });
 
 //start

@@ -1,3 +1,6 @@
+///import baidu.dom.offset;
+///import baidu.dom.g;
+
 /// Tangram 1.x Code Start
 /**
  * 设置目标元素的top和left值到用户指定的位置
@@ -11,8 +14,6 @@
  *
  * @return {HTMLElement}  进行设置的元素
  */
-///import baidu.dom.offset;
-///import baidu.dom.g;
 baidu.dom.setPosition = function(element, coordinate){
     element = baidu.dom.g(element);
     baidu.dom(element).offset(coordinate);

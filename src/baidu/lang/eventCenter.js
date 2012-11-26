@@ -1,11 +1,10 @@
+///import baidu.lang.createSingle;
+
 /// Tangram 1.x Code Start
 /*
  * Tangram
  * Copyright 2009 Baidu Inc. All rights reserved.
  */
-///import baidu.lang;
-///import baidu.lang.createSingle;
-
 /**
  * @description 事件中心
  * @class

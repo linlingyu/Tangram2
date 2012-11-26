@@ -1,3 +1,5 @@
+///import baidu.string.filterFormat;
+
 /// Tangram 1.x Code Start
 /*
  * Tangram
@@ -8,8 +10,6 @@
  * version: 1.1.2
  * date: 2010/06/12
  */
-
-///import baidu.string.filterFormat;
 /**
  * 对数字做安全转义,确保是十进制数字;否则返回0.
  * @name baidu.string.filterFormat.toInt

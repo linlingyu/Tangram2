@@ -1,3 +1,6 @@
+///import baidu.lang;
+///import baidu.global;
+
 /// Tangram 1.x Code Start
 /*
  * Tangram
@@ -8,10 +11,6 @@
  * version: 1.1.0
  * date: 2009/12/1
  */
-
-///import baidu.lang;
-///import baidu.global;
-
 /**
  * 所有类的实例的容器
  * key为每个实例的guid

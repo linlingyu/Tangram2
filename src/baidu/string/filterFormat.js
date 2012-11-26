@@ -1,3 +1,5 @@
+///import baidu.string;
+
 /// Tangram 1.x Code Start
 /*
  * Tangram
@@ -8,10 +10,6 @@
  * version: 1.1.2
  * date: 2010/06/10
  */
-
-///import baidu.string;
-
-
 /**
  * @description 对目标字符串进行格式化，支持过滤
  * @function 

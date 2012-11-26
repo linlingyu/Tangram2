@@ -1,11 +1,10 @@
+///import baidu.createChain;
+
 /// Tangram 1.x Code Start
 /**
  * @author wangxiao
  * @email  1988wangxiao@gmail.com
  */
-
-///import baidu.createChain;
-
 /**
  * @description 对form的操作，解决表单数据问题
  * @function

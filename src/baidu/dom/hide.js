@@ -3,7 +3,7 @@
  * @email  1988wangxiao@gmail.com
  */
 
-///import baidu.dom;
+///import baidu.dom.each;
 
 /**
  * @description 隐藏匹配的元素

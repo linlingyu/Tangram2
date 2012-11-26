@@ -1,3 +1,5 @@
+///import baidu.string.filterFormat;
+
 /// Tangram 1.x Code Start
 /*
  * Tangram
@@ -8,8 +10,6 @@
  * version: 1.1.2
  * date: 2010/06/12
  */
-
-///import baidu.string.filterFormat;
 /**
  * 对js片段的字符做安全转义,编码低于255的都将转换成\x加16进制数
  * @name baidu.string.filterFormat.escapeJs

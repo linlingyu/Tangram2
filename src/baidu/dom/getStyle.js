@@ -5,10 +5,7 @@
  */
 
 ///import baidu.dom.g;
-///import baidu.dom.getComputedStyle;
-///import baidu.dom._styleFixer;
-///import baidu.dom._styleFilter.filter;
-///import baidu.string.toCamelCase;
+///import baidu.dom.css;
 
 /**
  * 获取目标元素的样式值
@@ -32,29 +29,7 @@
 // 1. 无法解决px/em单位统一的问题（IE）
 // 2. 无法解决样式值为非数字值的情况（medium等 IE）
 baidu.dom.getStyle = function (element, key) {
-    var dom = baidu.dom;
-
-    element = dom.g(element);
-    key = baidu.string.toCamelCase(key);
-    //computed style, then cascaded style, then explicitly set style.
-    var value = element.style[key] ||
-                (element.currentStyle ? element.currentStyle[key] : "") || 
-                dom.getComputedStyle(element, key);
-
-    // 在取不到值的时候，用fixer进行修正
-    if (!value || value == 'auto') {
-        var fixer = dom._styleFixer[key];
-        if(fixer){
-            value = fixer.get ? fixer.get(element, key, value) : baidu.dom.getStyle(element, fixer);
-        }
-    }
-    
-    /* 检查结果过滤器 */
-    if (fixer = dom._styleFilter) {
-        value = fixer.filter(key, value, 'get');
-    }
-
-    return value;
+    return baidu.dom(baidu.dom.g(element)).css(key);
 };
 
 /// support magic - Tangram 1.x Code End
