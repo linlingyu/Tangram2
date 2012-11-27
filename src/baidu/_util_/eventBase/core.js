@@ -10,6 +10,7 @@ void function( base, be ){
     var queue = base.queue;
     var core = base.core = {};
     var special = be.special = {};
+    var push = [].push;
 
     var findVestedEl = function( target, parents ){
         for( var i = 0, l = parents.length; i < l; i ++ )
@@ -27,11 +28,11 @@ void function( base, be ){
             fn = special[name].pack( fn );
 
         return function( e ){ // e is instance of baidu.event()
-            var t = baidu.dom( e.target ), args = arguments, bindElement;
+            var t = baidu.dom( e.target ), args = [ e ], bindElement;
             if( data && !e.data ) 
                 e.data = data;
-            if( e.triggerData ) 
-                [].push.apply( args, e.triggerData );
+            if( e.triggerData )
+                push.apply( args, e.triggerData );
 
             if( !bindElements )
                 return e.result = fn.apply( target, args );
