@@ -53,6 +53,8 @@ baidu.ajax.request = function( url, opt ) {
                     opt.onsuccess( xhr, text );
             },
             error: function( text, status, xhr ){
+                if( xhr == "Not Found" )
+                    xhr = { status: 404 };
                 if( opt.onfailure )
                     opt.onfailure( xhr, text );
                 if( status == "timeout" && opt.ontimeout )

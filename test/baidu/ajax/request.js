@@ -153,7 +153,7 @@ test('老接口：on', function() {
 	// 404
 	baidu.ajax.request(ajax_request_baseurl + "?type=on&status=404", {
 		onfailure : function(xhr, text) {
-			equals(xhr, "Not Found");
+			equals(xhr.status, 404);
 		},
 		on404 : onhandle(404),
 		async : false
