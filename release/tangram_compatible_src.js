@@ -3427,7 +3427,7 @@ void function(){
 	    for(var i = 0, ele; ele = array[i]; i++){
 	        tangId = baidu.id(ele, 'get');
 	        if(!tangId){continue;}
-	        baidu._util_.eventBase.removeAll(ele);
+	        baidu._util_.eventBase.queue.remove(ele);
 	        baidu.id(ele, 'remove');
 	    }
 	}
@@ -3633,7 +3633,8 @@ void function(){
 	baidu.dom.extend({
 	    clone: function(){
 	        var util = baidu._util_,
-	            event = util.eventBase,
+	            eventCore = util.eventBase.core,
+	            eventQueue = util.eventBase.queue,
 	            div = util.support.dom.div,
 	            noCloneChecked = util.support.dom.input.cloneNode(true).checked,//用于判断ie是否支持clone属性
 	            noCloneEvent = true;
@@ -3674,10 +3675,10 @@ void function(){
 	        //
 	        function cloneCopyEvent(src, dest){
 	        	if(dest.nodeType !== 1 || !baidu.id(src, 'get')){return;}
-	        	var defaultEvents = event.get(src);
+	        	var defaultEvents = eventQueue.get(src);
 	        	for(var i in defaultEvents){
 	        	    for(var j = 0, handler; handler = defaultEvents[i][j]; j++){
-	        	        event.add(dest, i, handler);
+	        	        eventCore.add(dest, i, handler);
 	        	    }
 	        	}
 	        }

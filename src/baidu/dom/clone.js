@@ -4,7 +4,8 @@
 
 ///import baidu.dom.map;
 ///import baidu.id;
-///import baidu._util_.eventBase;
+///import baidu._util_.eventBase.core;
+///import baidu._util_.eventBase.queue;
 ///import baidu._util_.isXML;
 ///import baidu._util_.support;
 /**
@@ -61,7 +62,8 @@
 baidu.dom.extend({
     clone: function(){
         var util = baidu._util_,
-            event = util.eventBase,
+            eventCore = util.eventBase.core,
+            eventQueue = util.eventBase.queue,
             div = util.support.dom.div,
             noCloneChecked = util.support.dom.input.cloneNode(true).checked,//用于判断ie是否支持clone属性
             noCloneEvent = true;
@@ -102,10 +104,10 @@ baidu.dom.extend({
         //
         function cloneCopyEvent(src, dest){
         	if(dest.nodeType !== 1 || !baidu.id(src, 'get')){return;}
-        	var defaultEvents = event.get(src);
+        	var defaultEvents = eventQueue.get(src);
         	for(var i in defaultEvents){
         	    for(var j = 0, handler; handler = defaultEvents[i][j]; j++){
-        	        event.add(dest, i, handler);
+        	        eventCore.add(dest, i, handler);
         	    }
         	}
         }
