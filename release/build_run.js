@@ -7,11 +7,13 @@ var fs = require("fs"),
 //tangram源代码目录
 var tangramSrcPath = '../src';
 //需要排除的api
-var excludeFiles = ['baidu.check','baidu.short'];
+var excludeFiles = ['baidu.check', 'baidu.short'];
 
 //已经导入的文件
 var imported = [];
-imported.concat(excludeFiles);
+excludeFiles.forEach(function(file){
+    imported.push(util.api2File(file, tangramSrcPath));
+});
 
 //function getFileContent(file){
 //    var _content = '';
@@ -49,7 +51,7 @@ function getFileContent(file){
         || util.arrayContains(imported, file)){return '';}
     var code = fs.readFileSync(file, 'utf8'),
         dependAPIs = util.getDependApis(code),
-        rImport = /\/\/\/import\s(baidu[\w\.]*);/g,
+        rImport = /\/\/\/import\s(baidu.*);/g,
         importMap = {};
     imported.push(file);
     dependAPIs.forEach(function(item){
