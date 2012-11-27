@@ -9,8 +9,8 @@
 
 void function( base, be ){
 	var I = baidu.id;
-	var attaCache = {};
     var queue = base.queue = {};
+    var attaCache = queue.attaCache = {};
     var listener = base.listener;
 
     queue.get = function( target, type, bindType, attachElements ){
