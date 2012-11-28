@@ -9,8 +9,8 @@
 
 void function( base, be ){
 	var I = baidu.id;
+	var attaCache = baidu.global( "eventQueueCache" );
     var queue = base.queue = {};
-    var attaCache = queue.attaCache = {};
     var listener = base.listener;
 
     queue.get = function( target, type, bindType, attachElements ){
@@ -18,12 +18,13 @@ void function( base, be ){
 
         if( !attaCache[id] )
             attaCache[id] = {};
-        
+
         c = attaCache[id];
 
         if( type ){
-            if( !c[type] )
+            if( !c[type] ){
                 this.setupCall( target, type, bindType, c[ type ] = [], attachElements );
+            }
             return c[type];
         }else return c;
     };

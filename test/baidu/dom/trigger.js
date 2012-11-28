@@ -63,7 +63,8 @@ test('div trigger event', function(){
 });
 
 test('custom event', function(){
-    stop()
+    stop();
+    expect(1);
     ua.importsrc('baidu.dom.bind', function(){
         var c = new Div(),
             div = c.get();
