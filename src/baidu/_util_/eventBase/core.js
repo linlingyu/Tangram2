@@ -29,6 +29,7 @@ void function( base, be ){
 
         return function( e ){ // e is instance of baidu.event()
             var t = baidu.dom( e.target ), args = [ e ], bindElement;
+
             if( data && !e.data ) 
                 e.data = data;
             if( e.triggerData )

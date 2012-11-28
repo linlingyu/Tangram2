@@ -63,12 +63,12 @@ void function( base, be ){
             if( !e.currentTarget )
                 e.currentTarget = target;
 
-            for( var i = 0, r, l = fnAry.length; i < l; i ++ ){
-                r = fnAry[i];
-                r.pkg.apply( target, args );
-                if( r.one )
-                    one.unshift( i );
-            }
+            for( var i = 0, r, l = fnAry.length; i < l; i ++ )
+                if(r = fnAry[i]){
+                    r.pkg.apply( target, args );
+                    if( r.one )
+                        one.unshift( i );
+                }
 
             if( one.length )
                 for(var i = 0, l = one.length; i < l; i ++)
