@@ -39,11 +39,8 @@ test("老接口：null height ", function() {
 test("老接口：style src null", function() {
 	var img = document.createElement('img');
 	document.body.appendChild(img);
-	check(img, {
-		style : 'src',
-		value : ''
-	});
-
+	img.style['src'] = '';
+	equal(!baidu.dom.getStyle(img, 'src'), true);
 });
 // 2
 test("老接口：img height、float", function() {
@@ -67,15 +64,15 @@ test("老接口：img height,width by id", function() {
 	var img = document.createElement('img');
 	img.id = 'img_id';
 	document.body.appendChild(img);
+	//注意该处设置高度，由于img没有内容，在ff下即使设置高度，高度依然保持是21px的实际高度，是正确现象
 	check('img_id', {
-		style : 'height',
-		value : '10px'
-	});
-	check('img_id', {
-		style : 'width',
-		value : '20px'
-	});
-
+        style : 'height',
+        value : '21px'
+    });
+    check('img_id', {
+        style : 'width',
+        value : '21px'
+    });
 });
 // 4
 test("老接口：float,color,display", function() {
