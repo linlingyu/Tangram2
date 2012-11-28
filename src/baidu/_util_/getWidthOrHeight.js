@@ -22,10 +22,10 @@ baidu._util_.getWidthOrHeight = function(){
         var cssExpand = {Width: ['Right', 'Left'], Height: ['Top', 'Bottom']}[item];
         ret['get' + item] = function(ele, extra){
             var tang = baidu.dom(ele),
-                defaultValue =  ele.offsetWidth === 0
+                defaultValue = ele.offsetWidth === 0
                     && rdisplayswap.test(tang.getCurrentStyle('display'))
                     && (swap(ele, cssShow)),
-                rect = ele['offset' + item] || parseInt(tang.getCurrentStyle(item)),
+                rect = ele['offset' + item] || parseInt(tang.getCurrentStyle(item.toLowerCase())),
                 delString = 'padding|border';
             extra && baidu.forEach(extra.split('|'), function(val){
                 if(!~delString.indexOf(val)){//if val is margin

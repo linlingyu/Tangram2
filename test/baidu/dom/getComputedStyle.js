@@ -104,7 +104,7 @@ test("get empty style in IE", function() {
 		stop();
 		var div = document.createElement('div');
 		div.style.width = '100px';
-		equal(baidu.dom.getComputedStyle(div, 'width'), '','empty style');
+		equal(baidu.dom.getComputedStyle(div, 'width'), '100px','empty style');
 		start();
 	}
 });
@@ -196,13 +196,4 @@ test("get style from fixer", function() {
     div.appendChild(img);
     equal(baidu.dom.getComputedStyle(img, 'opacity'), '1');
     document.body.removeChild(div);
-});
-test("get empty style in IE", function() {
-	if (ie < 9 ) {
-		stop();
-		var div = document.createElement('div');
-		div.style.width = '100px';
-		equal(baidu.dom.getComputedStyle(div, 'width'), '','empty style');
-		start();
-	}
 });

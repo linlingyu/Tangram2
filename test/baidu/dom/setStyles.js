@@ -24,7 +24,7 @@ test("老接口：set styles",function(){
 	ok(color=='red'||color=='rgb(255,0,0)'||color=='#ff0000','color red');
 	equal(img.style.display,"",'get img display style');
 	equal($(img).css('float'),'left','get img float');
-	ok(img.style.opacity=='0.2'||img.filters.alpha.opacity== 20,'get img opacity');
+	ok(img.style.opacity=='0.2'||img.filters['dximagetransform.microsoft.Alpha'].opacity== 20,'get img opacity');
 	document.body.removeChild(div);
 });
 
@@ -41,7 +41,7 @@ test("老接口：shortcut",function(){
 	ok(color=='red'||color=='rgb(255,0,0)'||color=='#ff0000','color red');
 	equal(img.style.display,"",'get img display style');
 	equal($(img).css('float'),'left','get img float');
-	ok(img.style.opacity=='0.2'||img.filters.alpha.opacity== 20,'get img opacity');
+	ok(img.style.opacity=='0.2'||img.filters['dximagetransform.microsoft.Alpha'].opacity== 20,'get img opacity');
 	document.body.removeChild(div);
 });
 
@@ -59,7 +59,7 @@ test("老接口：set styles",function(){
 	ok(color=='red'||color=='rgb(255,0,0)'||color=='#ff0000','color red');
 	equal(img.style.display,"",'get img display style');
 	equal($(img).css('float'),'left','get img float');
-	ok(img.style.opacity=='0.2'||img.filters.alpha.opacity== 20,'get img opacity');
+	ok(img.style.opacity=='0.2'||img.filters['dximagetransform.microsoft.Alpha'].opacity== 20,'get img opacity');
 	document.body.removeChild(div);
 });
 
@@ -76,7 +76,7 @@ test("老接口：shortcut",function(){
 	ok(color=='red'||color=='rgb(255,0,0)'||color=='#ff0000','color red');
 	equal(img.style.display,"",'get img display style');
 	equal($(img).css('float'),'left','get img float');
-	ok(img.style.opacity=='0.2'||img.filters.alpha.opacity== 20,'get img opacity');
+	ok(img.style.opacity=='0.2'||img.filters['dximagetransform.microsoft.Alpha'].opacity== 20,'get img opacity');
 	document.body.removeChild(div);
 });
 
