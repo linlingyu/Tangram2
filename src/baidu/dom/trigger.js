@@ -8,6 +8,7 @@
 ///import baidu._util_.eventBase;
 ///import baidu._util_.eventBase.queue;
 ///import baidu._util_.eventBase.simulate;
+///import baidu.dom.triggerHandler;
 
 /**
  * @description 对指定的 TangramDom 集合派发指定的事件，并触发事件默认行为
@@ -22,11 +23,13 @@
 void function( base, be ){
 	var special = be.special;
 	var queue = base.queue;
+	var dom = baidu.dom;
 
 	var triggerEvents = { submit: 1 };
 
 	var createEvent = function( type, opts ){
 	    var evnt;
+
 	    if( document.createEvent )
 	        evnt = document.createEvent( "HTMLEvents" ),
 	        evnt.initEvent( type, true, true );
@@ -62,8 +65,13 @@ void function( base, be ){
 		    
 		    if( special )
 		    	queue.call( element, type, null, evnt );
-		    else
-		        eventReturn = dispatchEvent( element, type, evnt );
+		    else{
+		    	try{
+		    		eventReturn = dispatchEvent( element, type, evnt );
+		    	}catch(e){
+		    		dom(element).triggerHandler( type, triggerData, evnt );
+		    	}
+		    }
 
 		    if( eventReturn !== false && triggerEvents[type] ){
 			    try{
